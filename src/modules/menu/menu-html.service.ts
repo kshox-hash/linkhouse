@@ -28,6 +28,11 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
           <div class="module-icon">${icon}</div>
 
           <div class="module-main">
+            <div class="module-topline">
+              <span class="module-status">Activo</span>
+              <span class="module-code">Módulo ${String(index + 1).padStart(2, "0")}</span>
+            </div>
+
             <div class="module-title">${title}</div>
             <div class="module-description">${description}</div>
           </div>
@@ -48,7 +53,6 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
   <style>
     :root {
       --bg: #030712;
-      --bg-soft: #07111f;
       --surface: rgba(255, 255, 255, 0.055);
       --surface-hover: rgba(255, 255, 255, 0.085);
       --border: rgba(255, 255, 255, 0.10);
@@ -150,7 +154,9 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
       width: 32px;
       height: 32px;
       border-radius: 10px;
-      background: linear-gradient(135deg, #60a5fa, #2563eb);
+      background:
+        radial-gradient(circle at 32% 26%, rgba(255,255,255,0.75), transparent 24%),
+        linear-gradient(135deg, #60a5fa, #2563eb);
       box-shadow: 0 10px 24px rgba(37, 99, 235, 0.24);
       flex-shrink: 0;
     }
@@ -166,10 +172,22 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
     }
 
     .brand-sub {
-      margin-top: 1px;
+      margin-top: 3px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       font-size: 11px;
       color: var(--muted-soft);
-      font-weight: 700;
+      font-weight: 750;
+    }
+
+    .brand-sub::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.75);
     }
 
     .system-pill {
@@ -191,6 +209,7 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
       height: 7px;
       border-radius: 999px;
       background: var(--green);
+      box-shadow: 0 0 14px rgba(34, 197, 94, 0.72);
     }
 
     .hero {
@@ -272,7 +291,7 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
       grid-template-columns: 48px minmax(0, 1fr) 34px;
       gap: 13px;
       align-items: center;
-      min-height: 86px;
+      min-height: 92px;
       padding: 13px;
       border-radius: var(--radius-lg);
       border: 1px solid var(--border);
@@ -310,6 +329,46 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
     .module-main {
       min-width: 0;
+    }
+
+    .module-topline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+
+    .module-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.09);
+      border: 1px solid rgba(34, 197, 94, 0.14);
+      color: #bbf7d0;
+      font-size: 9.5px;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .module-status::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.70);
+    }
+
+    .module-code {
+      color: var(--muted-soft);
+      font-size: 9.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     .module-title {
@@ -366,6 +425,26 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
       align-items: center;
       justify-content: center;
       gap: 7px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.035);
+    }
+
+    .secure-lock {
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .powered-by {
+      margin-top: 10px;
+      font-size: 11px;
+      color: rgba(148, 163, 184, 0.78);
+    }
+
+    .powered-by strong {
+      color: var(--blue-soft);
+      font-weight: 850;
     }
 
     @keyframes spin {
@@ -447,7 +526,7 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       .module-card {
         grid-template-columns: 46px minmax(0, 1fr) 30px;
-        min-height: 88px;
+        min-height: 94px;
         padding: 12px;
         gap: 12px;
       }
@@ -519,7 +598,12 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       <div class="footer">
         <div class="secure-row">
+          <span class="secure-lock">🔒</span>
           <span>Acceso seguro generado para tu atención</span>
+        </div>
+
+        <div class="powered-by">
+          Desarrollado por <strong>Automatiza Fácil</strong>
         </div>
       </div>
     </div>
