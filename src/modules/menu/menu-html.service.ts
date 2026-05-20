@@ -9,9 +9,9 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
   );
 
   const modules = record.config.modules || [];
+  const activeModules = modules.filter((module) => module.enabled);
 
-  const cardsHtml = modules
-    .filter((module) => module.enabled)
+  const cardsHtml = activeModules
     .map((module, index) => {
       const title = escapeHtml(module.title);
       const description = escapeHtml(module.description);
@@ -24,8 +24,6 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
           href="${url}"
           style="--delay: ${index * 90}ms;"
           data-loading-link="true"
-          data-loading-title="Abriendo ${title}"
-          data-loading-text="Estamos preparando la pantalla..."
         >
           <div class="module-left">
             <div class="module-icon">${icon}</div>
@@ -60,30 +58,19 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
   <style>
     :root {
       --bg: #070b12;
-      --bg-soft: #0d1422;
       --panel: rgba(13, 20, 34, 0.78);
-      --panel-strong: rgba(15, 23, 42, 0.94);
-      --card: rgba(255, 255, 255, 0.055);
-      --card-hover: rgba(255, 255, 255, 0.095);
-
       --text: #f8fafc;
       --muted: #9caac0;
       --muted-soft: #6f7d93;
-
       --border: rgba(255, 255, 255, 0.105);
       --border-strong: rgba(96, 165, 250, 0.36);
-
       --blue: #3b82f6;
       --cyan: #22d3ee;
       --green: #22c55e;
-      --orange: #f59e0b;
-
       --shadow: 0 30px 90px rgba(0, 0, 0, 0.42);
       --shadow-card: 0 18px 42px rgba(0, 0, 0, 0.24);
-
       --radius-xl: 30px;
       --radius-lg: 22px;
-      --radius-md: 16px;
     }
 
     * {
@@ -129,10 +116,9 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
       display: flex;
       align-items: center;
       justify-content: center;
-      background:
-        radial-gradient(circle at 14% 8%, rgba(59, 130, 246, 0.22), transparent 28%),
-        linear-gradient(180deg, #070b12 0%, #0d1422 100%);
-      transition: opacity 180ms ease, visibility 180ms ease;
+      background: rgba(7, 11, 18, 0.78);
+      backdrop-filter: blur(10px);
+      transition: opacity 160ms ease, visibility 160ms ease;
     }
 
     .app-loader.hidden {
@@ -141,39 +127,14 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
       pointer-events: none;
     }
 
-    .app-loader-card {
-      width: min(300px, calc(100vw - 48px));
-      padding: 24px 22px;
-      border-radius: 24px;
-      background: rgba(15, 23, 42, 0.84);
-      border: 1px solid rgba(96, 165, 250, 0.22);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(18px);
-      text-align: center;
-      animation: loaderIn 260ms ease both;
-    }
-
     .app-spinner {
-      width: 36px;
-      height: 36px;
-      margin: 0 auto 15px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       border: 3px solid rgba(96, 165, 250, 0.18);
       border-top-color: var(--cyan);
       animation: spin 760ms linear infinite;
-    }
-
-    .app-loader-title {
-      font-size: 15px;
-      font-weight: 900;
-      color: var(--text);
-      margin-bottom: 5px;
-    }
-
-    .app-loader-text {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.4;
+      box-shadow: 0 0 24px rgba(34, 211, 238, 0.22);
     }
 
     .page {
@@ -623,17 +584,6 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
       to { transform: rotate(360deg); }
     }
 
-    @keyframes loaderIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px) scale(0.98);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-
     @keyframes pageIn {
       from { opacity: 0; }
       to { opacity: 1; }
@@ -764,11 +714,7 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
 <body>
   <div id="appLoader" class="app-loader hidden">
-    <div class="app-loader-card">
-      <div class="app-spinner"></div>
-      <div id="appLoaderTitle" class="app-loader-title">Cargando</div>
-      <div id="appLoaderText" class="app-loader-text">Estamos preparando la información...</div>
-    </div>
+    <div class="app-spinner"></div>
   </div>
 
   <main class="page">
@@ -802,7 +748,7 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
           <aside class="hero-metric">
             <div class="metric-label">Módulos activos</div>
-            <div class="metric-value">${modules.filter((m) => m.enabled).length}</div>
+            <div class="metric-value">${activeModules.length}</div>
             <div class="metric-caption">Herramientas disponibles para esta atención.</div>
           </aside>
         </div>
@@ -833,37 +779,38 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
   <script>
     window.AppLoader = {
-      show(title, text) {
+      show() {
         const loader = document.getElementById("appLoader");
-        const titleEl = document.getElementById("appLoaderTitle");
-        const textEl = document.getElementById("appLoaderText");
-
-        if (titleEl) titleEl.textContent = title || "Cargando";
-        if (textEl) textEl.textContent = text || "Estamos preparando la información...";
-
-        if (loader) {
-          loader.classList.remove("hidden");
-        }
+        if (loader) loader.classList.remove("hidden");
       },
 
       hide() {
         const loader = document.getElementById("appLoader");
-
-        if (loader) {
-          loader.classList.add("hidden");
-        }
+        if (loader) loader.classList.add("hidden");
       }
     };
 
-    document.addEventListener("DOMContentLoaded", () => {
+    function bindLoadingLinks() {
       document.querySelectorAll("[data-loading-link]").forEach((link) => {
         link.addEventListener("click", () => {
-          window.AppLoader.show(
-            link.getAttribute("data-loading-title") || "Abriendo módulo",
-            link.getAttribute("data-loading-text") || "Estamos preparando la pantalla..."
-          );
+          window.AppLoader.show();
         });
       });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      window.AppLoader.hide();
+      bindLoadingLinks();
+    });
+
+    window.addEventListener("pageshow", () => {
+      window.AppLoader.hide();
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        window.AppLoader.hide();
+      }
     });
   </script>
 </body>
