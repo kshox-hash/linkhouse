@@ -124,20 +124,24 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
     .page {
       position: relative;
       min-height: 100vh;
-      padding: 16px 10px 26px;
+      padding: 10px 10px 18px;
     }
 
     .shell {
-      max-width: 760px;
+      width: min(920px, 100%);
+      min-height: calc(100vh - 28px);
       margin: 0 auto;
+      display: flex;
+      flex-direction: column;
       animation: pageIn 520ms ease both;
     }
 
     /* ── Hero ── */
     .hero {
       text-align: center;
-      margin-bottom: 10px;
-      padding-top: 2px;
+      margin-bottom: 7px;
+      padding-top: 0;
+      flex: 0 0 auto;
     }
 
     .brand-pill {
@@ -165,8 +169,8 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
     }
 
     h1 {
-      margin: 8px 0 0;
-      font-size: 28px;
+      margin: 6px 0 0;
+      font-size: 24px;
       line-height: 1;
       letter-spacing: -0.055em;
       color: var(--text);
@@ -175,11 +179,11 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
     }
 
     .subtitle {
-      margin: 6px auto 0;
-      max-width: 520px;
+      margin: 5px auto 0;
+      max-width: 620px;
       color: var(--muted);
-      font-size: 12.5px;
-      line-height: 1.35;
+      font-size: 11.5px;
+      line-height: 1.25;
       animation: fadeUp 620ms ease both;
       animation-delay: 100ms;
     }
@@ -187,14 +191,18 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
     /* ── Panel ── */
     .panel {
       position: relative;
-      margin-top: 10px;
-      padding: 9px;
+      flex: 1 1 auto;
+      min-height: 0;
+      margin-top: 7px;
+      padding: 8px;
       border: 1px solid rgba(255, 255, 255, 0.72);
       border-radius: var(--radius-xl);
       background: var(--panel);
       backdrop-filter: blur(18px);
       box-shadow: var(--shadow);
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
       animation: fadeUp 660ms ease both;
       animation-delay: 150ms;
     }
@@ -213,8 +221,11 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
     .content-flow {
       position: relative;
       z-index: 1;
-      display: grid;
-      gap: 8px;
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
     }
 
     /* ── Section container ── */
@@ -225,6 +236,20 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
       box-shadow: var(--shadow-card);
       overflow: hidden;
       animation: cardIn 500ms cubic-bezier(.2,.8,.2,1) both;
+    }
+
+    .products-section {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .products-section .section-inner {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
     }
 
     .section-inner {
@@ -271,7 +296,9 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
     .products-list {
       display: grid;
       gap: 6px;
-      max-height: 238px;
+      flex: 1 1 auto;
+      max-height: clamp(360px, 58vh, 680px);
+      min-height: 280px;
       overflow-y: auto;
       overscroll-behavior: contain;
       padding-right: 3px;
@@ -414,6 +441,7 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
 
     /* ── Total ── */
     .total-card {
+      flex: 0 0 auto;
       margin-top: 7px;
       padding: 7px 9px;
       border: 1px solid rgba(37, 99, 235, 0.18);
@@ -459,6 +487,55 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
       letter-spacing: -0.035em;
       color: var(--text);
       white-space: nowrap;
+    }
+
+    /* ── Form compact/collapsible ── */
+    .form-section {
+      flex: 0 0 auto;
+    }
+
+    .form-section summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 9px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      user-select: none;
+    }
+
+    .form-section summary::-webkit-details-marker { display: none; }
+
+    .form-summary-left {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-summary-text { min-width: 0; }
+
+    .form-toggle-pill {
+      flex: 0 0 auto;
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      border-radius: 999px;
+      padding: 5px 9px;
+      color: var(--accent-dark);
+      background: var(--accent-soft);
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .form-toggle-pill::after { content: "Abrir"; }
+    .form-section[open] .form-toggle-pill::after { content: "Cerrar"; }
+
+    .form-section .section-inner {
+      padding-top: 0;
+      border-top: 1px solid rgba(148, 163, 184, 0.18);
+      max-height: 240px;
+      overflow-y: auto;
     }
 
     /* ── Form ── */
@@ -636,14 +713,15 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
 
     /* ── Responsive ── */
     @media (max-width: 640px) {
-      .page { padding: 12px 7px 22px; }
-      .shell { max-width: 100%; }
-      h1 { font-size: 24px; }
-      .subtitle { font-size: 11.8px; }
-      .panel { padding: 7px; border-radius: 18px; }
-      .section-inner { padding: 8px; }
-      .section-head { margin-bottom: 7px; }
-      .products-list { max-height: 226px; }
+      .page { padding: 8px 6px 14px; }
+      .shell { width: 100%; min-height: calc(100vh - 22px); }
+      .brand-pill { font-size: 10.5px; padding: 4px 9px; }
+      h1 { font-size: 21px; }
+      .subtitle { font-size: 10.8px; }
+      .panel { padding: 6px; border-radius: 18px; }
+      .section-inner { padding: 7px; }
+      .section-head { margin-bottom: 6px; }
+      .products-list { max-height: clamp(390px, 62vh, 720px); min-height: 330px; }
       .product-card {
         grid-template-columns: minmax(0, 1fr) auto;
         padding: 7px;
@@ -659,6 +737,7 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
       .field.full { grid-column: 1 / -1; }
       .total-card { flex-direction: row; align-items: center; }
       .total-value { font-size: 15px; }
+      .form-section .section-inner { max-height: 210px; }
     }
 
     @media (max-width: 390px) {
@@ -805,6 +884,7 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
         "Productos",
         "Cantidad, precio y total en vista compacta."
       );
+      section.classList.add("products-section");
 
       if (!Array.isArray(component.items) || component.items.length === 0) {
         const empty = document.createElement("div");
@@ -906,7 +986,7 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
       inner.appendChild(scrollWrap);
 
       /* Only show fade hint if there are enough items to scroll */
-      if (component.items.length <= 4) {
+      if (component.items.length <= 7) {
         scrollWrap.classList.add("at-bottom");
       }
 
@@ -949,11 +1029,44 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
     }
 
     function renderForm(component) {
-      const { section, inner } = createSection(
-        "👤",
-        "Mis datos",
-        "Información mínima para contactarte."
-      );
+      const section = document.createElement("details");
+      section.className = "section form-section";
+      section.id = "customerDetailsSection";
+
+      const summary = document.createElement("summary");
+
+      const summaryLeft = document.createElement("div");
+      summaryLeft.className = "form-summary-left";
+
+      const iconEl = document.createElement("div");
+      iconEl.className = "section-icon";
+      iconEl.textContent = "👤";
+
+      const textWrap = document.createElement("div");
+      textWrap.className = "form-summary-text";
+
+      const titleEl = document.createElement("div");
+      titleEl.className = "section-title";
+      titleEl.textContent = "Mis datos";
+
+      const subtitleEl = document.createElement("div");
+      subtitleEl.className = "section-subtitle";
+      subtitleEl.textContent = "Abrir solo para completar contacto.";
+
+      textWrap.appendChild(titleEl);
+      textWrap.appendChild(subtitleEl);
+      summaryLeft.appendChild(iconEl);
+      summaryLeft.appendChild(textWrap);
+
+      const toggle = document.createElement("div");
+      toggle.className = "form-toggle-pill";
+
+      summary.appendChild(summaryLeft);
+      summary.appendChild(toggle);
+      section.appendChild(summary);
+
+      const inner = document.createElement("div");
+      inner.className = "section-inner";
 
       const grid = document.createElement("div");
       grid.className = "form-grid";
@@ -984,6 +1097,7 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
       });
 
       inner.appendChild(grid);
+      section.appendChild(inner);
       return section;
     }
 
@@ -1035,6 +1149,9 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
       for (const field of formFields) {
         const value = String(field.value || "").trim();
         if (field.required && !value) {
+          const details = document.getElementById("customerDetailsSection");
+          if (details) details.setAttribute("open", "open");
+          field.focus();
           showMessage("error", "Completa los campos obligatorios.");
           return;
         }
