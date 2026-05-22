@@ -25,11 +25,11 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
 :root {
   --bg: #202124;
 
-  --surface: #0b0c10;
-  --surface-2: #101116;
-  --surface-3: #171922;
-  --surface-soft: #151720;
-  --surface-block: #111219;
+  --surface: #0d0e13;
+  --surface-2: #151720;
+  --surface-3: #1b1e29;
+  --surface-soft: #242734;
+  --surface-block: #12131a;
 
   --text: #d8dbe2;
   --text-strong: #e8eaed;
@@ -40,7 +40,7 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
   --muted-2: #646b78;
 
   --link: #bfc7ff;
-  --link-soft: #22263a;
+  --link-soft: #252941;
 
   --green: #81c995;
   --green-soft: #1d3428;
@@ -107,16 +107,16 @@ button {
 /* HEADER */
 
 .topbar {
-  min-height: 54px;
+  min-height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .brand {
   color: var(--text-strong);
-  font-size: 20px;
+  font-size: 19px;
   line-height: 1;
   font-weight: 500;
   letter-spacing: -0.045em;
@@ -125,7 +125,7 @@ button {
 
 .hero {
   text-align: center;
-  padding: 6px 10px 28px;
+  padding: 4px 10px 26px;
 }
 
 .hero-kicker {
@@ -159,7 +159,6 @@ h1 {
   font-size: 15px;
   font-weight: 400;
   line-height: 1.5;
-  text-wrap: balance;
 }
 
 /* PANEL */
@@ -172,15 +171,15 @@ h1 {
 
 .content-flow {
   display: grid;
-  gap: 16px;
+  gap: 18px;
 }
 
 /* PRODUCTS WRAPPER */
 
 .products-section {
   display: grid;
-  gap: 14px;
-  padding: 16px;
+  gap: 16px;
+  padding: 18px;
   border-radius: var(--radius-xl);
   background: var(--surface-block);
 }
@@ -258,7 +257,7 @@ h1 {
   font-size: 17px;
 }
 
-/* SCROLLABLE PRODUCTS AREA */
+/* SCROLL AREA */
 
 .products-scroll {
   border-radius: var(--radius-lg);
@@ -268,12 +267,12 @@ h1 {
 
 .products-list {
   display: grid;
-  gap: 8px;
-  max-height: 390px;
+  gap: 10px;
+  max-height: 520px;
   overflow-y: auto;
-  padding: 10px;
+  padding: 12px;
   scrollbar-width: thin;
-  scrollbar-color: #383d50 transparent;
+  scrollbar-color: #3c4155 transparent;
 }
 
 .products-list::-webkit-scrollbar {
@@ -285,7 +284,7 @@ h1 {
 }
 
 .products-list::-webkit-scrollbar-thumb {
-  background: #383d50;
+  background: #3c4155;
   border-radius: 999px;
 }
 
@@ -295,10 +294,10 @@ h1 {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 12px;
-  min-height: 72px;
-  padding: 13px;
-  border-radius: 18px;
+  gap: 14px;
+  min-height: 78px;
+  padding: 15px 16px;
+  border-radius: 20px;
   background: var(--surface-2);
   border: none;
   transition:
@@ -320,7 +319,7 @@ h1 {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
   gap: 12px;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .product-name {
@@ -395,7 +394,7 @@ h1 {
 /* TOTAL */
 
 .total-card {
-  min-height: 74px;
+  min-height: 76px;
   padding: 18px;
   border-radius: var(--radius-lg);
   background: var(--link-soft);
@@ -615,8 +614,8 @@ textarea {
   }
 
   .topbar {
-    min-height: 48px;
-    margin-bottom: 14px;
+    min-height: 46px;
+    margin-bottom: 12px;
   }
 
   .brand {
@@ -642,6 +641,7 @@ textarea {
 
   .products-section {
     padding: 14px;
+    gap: 14px;
   }
 
   .products-title {
@@ -649,12 +649,13 @@ textarea {
   }
 
   .products-list {
-    max-height: 360px;
+    max-height: 480px;
+    padding: 10px;
   }
 
   .product-card {
-    min-height: 72px;
-    padding: 12px;
+    min-height: 74px;
+    padding: 13px;
   }
 
   .product-name {
@@ -787,7 +788,7 @@ function renderText(component) {
   const box = document.createElement("div");
   box.style.padding = "14px";
   box.style.borderRadius = "18px";
-  box.style.background = "#0b0c10";
+  box.style.background = "#0d0e13";
   box.style.color = "#a6abb7";
   box.style.fontSize = "14px";
   box.style.lineHeight = "1.5";
