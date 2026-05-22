@@ -24,36 +24,37 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
 
 <style>
 :root {
-  /* VS Code Light Inspired */
-  --bg: #f3f3f3;
-  --surface: #ffffff;
-  --surface-2: #f8f8f8;
-  --surface-3: #e7e7e7;
-  --surface-hover: #eeeeee;
+  --bg: #1d1f27;
 
-  --text: #1e1e1e;
-  --text-soft: #3c3c3c;
-  --muted: #6a6a6a;
-  --muted-2: #8a8a8a;
+  --surface: #0c0d12;
+  --surface-2: #12141b;
+  --surface-3: #191b25;
+  --surface-hover: #12141b;
 
-  --accent: #007acc;
-  --accent-hover: #006bb3;
-  --accent-soft: #e5f3ff;
+  --text: #e8eaed;
+  --text-strong: #f1f3f4;
+  --text-soft: #c6cad6;
 
-  --border: #d4d4d4;
+  --muted: #a8adb9;
+  --muted-soft: #7d8391;
+  --muted-2: #6f7584;
 
-  --success-bg: #eaf7ea;
-  --success-text: #107c10;
+  --link: #bcc5ff;
+  --link-hover: #aeb8f8;
+  --link-soft: #23263a;
 
-  --error-bg: #fdecea;
-  --error-text: #a1260d;
+  --green: #81c995;
+  --green-soft: #1c2f28;
+
+  --red: #f28b82;
+  --red-soft: #32201f;
+
+  --border: transparent;
+  --border-soft: #20232e;
 
   --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 22px;
-
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 18px 42px rgba(0, 0, 0, 0.10);
+  --radius-lg: 18px;
+  --radius-xl: 28px;
 
   --page-max: 780px;
 }
@@ -74,6 +75,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family:
+    "Google Sans",
     Inter,
     system-ui,
     -apple-system,
@@ -93,6 +95,7 @@ textarea {
 .page {
   min-height: 100vh;
   padding: 24px 12px 28px;
+  background: var(--bg);
 }
 
 .shell {
@@ -109,9 +112,9 @@ textarea {
 
 .hero-kicker {
   margin-bottom: 12px;
-  color: var(--accent);
+  color: var(--link);
   font-size: 12px;
-  font-weight: 900;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -119,11 +122,11 @@ textarea {
 h1 {
   margin: 0;
   max-width: 680px;
-  color: var(--text);
+  color: var(--text-strong);
   font-size: clamp(38px, 6vw, 56px);
   line-height: 1.04;
-  letter-spacing: -0.045em;
-  font-weight: 900;
+  letter-spacing: -0.055em;
+  font-weight: 750;
 }
 
 .subtitle {
@@ -140,8 +143,7 @@ h1 {
   background: var(--surface);
   border-radius: var(--radius-xl);
   padding: 14px;
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--border);
+  border: none;
 }
 
 .content-flow {
@@ -164,15 +166,15 @@ h1 {
 }
 
 .products-title {
-  color: var(--text);
+  color: var(--text-strong);
   font-size: 16px;
-  font-weight: 900;
+  font-weight: 750;
   letter-spacing: -0.02em;
 }
 
 .products-subtitle {
   margin-top: 4px;
-  color: var(--muted);
+  color: var(--muted-soft);
   font-size: 12px;
 }
 
@@ -180,10 +182,10 @@ h1 {
   flex-shrink: 0;
   padding: 8px 12px;
   border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--link-soft);
+  color: var(--link);
   font-size: 12px;
-  font-weight: 900;
+  font-weight: 750;
 }
 
 /* SEARCH */
@@ -191,9 +193,9 @@ h1 {
 .search-input {
   width: 100%;
   height: 48px;
-  border: 1px solid var(--border);
+  border: none;
   outline: none;
-  border-radius: 14px;
+  border-radius: 16px;
   background: var(--surface-2);
   color: var(--text);
   padding: 0 16px;
@@ -201,12 +203,11 @@ h1 {
 }
 
 .search-input::placeholder {
-  color: var(--muted-2);
+  color: var(--muted-soft);
 }
 
 .search-input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.12);
+  background: var(--surface-3);
 }
 
 /* PRODUCTS LIST */
@@ -214,14 +215,11 @@ h1 {
 .products-list {
   display: grid;
   gap: 8px;
-
-  /* AQUÍ ESTÁ LA SOLUCIÓN PARA 60 PRODUCTOS */
   max-height: 58vh;
   overflow-y: auto;
-
   padding-right: 4px;
   scrollbar-width: thin;
-  scrollbar-color: #a6a6a6 transparent;
+  scrollbar-color: #3b4054 transparent;
 }
 
 .products-list::-webkit-scrollbar {
@@ -229,7 +227,7 @@ h1 {
 }
 
 .products-list::-webkit-scrollbar-thumb {
-  background: #a6a6a6;
+  background: #3b4054;
   border-radius: 999px;
 }
 
@@ -244,17 +242,14 @@ h1 {
   padding: 14px;
   border-radius: var(--radius-lg);
   background: var(--surface-2);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
+  border: none;
   transition:
     background 140ms ease,
-    border-color 140ms ease,
     transform 140ms ease;
 }
 
 .product-card:hover {
   background: var(--surface-hover);
-  border-color: #bdbdbd;
   transform: translateY(-1px);
 }
 
@@ -272,10 +267,10 @@ h1 {
 
 .product-name {
   margin: 0;
-  color: var(--text);
+  color: var(--text-strong);
   font-size: 15px;
   line-height: 1.25;
-  font-weight: 850;
+  font-weight: 750;
   letter-spacing: -0.02em;
   white-space: nowrap;
   overflow: hidden;
@@ -285,7 +280,7 @@ h1 {
 .product-price {
   color: var(--text-soft);
   font-size: 14px;
-  font-weight: 900;
+  font-weight: 750;
   white-space: nowrap;
 }
 
@@ -308,8 +303,8 @@ h1 {
   height: 36px;
   border-radius: 12px;
   overflow: hidden;
-  background: #ffffff;
-  border: 1px solid var(--border);
+  background: var(--surface);
+  border: none;
 }
 
 .qty-btn {
@@ -328,11 +323,11 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text);
+  color: var(--text-strong);
   font-size: 13px;
-  font-weight: 900;
-  border-left: 1px solid var(--border);
-  border-right: 1px solid var(--border);
+  font-weight: 750;
+  border-left: 1px solid var(--border-soft);
+  border-right: 1px solid var(--border-soft);
 }
 
 .qty-hidden {
@@ -345,12 +340,7 @@ h1 {
   min-height: 70px;
   padding: 16px;
   border-radius: var(--radius-lg);
-  background:
-    linear-gradient(
-      180deg,
-      var(--accent) 0%,
-      var(--accent-hover) 100%
-    );
+  background: var(--link-soft);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -358,15 +348,15 @@ h1 {
 }
 
 .total-title {
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--muted);
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .total-value {
-  color: white;
+  color: var(--link);
   font-size: clamp(24px, 4vw, 30px);
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: -0.045em;
 }
 
@@ -375,7 +365,7 @@ h1 {
 .form-collapse {
   border-radius: var(--radius-lg);
   background: var(--surface-2);
-  border: 1px solid var(--border);
+  border: none;
   overflow: hidden;
 }
 
@@ -401,22 +391,23 @@ h1 {
 .form-icon {
   width: 34px;
   height: 34px;
-  border-radius: 10px;
-  background: var(--accent-soft);
-  color: var(--accent);
+  border-radius: 12px;
+  background: var(--link-soft);
+  color: var(--link);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .form-title {
+  color: var(--text-strong);
   font-size: 15px;
-  font-weight: 900;
+  font-weight: 750;
 }
 
 .form-subtitle {
   margin-top: 4px;
-  color: var(--muted);
+  color: var(--muted-soft);
   font-size: 12px;
 }
 
@@ -458,25 +449,29 @@ h1 {
 .label {
   color: var(--muted);
   font-size: 12px;
-  font-weight: 750;
+  font-weight: 650;
 }
 
 input,
 textarea {
   width: 100%;
-  border: 1px solid var(--border);
+  border: none;
   outline: none;
-  background: #ffffff;
+  background: var(--surface);
   color: var(--text);
   border-radius: 12px;
   padding: 12px;
   font-size: 14px;
 }
 
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted-soft);
+}
+
 input:focus,
 textarea:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.12);
+  background: var(--surface-3);
 }
 
 textarea {
@@ -496,24 +491,19 @@ textarea {
   min-height: 56px;
   border: none;
   border-radius: var(--radius-lg);
-  background:
-    linear-gradient(
-      180deg,
-      var(--accent) 0%,
-      var(--accent-hover) 100%
-    );
-  color: white;
+  background: #3f5192;
+  color: var(--text-strong);
   font-size: 15px;
-  font-weight: 950;
+  font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 10px 24px rgba(0, 122, 204, 0.22);
   transition:
     opacity 140ms ease,
-    transform 140ms ease;
+    transform 140ms ease,
+    background 140ms ease;
 }
 
 .submit-btn:hover {
-  opacity: 0.92;
+  background: #485ca6;
 }
 
 .submit-btn:active {
@@ -538,20 +528,20 @@ textarea {
 
 .message.success {
   display: block;
-  background: var(--success-bg);
-  color: var(--success-text);
+  background: var(--green-soft);
+  color: var(--green);
 }
 
 .message.error {
   display: block;
-  background: var(--error-bg);
-  color: var(--error-text);
+  background: var(--red-soft);
+  color: var(--red);
 }
 
 .expires {
   margin-top: 10px;
   text-align: center;
-  color: var(--muted-2);
+  color: var(--muted-soft);
   font-size: 10px;
 }
 
@@ -692,11 +682,11 @@ function renderText(component) {
   const box = document.createElement("div");
   box.style.padding = "14px";
   box.style.borderRadius = "16px";
-  box.style.background = "#f8f8f8";
-  box.style.color = "#3c3c3c";
+  box.style.background = "#12141b";
+  box.style.color = "#a8adb9";
   box.style.fontSize = "14px";
   box.style.lineHeight = "1.5";
-  box.style.border = "1px solid #d4d4d4";
+  box.style.border = "none";
   box.textContent = component.value || "";
   return box;
 }
@@ -736,7 +726,7 @@ function renderProducts(component) {
 
   if (!Array.isArray(component.items) || component.items.length === 0) {
     list.innerHTML =
-      "<div style='padding:16px;color:#6a6a6a;font-size:13px'>No hay productos disponibles.</div>";
+      "<div style='padding:16px;color:#a8adb9;font-size:13px'>No hay productos disponibles.</div>";
     return section;
   }
 
