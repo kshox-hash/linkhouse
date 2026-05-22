@@ -23,35 +23,35 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
 
 <style>
 :root {
-  --bg: #1d1f27;
+  --bg: #202124;
 
-  --surface: #0c0d12;
-  --surface-2: #12141b;
-  --surface-3: #191b25;
-  --surface-hover: #171a22;
+  --surface: #0b0c10;
+  --surface-2: #101116;
+  --surface-3: #171922;
+  --surface-soft: #1b1d27;
 
-  --text: #d7d9e2;
-  --text-strong: #e7e9f1;
+  --text: #d8dbe2;
+  --text-strong: #e8eaed;
   --text-soft: #c4c8d4;
 
-  --muted: #9ca1af;
-  --muted-soft: #747a8a;
-  --muted-2: #626878;
+  --muted: #a6abb7;
+  --muted-soft: #808693;
+  --muted-2: #646b78;
 
-  --link: #b6c0f5;
-  --link-soft: #23263a;
+  --link: #bfc7ff;
+  --link-soft: #22263a;
 
   --green: #81c995;
-  --green-soft: #1c2f28;
+  --green-soft: #1d3428;
 
   --red: #f28b82;
-  --red-soft: #32201f;
+  --red-soft: #34201f;
 
   --radius-md: 14px;
   --radius-lg: 22px;
   --radius-xl: 30px;
 
-  --page-max: 760px;
+  --page-max: 720px;
 }
 
 * {
@@ -93,7 +93,7 @@ button {
 
 .page {
   min-height: 100vh;
-  padding: 20px 12px 28px;
+  padding: 18px 12px 28px;
   background: var(--bg);
 }
 
@@ -103,59 +103,65 @@ button {
   margin: 0 auto;
 }
 
+/* HEADER */
+
 .topbar {
-  min-height: 56px;
+  min-height: 54px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
 
 .brand {
   color: var(--text-strong);
-  font-size: 22px;
+  font-size: 20px;
+  line-height: 1;
   font-weight: 500;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.045em;
+  opacity: 0.94;
 }
 
 .hero {
   text-align: center;
-  padding: 8px 10px 28px;
+  padding: 6px 10px 28px;
 }
 
 .hero-kicker {
   width: max-content;
   max-width: 100%;
-  margin: 0 auto 16px;
-  padding: 8px 13px;
+  margin: 0 auto 14px;
+  padding: 7px 13px;
   border-radius: 999px;
   background: var(--link-soft);
   color: var(--link);
   font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.01em;
 }
 
 h1 {
   margin: 0 auto;
   max-width: 620px;
   color: var(--text-strong);
-  font-size: clamp(34px, 6vw, 52px);
+  font-size: clamp(31px, 5.2vw, 42px);
   line-height: 1.08;
   letter-spacing: -0.055em;
-  font-weight: 520;
+  font-weight: 500;
   text-wrap: balance;
 }
 
 .subtitle {
-  margin: 16px auto 0;
+  margin: 15px auto 0;
   max-width: 520px;
   color: var(--muted);
   font-size: 15px;
   font-weight: 400;
-  line-height: 1.55;
+  line-height: 1.5;
   text-wrap: balance;
 }
+
+/* PANEL */
 
 .panel {
   background: transparent;
@@ -168,7 +174,7 @@ h1 {
   gap: 14px;
 }
 
-/* PRODUCTOS */
+/* PRODUCTS */
 
 .products-section {
   display: grid;
@@ -176,22 +182,22 @@ h1 {
 }
 
 .products-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 14px;
 }
 
 .products-title {
   color: var(--text-strong);
   font-size: 22px;
   line-height: 1.1;
-  font-weight: 520;
-  letter-spacing: -0.04em;
+  font-weight: 500;
+  letter-spacing: -0.045em;
 }
 
 .products-subtitle {
-  margin-top: 6px;
+  margin-top: 5px;
   color: var(--muted-soft);
   font-size: 13px;
   font-weight: 400;
@@ -205,14 +211,15 @@ h1 {
   color: var(--link);
   font-size: 12px;
   font-weight: 500;
+  white-space: nowrap;
 }
 
-/* BUSCADOR */
+/* SEARCH */
 
 .search-shell {
   height: 56px;
   display: grid;
-  grid-template-columns: 1fr 48px;
+  grid-template-columns: 1fr 46px;
   align-items: center;
   border-radius: 999px;
   background: var(--surface);
@@ -236,8 +243,8 @@ h1 {
 }
 
 .search-icon {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 999px;
   display: flex;
   align-items: center;
@@ -247,16 +254,16 @@ h1 {
   font-size: 18px;
 }
 
-/* LISTADO */
+/* PRODUCTS LIST */
 
 .products-list {
   display: grid;
   gap: 10px;
-  max-height: 54vh;
+  max-height: 50vh;
   overflow-y: auto;
-  padding-right: 4px;
+  padding-right: 3px;
   scrollbar-width: thin;
-  scrollbar-color: #3b4054 transparent;
+  scrollbar-color: #383d50 transparent;
 }
 
 .products-list::-webkit-scrollbar {
@@ -264,19 +271,19 @@ h1 {
 }
 
 .products-list::-webkit-scrollbar-thumb {
-  background: #3b4054;
+  background: #383d50;
   border-radius: 999px;
 }
 
-/* CARD PRODUCTO */
+/* PRODUCT CARD */
 
 .product-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
-  min-height: 82px;
-  padding: 15px;
+  min-height: 76px;
+  padding: 14px;
   border-radius: var(--radius-lg);
   background: var(--surface);
   border: none;
@@ -286,7 +293,7 @@ h1 {
 }
 
 .product-card:hover {
-  background: var(--surface-hover);
+  background: var(--surface-2);
   transform: translateY(-1px);
 }
 
@@ -299,15 +306,15 @@ h1 {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
   gap: 12px;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
 
 .product-name {
   margin: 0;
   color: var(--text-strong);
   font-size: 15px;
-  line-height: 1.25;
-  font-weight: 520;
+  line-height: 1.24;
+  font-weight: 500;
   letter-spacing: -0.025em;
   white-space: nowrap;
   overflow: hidden;
@@ -323,7 +330,7 @@ h1 {
 
 .product-description {
   margin: 0;
-  color: var(--muted);
+  color: var(--muted-soft);
   font-size: 12px;
   line-height: 1.35;
   font-weight: 400;
@@ -333,11 +340,11 @@ h1 {
   overflow: hidden;
 }
 
-/* CANTIDAD */
+/* QTY */
 
 .qty-box {
   display: grid;
-  grid-template-columns: 34px 38px 34px;
+  grid-template-columns: 32px 36px 32px;
   height: 36px;
   border-radius: 999px;
   overflow: hidden;
@@ -374,7 +381,7 @@ h1 {
 /* TOTAL */
 
 .total-card {
-  min-height: 76px;
+  min-height: 74px;
   padding: 18px;
   border-radius: var(--radius-lg);
   background: var(--link-soft);
@@ -392,12 +399,12 @@ h1 {
 
 .total-value {
   color: var(--link);
-  font-size: clamp(25px, 4vw, 32px);
-  font-weight: 560;
+  font-size: clamp(24px, 4vw, 30px);
+  font-weight: 520;
   letter-spacing: -0.05em;
 }
 
-/* FORMULARIO */
+/* FORM */
 
 .form-collapse {
   border-radius: var(--radius-lg);
@@ -439,7 +446,8 @@ h1 {
 .form-title {
   color: var(--text-strong);
   font-size: 15px;
-  font-weight: 520;
+  font-weight: 500;
+  letter-spacing: -0.02em;
 }
 
 .form-subtitle {
@@ -519,7 +527,7 @@ textarea {
   resize: vertical;
 }
 
-/* BOTÓN */
+/* BUTTON */
 
 .submit-wrap {
   display: grid;
@@ -528,13 +536,13 @@ textarea {
 
 .submit-btn {
   width: 100%;
-  min-height: 58px;
+  min-height: 56px;
   border: none;
   border-radius: 22px;
-  background: #3f5192;
-  color: #edf0ff;
+  background: #40518e;
+  color: #e7eaff;
   font-size: 15px;
-  font-weight: 520;
+  font-weight: 500;
   cursor: pointer;
   transition:
     opacity 140ms ease,
@@ -543,7 +551,7 @@ textarea {
 }
 
 .submit-btn:hover {
-  background: #485ca6;
+  background: #485b9d;
 }
 
 .submit-btn:active {
@@ -555,7 +563,7 @@ textarea {
   cursor: not-allowed;
 }
 
-/* MENSAJES */
+/* MESSAGE */
 
 .message {
   display: none;
@@ -593,15 +601,24 @@ textarea {
   }
 
   .topbar {
-    margin-bottom: 16px;
+    min-height: 48px;
+    margin-bottom: 14px;
+  }
+
+  .brand {
+    font-size: 19px;
   }
 
   .hero {
     padding: 4px 4px 22px;
   }
 
+  .hero-kicker {
+    margin-bottom: 13px;
+  }
+
   h1 {
-    font-size: 36px;
+    font-size: 34px;
     line-height: 1.08;
   }
 
@@ -610,15 +627,15 @@ textarea {
   }
 
   .products-title {
-    font-size: 21px;
+    font-size: 20px;
   }
 
   .products-list {
-    max-height: 52vh;
+    max-height: 48vh;
   }
 
   .product-card {
-    min-height: 76px;
+    min-height: 74px;
     padding: 13px;
   }
 
@@ -636,6 +653,29 @@ textarea {
 
   .submit-btn {
     min-height: 54px;
+  }
+}
+
+@media (max-width: 390px) {
+  h1 {
+    font-size: 31px;
+  }
+
+  .products-top {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .products-selected {
+    width: max-content;
+  }
+
+  .product-card {
+    grid-template-columns: 1fr;
+  }
+
+  .qty-box {
+    justify-self: end;
   }
 }
 </style>
@@ -729,8 +769,8 @@ function renderText(component) {
   const box = document.createElement("div");
   box.style.padding = "14px";
   box.style.borderRadius = "18px";
-  box.style.background = "#0c0d12";
-  box.style.color = "#9ca1af";
+  box.style.background = "#0b0c10";
+  box.style.color = "#a6abb7";
   box.style.fontSize = "14px";
   box.style.lineHeight = "1.5";
   box.textContent = component.value || "";
@@ -767,10 +807,7 @@ function renderProducts(component) {
     <div class="products-list" id="productsList"></div>
 
     <div class="total-card">
-      <div>
-        <div class="total-title">Total estimado</div>
-      </div>
-
+      <div class="total-title">Total estimado</div>
       <div class="total-value" id="totalValue">\${formatCurrency(0)}</div>
     </div>
   \`;
@@ -779,7 +816,7 @@ function renderProducts(component) {
 
   if (!Array.isArray(component.items) || component.items.length === 0) {
     list.innerHTML =
-      "<div style='padding:16px;color:#9ca1af;font-size:13px'>No hay productos disponibles.</div>";
+      "<div style='padding:16px;color:#a6abb7;font-size:13px'>No hay productos disponibles.</div>";
     return section;
   }
 
