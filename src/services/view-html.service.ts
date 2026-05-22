@@ -28,7 +28,8 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
   --surface: #0b0c10;
   --surface-2: #101116;
   --surface-3: #171922;
-  --surface-soft: #1b1d27;
+  --surface-soft: #151720;
+  --surface-block: #111219;
 
   --text: #d8dbe2;
   --text-strong: #e8eaed;
@@ -171,14 +172,17 @@ h1 {
 
 .content-flow {
   display: grid;
-  gap: 14px;
+  gap: 16px;
 }
 
-/* PRODUCTS */
+/* PRODUCTS WRAPPER */
 
 .products-section {
   display: grid;
   gap: 14px;
+  padding: 16px;
+  border-radius: var(--radius-xl);
+  background: var(--surface-block);
 }
 
 .products-top {
@@ -217,9 +221,9 @@ h1 {
 /* SEARCH */
 
 .search-shell {
-  height: 56px;
+  height: 54px;
   display: grid;
-  grid-template-columns: 1fr 46px;
+  grid-template-columns: 1fr 44px;
   align-items: center;
   border-radius: 999px;
   background: var(--surface);
@@ -243,31 +247,41 @@ h1 {
 }
 
 .search-icon {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: 999px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--surface-3);
   color: var(--muted);
-  font-size: 18px;
+  font-size: 17px;
 }
 
-/* PRODUCTS LIST */
+/* SCROLLABLE PRODUCTS AREA */
+
+.products-scroll {
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  overflow: hidden;
+}
 
 .products-list {
   display: grid;
-  gap: 10px;
-  max-height: 50vh;
+  gap: 8px;
+  max-height: 390px;
   overflow-y: auto;
-  padding-right: 3px;
+  padding: 10px;
   scrollbar-width: thin;
   scrollbar-color: #383d50 transparent;
 }
 
 .products-list::-webkit-scrollbar {
   width: 6px;
+}
+
+.products-list::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .products-list::-webkit-scrollbar-thumb {
@@ -282,10 +296,10 @@ h1 {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
-  min-height: 76px;
-  padding: 14px;
-  border-radius: var(--radius-lg);
-  background: var(--surface);
+  min-height: 72px;
+  padding: 13px;
+  border-radius: 18px;
+  background: var(--surface-2);
   border: none;
   transition:
     background 140ms ease,
@@ -293,7 +307,7 @@ h1 {
 }
 
 .product-card:hover {
-  background: var(--surface-2);
+  background: var(--surface-3);
   transform: translateY(-1px);
 }
 
@@ -312,7 +326,7 @@ h1 {
 .product-name {
   margin: 0;
   color: var(--text-strong);
-  font-size: 15px;
+  font-size: 14.5px;
   line-height: 1.24;
   font-weight: 500;
   letter-spacing: -0.025em;
@@ -348,7 +362,7 @@ h1 {
   height: 36px;
   border-radius: 999px;
   overflow: hidden;
-  background: var(--surface-2);
+  background: var(--surface);
   border: none;
 }
 
@@ -407,7 +421,7 @@ h1 {
 /* FORM */
 
 .form-collapse {
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   background: var(--surface);
   border: none;
   overflow: hidden;
@@ -626,17 +640,21 @@ textarea {
     font-size: 14px;
   }
 
+  .products-section {
+    padding: 14px;
+  }
+
   .products-title {
     font-size: 20px;
   }
 
   .products-list {
-    max-height: 48vh;
+    max-height: 360px;
   }
 
   .product-card {
-    min-height: 74px;
-    padding: 13px;
+    min-height: 72px;
+    padding: 12px;
   }
 
   .product-name {
@@ -804,7 +822,9 @@ function renderProducts(component) {
       <div class="search-icon">⌕</div>
     </div>
 
-    <div class="products-list" id="productsList"></div>
+    <div class="products-scroll">
+      <div class="products-list" id="productsList"></div>
+    </div>
 
     <div class="total-card">
       <div class="total-title">Total estimado</div>
