@@ -23,78 +23,59 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
 
 <style>
 :root {
-  --bg: #202124;
+  --bg: #13141a;
+  --surface: #1c1e28;
+  --surface-2: #22253200;
+  --surface-raised: #21243200;
+  --surface-input: #181a23;
+  --surface-card: #1e2130;
+  --surface-card-hover: #242740;
 
-  --surface: #0d0e13;
-  --surface-2: #151720;
-  --surface-3: #1b1e29;
-  --surface-soft: #242734;
-  --surface-block: #12131a;
+  --text: #cdd0de;
+  --text-strong: #eceef5;
+  --text-soft: #9fa4b8;
 
-  --text: #d8dbe2;
-  --text-strong: #e8eaed;
-  --text-soft: #c4c8d4;
+  --muted: #7a8099;
+  --muted-soft: #636878;
 
-  --muted: #a6abb7;
-  --muted-soft: #808693;
-  --muted-2: #646b78;
+  --link: #9eaaff;
+  --link-soft: #1e2240;
+  --link-mid: #2d3360;
 
-  --link: #bfc7ff;
-  --link-soft: #252941;
-
-  --green: #81c995;
-  --green-soft: #1d3428;
+  --green: #6fcf97;
+  --green-soft: #162b22;
 
   --red: #f28b82;
-  --red-soft: #34201f;
+  --red-soft: #2e1a1a;
 
-  --radius-md: 14px;
-  --radius-lg: 22px;
-  --radius-xl: 30px;
+  --border: rgba(255,255,255,0.07);
+  --border-soft: rgba(255,255,255,0.04);
 
-  --page-max: 720px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 26px;
+  --radius-2xl: 32px;
+
+  --page-max: 680px;
 }
 
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-}
-
-body {
+html, body {
   min-height: 100vh;
   background: var(--bg);
   color: var(--text);
-  font-family:
-    "Google Sans",
-    Inter,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  font-family: "Google Sans", Inter, system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
-button,
-input,
-textarea {
-  font: inherit;
-}
-
-button {
-  color: inherit;
-}
+button, input, textarea { font: inherit; color: inherit; }
 
 .page {
   min-height: 100vh;
-  padding: 18px 12px 28px;
+  padding: 24px 16px 48px;
   background: var(--bg);
 }
 
@@ -104,231 +85,202 @@ button {
   margin: 0 auto;
 }
 
-/* HEADER */
-
+/* TOPBAR */
 .topbar {
-  min-height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 14px;
+  padding: 4px 0 8px;
+  margin-bottom: 32px;
 }
 
 .brand {
   color: var(--text-strong);
-  font-size: 19px;
-  line-height: 1;
+  font-size: 17px;
   font-weight: 500;
-  letter-spacing: -0.045em;
-  opacity: 0.94;
+  letter-spacing: -0.03em;
+  opacity: 0.9;
 }
 
+/* HERO */
 .hero {
   text-align: center;
-  padding: 4px 10px 26px;
+  padding: 0 8px 40px;
 }
 
 .hero-kicker {
-  width: max-content;
-  max-width: 100%;
-  margin: 0 auto 14px;
-  padding: 7px 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
   border-radius: 999px;
   background: var(--link-soft);
   color: var(--link);
   font-size: 12px;
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.02em;
+  margin-bottom: 18px;
+  border: 1px solid var(--link-mid);
 }
 
 h1 {
-  margin: 0 auto;
-  max-width: 620px;
   color: var(--text-strong);
-  font-size: clamp(31px, 5.2vw, 42px);
-  line-height: 1.08;
+  font-size: clamp(32px, 7vw, 44px);
+  line-height: 1.06;
   letter-spacing: -0.055em;
   font-weight: 500;
   text-wrap: balance;
+  margin-bottom: 14px;
 }
 
 .subtitle {
-  margin: 15px auto 0;
-  max-width: 520px;
   color: var(--muted);
   font-size: 15px;
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.55;
+  max-width: 460px;
+  margin: 0 auto;
 }
 
-/* PANEL */
-
-.panel {
-  background: transparent;
-  border-radius: var(--radius-xl);
-  padding: 0;
-}
-
+/* CONTENT FLOW */
 .content-flow {
   display: grid;
-  gap: 18px;
+  gap: 12px;
 }
 
-/* PRODUCTS WRAPPER */
-
-.products-section {
-  display: grid;
-  gap: 16px;
-  padding: 18px;
-  border-radius: var(--radius-xl);
-  background: var(--surface-block);
+/* SECTION WRAPPER */
+.section-wrap {
+  border-radius: var(--radius-2xl);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  overflow: hidden;
 }
 
-.products-top {
+/* SECTION HEADER */
+.section-header {
+  padding: 20px 20px 0;
   display: grid;
   grid-template-columns: 1fr auto;
-  align-items: end;
-  gap: 14px;
+  align-items: start;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
-.products-title {
+.section-title {
   color: var(--text-strong);
-  font-size: 22px;
-  line-height: 1.1;
+  font-size: 20px;
   font-weight: 500;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
 }
 
-.products-subtitle {
-  margin-top: 5px;
+.section-sub {
   color: var(--muted-soft);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 400;
+  margin-top: 3px;
 }
 
-.products-selected {
-  flex-shrink: 0;
-  padding: 8px 12px;
+.badge-count {
+  padding: 6px 12px;
   border-radius: 999px;
   background: var(--link-soft);
   color: var(--link);
   font-size: 12px;
   font-weight: 500;
   white-space: nowrap;
+  border: 1px solid var(--link-mid);
+  margin-top: 2px;
 }
 
 /* SEARCH */
+.search-wrap {
+  padding: 0 20px 16px;
+}
 
 .search-shell {
-  height: 54px;
+  height: 46px;
   display: grid;
-  grid-template-columns: 1fr 44px;
+  grid-template-columns: 1fr 38px;
   align-items: center;
   border-radius: 999px;
-  background: var(--surface);
-  padding: 0 6px 0 18px;
+  background: var(--surface-input);
+  border: 1px solid var(--border);
+  padding: 0 4px 0 16px;
 }
 
 .search-input {
-  width: 100%;
-  height: 100%;
   border: none;
   outline: none;
   background: transparent;
   color: var(--text);
-  padding: 0;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 400;
 }
 
-.search-input::placeholder {
-  color: var(--muted-soft);
-}
+.search-input::placeholder { color: var(--muted-soft); }
 
 .search-icon {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 999px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface-3);
-  color: var(--muted);
-  font-size: 17px;
-}
-
-/* SCROLL AREA */
-
-.products-scroll {
-  border-radius: var(--radius-lg);
   background: var(--surface);
-  overflow: hidden;
+  color: var(--muted);
+  font-size: 16px;
 }
 
+/* PRODUCTS LIST — no fixed height, no scroll, flows naturally */
 .products-list {
   display: grid;
-  gap: 10px;
-  max-height: 520px;
-  overflow-y: auto;
-  padding: 12px;
-  scrollbar-width: thin;
-  scrollbar-color: #3c4155 transparent;
-}
-
-.products-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-.products-list::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.products-list::-webkit-scrollbar-thumb {
-  background: #3c4155;
-  border-radius: 999px;
+  gap: 2px;
+  padding: 0 10px 10px;
 }
 
 /* PRODUCT CARD */
-
 .product-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 14px;
-  min-height: 78px;
-  padding: 15px 16px;
-  border-radius: 20px;
-  background: var(--surface-2);
+  padding: 14px 12px;
+  border-radius: var(--radius-lg);
+  background: transparent;
   border: none;
-  transition:
-    background 140ms ease,
-    transform 140ms ease;
+  transition: background 130ms ease;
+  cursor: default;
 }
 
 .product-card:hover {
-  background: var(--surface-3);
-  transform: translateY(-1px);
+  background: var(--surface-card-hover);
 }
 
-.product-main {
-  min-width: 0;
+.product-card + .product-card {
+  border-top: 1px solid var(--border-soft);
 }
+
+.product-card:hover + .product-card,
+.product-card:hover {
+  border-top-color: transparent;
+}
+
+.product-main { min-width: 0; }
 
 .product-top {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0,1fr) auto;
   align-items: baseline;
-  gap: 12px;
-  margin-bottom: 5px;
+  gap: 10px;
+  margin-bottom: 4px;
 }
 
 .product-name {
-  margin: 0;
   color: var(--text-strong);
-  font-size: 14.5px;
-  line-height: 1.24;
+  font-size: 14px;
   font-weight: 500;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -336,47 +288,45 @@ h1 {
 
 .product-price {
   color: var(--link);
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 500;
   white-space: nowrap;
 }
 
 .product-description {
-  margin: 0;
-  color: var(--muted-soft);
+  color: var(--muted);
   font-size: 12px;
   line-height: 1.35;
-  font-weight: 400;
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* QTY */
-
+/* QTY STEPPER */
 .qty-box {
   display: grid;
-  grid-template-columns: 32px 36px 32px;
-  height: 36px;
+  grid-template-columns: 30px 34px 30px;
+  height: 34px;
   border-radius: 999px;
+  background: var(--surface-input);
+  border: 1px solid var(--border);
   overflow: hidden;
-  background: var(--surface);
-  border: none;
 }
 
 .qty-btn {
   border: none;
   background: transparent;
   color: var(--text-soft);
-  font-size: 17px;
-  font-weight: 400;
+  font-size: 16px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 120ms ease, color 120ms ease;
 }
 
-.qty-btn:hover {
-  background: var(--surface-3);
-}
+.qty-btn:hover { background: var(--surface-card-hover); color: var(--text-strong); }
 
 .qty-value {
   display: flex;
@@ -387,17 +337,15 @@ h1 {
   font-weight: 500;
 }
 
-.qty-hidden {
-  display: none;
-}
+.qty-hidden { display: none; }
 
 /* TOTAL */
-
-.total-card {
-  min-height: 76px;
-  padding: 18px;
+.total-row {
+  margin: 8px 10px 10px;
+  padding: 16px 18px;
   border-radius: var(--radius-lg);
   background: var(--link-soft);
+  border: 1px solid var(--link-mid);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -407,37 +355,49 @@ h1 {
 .total-title {
   color: var(--muted);
   font-size: 13px;
-  font-weight: 400;
 }
 
 .total-value {
   color: var(--link);
-  font-size: clamp(24px, 4vw, 30px);
-  font-weight: 520;
+  font-size: 26px;
+  font-weight: 500;
   letter-spacing: -0.05em;
 }
 
-/* FORM */
-
-.form-collapse {
+/* TEXT COMPONENT */
+.text-block {
+  padding: 16px 20px;
   border-radius: var(--radius-xl);
   background: var(--surface);
-  border: none;
+  border: 1px solid var(--border);
+  color: var(--text-soft);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* FORM COLLAPSE */
+.form-collapse {
+  border-radius: var(--radius-2xl);
+  background: var(--surface);
+  border: 1px solid var(--border);
   overflow: hidden;
 }
 
 .form-toggle {
   width: 100%;
-  min-height: 72px;
+  min-height: 68px;
   border: none;
   background: transparent;
-  color: var(--text);
-  padding: 16px;
+  padding: 16px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
+  gap: 12px;
+  transition: background 130ms ease;
 }
+
+.form-toggle:hover { background: rgba(255,255,255,0.03); }
 
 .form-toggle-left {
   display: flex;
@@ -448,46 +408,50 @@ h1 {
 .form-icon {
   width: 40px;
   height: 40px;
-  border-radius: 16px;
+  flex-shrink: 0;
+  border-radius: 14px;
   background: var(--link-soft);
+  border: 1px solid var(--link-mid);
   color: var(--link);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 18px;
 }
 
 .form-title {
   color: var(--text-strong);
   font-size: 15px;
   font-weight: 500;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
-.form-subtitle {
-  margin-top: 4px;
+.form-sub {
   color: var(--muted-soft);
   font-size: 12px;
-  font-weight: 400;
+  margin-top: 3px;
 }
 
 .form-arrow {
-  font-size: 22px;
-  color: var(--muted);
-  font-weight: 400;
+  font-size: 20px;
+  color: var(--muted-soft);
   transition: transform 160ms ease;
+  flex-shrink: 0;
 }
 
-.form-collapse.open .form-arrow {
-  transform: rotate(180deg);
-}
+.form-collapse.open .form-arrow { transform: rotate(180deg); }
 
 .form-content {
   display: none;
-  padding: 0 16px 16px;
+  padding: 0 20px 20px;
 }
 
-.form-collapse.open .form-content {
-  display: block;
+.form-collapse.open .form-content { display: block; }
+
+.form-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 18px;
 }
 
 .form-grid {
@@ -499,203 +463,102 @@ h1 {
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
 
-.field.full {
-  grid-column: 1 / -1;
-}
+.field.full { grid-column: 1 / -1; }
 
 .label {
   color: var(--muted);
   font-size: 12px;
   font-weight: 400;
+  letter-spacing: 0.01em;
 }
 
-input,
-textarea {
+input, textarea {
   width: 100%;
-  border: none;
+  border: 1px solid var(--border);
   outline: none;
-  background: var(--surface-2);
+  background: var(--surface-input);
   color: var(--text);
-  border-radius: 14px;
-  padding: 13px;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
   font-size: 14px;
   font-weight: 400;
+  transition: border-color 130ms ease, background 130ms ease;
 }
 
-input::placeholder,
-textarea::placeholder {
-  color: var(--muted-soft);
-}
+input::placeholder, textarea::placeholder { color: var(--muted-soft); }
 
-input:focus,
-textarea:focus {
-  background: var(--surface-3);
+input:focus, textarea:focus {
+  border-color: var(--link-mid);
+  background: var(--surface);
 }
 
 textarea {
-  min-height: 90px;
+  min-height: 88px;
   resize: vertical;
 }
 
-/* BUTTON */
-
-.submit-wrap {
-  display: grid;
-  gap: 8px;
-}
+/* SUBMIT */
+.submit-wrap { display: grid; gap: 8px; }
 
 .submit-btn {
   width: 100%;
-  min-height: 56px;
+  min-height: 54px;
   border: none;
-  border-radius: 22px;
-  background: #40518e;
-  color: #e7eaff;
+  border-radius: var(--radius-xl);
+  background: #3d4f8a;
+  color: #e4eaff;
   font-size: 15px;
   font-weight: 500;
+  letter-spacing: -0.01em;
   cursor: pointer;
-  transition:
-    opacity 140ms ease,
-    transform 140ms ease,
-    background 140ms ease;
+  transition: background 130ms ease, transform 130ms ease;
 }
 
-.submit-btn:hover {
-  background: #485b9d;
-}
-
-.submit-btn:active {
-  transform: scale(0.99);
-}
-
-.submit-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+.submit-btn:hover { background: #4659a0; }
+.submit-btn:active { transform: scale(0.99); }
+.submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
 /* MESSAGE */
-
 .message {
   display: none;
-  padding: 14px;
-  border-radius: 16px;
+  padding: 14px 18px;
+  border-radius: var(--radius-lg);
   font-size: 13px;
-  line-height: 1.45;
+  line-height: 1.5;
   white-space: pre-wrap;
 }
 
-.message.success {
-  display: block;
-  background: var(--green-soft);
-  color: var(--green);
-}
-
-.message.error {
-  display: block;
-  background: var(--red-soft);
-  color: var(--red);
-}
+.message.success { display: block; background: var(--green-soft); color: var(--green); border: 1px solid rgba(111,207,151,0.15); }
+.message.error { display: block; background: var(--red-soft); color: var(--red); border: 1px solid rgba(242,139,130,0.15); }
 
 .expires {
-  margin-top: 12px;
+  margin-top: 20px;
   text-align: center;
   color: var(--muted-soft);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 /* MOBILE */
-
-@media (max-width: 640px) {
-  .page {
-    padding: 14px 10px 18px;
-  }
-
-  .topbar {
-    min-height: 46px;
-    margin-bottom: 12px;
-  }
-
-  .brand {
-    font-size: 19px;
-  }
-
-  .hero {
-    padding: 4px 4px 22px;
-  }
-
-  .hero-kicker {
-    margin-bottom: 13px;
-  }
-
-  h1 {
-    font-size: 34px;
-    line-height: 1.08;
-  }
-
-  .subtitle {
-    font-size: 14px;
-  }
-
-  .products-section {
-    padding: 14px;
-    gap: 14px;
-  }
-
-  .products-title {
-    font-size: 20px;
-  }
-
-  .products-list {
-    max-height: 480px;
-    padding: 10px;
-  }
-
-  .product-card {
-    min-height: 74px;
-    padding: 13px;
-  }
-
-  .product-name {
-    font-size: 14px;
-  }
-
-  .product-description {
-    font-size: 11.5px;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .submit-btn {
-    min-height: 54px;
-  }
+@media (max-width: 580px) {
+  .page { padding: 16px 12px 36px; }
+  .topbar { margin-bottom: 24px; }
+  .hero { padding: 0 4px 32px; }
+  h1 { font-size: 34px; }
+  .section-header { padding: 16px 16px 0; }
+  .search-wrap { padding: 0 16px 14px; }
+  .products-list { padding: 0 6px 6px; }
+  .total-row { margin: 6px 6px 6px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-content { padding: 0 16px 16px; }
 }
 
-@media (max-width: 390px) {
-  h1 {
-    font-size: 31px;
-  }
-
-  .products-top {
-    grid-template-columns: 1fr;
-    align-items: start;
-  }
-
-  .products-selected {
-    width: max-content;
-  }
-
-  .product-card {
-    grid-template-columns: 1fr;
-  }
-
-  .qty-box {
-    justify-self: end;
-  }
+@media (max-width: 380px) {
+  .products-top { flex-direction: column; align-items: flex-start; }
+  .product-card { grid-template-columns: 1fr; gap: 10px; }
+  .qty-box { justify-self: start; }
 }
 </style>
 </head>
@@ -709,18 +572,15 @@ textarea {
     </header>
 
     <section class="hero">
-      <div class="hero-kicker">Cotizador online</div>
+      <div class="hero-kicker">✦ Cotizador online</div>
       <h1>${safeTitle}</h1>
       <p class="subtitle">${safeSubtitle}</p>
     </section>
 
     <section class="panel">
       <div id="content" class="content-flow"></div>
-      <div id="message" class="message"></div>
-
-      <div class="expires">
-        Este enlace expira el <span id="expiresAt"></span>
-      </div>
+      <div id="message" class="message" style="margin-top:12px"></div>
+      <p class="expires">Este enlace expira el <span id="expiresAt"></span></p>
     </section>
 
   </div>
@@ -756,96 +616,70 @@ function showMessage(type, text) {
 function updateSelectedCount() {
   const inputs = document.querySelectorAll('[data-kind="product-quantity"]');
   let selected = 0;
-
-  inputs.forEach((input) => {
-    if (Number(input.value || 0) > 0) selected++;
-  });
-
+  inputs.forEach((input) => { if (Number(input.value || 0) > 0) selected++; });
   const badge = document.getElementById("productsSelected");
-
   if (badge) {
-    badge.textContent =
-      selected === 1 ? "1 seleccionado" : selected + " seleccionados";
+    badge.textContent = selected === 1 ? "1 seleccionado" : selected + " seleccionados";
   }
 }
 
 function updateTotal() {
   const inputs = document.querySelectorAll('[data-kind="product-quantity"]');
   let total = 0;
-
   inputs.forEach((input) => {
     total += Number(input.value || 0) * Number(input.dataset.productPrice || 0);
   });
-
   const totalValue = document.getElementById("totalValue");
-
   if (totalValue) totalValue.textContent = formatCurrency(total);
-
   updateSelectedCount();
 }
 
 function renderText(component) {
   const box = document.createElement("div");
-  box.style.padding = "14px";
-  box.style.borderRadius = "18px";
-  box.style.background = "#0d0e13";
-  box.style.color = "#a6abb7";
-  box.style.fontSize = "14px";
-  box.style.lineHeight = "1.5";
+  box.className = "text-block";
   box.textContent = component.value || "";
   return box;
 }
 
 function renderProducts(component) {
-  const section = document.createElement("section");
-  section.className = "products-section";
+  const wrap = document.createElement("div");
+  wrap.className = "section-wrap";
 
-  section.innerHTML = \`
-    <div class="products-top">
-      <div>
-        <div class="products-title">Productos</div>
-        <div class="products-subtitle">Busca y selecciona productos</div>
-      </div>
-
-      <div class="products-selected" id="productsSelected">
-        0 seleccionados
-      </div>
+  const header = document.createElement("div");
+  header.className = "section-header";
+  header.innerHTML = \`
+    <div>
+      <div class="section-title">Productos</div>
+      <div class="section-sub">Selecciona los que necesitas</div>
     </div>
+    <div class="badge-count" id="productsSelected">0 seleccionados</div>
+  \`;
+  wrap.appendChild(header);
 
+  const searchWrap = document.createElement("div");
+  searchWrap.className = "search-wrap";
+  searchWrap.innerHTML = \`
     <div class="search-shell">
-      <input
-        class="search-input"
-        id="productsSearch"
-        type="text"
-        placeholder="Buscar productos"
-      />
-
+      <input class="search-input" id="productsSearch" type="text" placeholder="Buscar productos…" />
       <div class="search-icon">⌕</div>
     </div>
-
-    <div class="products-scroll">
-      <div class="products-list" id="productsList"></div>
-    </div>
-
-    <div class="total-card">
-      <div class="total-title">Total estimado</div>
-      <div class="total-value" id="totalValue">\${formatCurrency(0)}</div>
-    </div>
   \`;
+  wrap.appendChild(searchWrap);
 
-  const list = section.querySelector("#productsList");
+  const list = document.createElement("div");
+  list.className = "products-list";
+  list.id = "productsList";
 
   if (!Array.isArray(component.items) || component.items.length === 0) {
-    list.innerHTML =
-      "<div style='padding:16px;color:#a6abb7;font-size:13px'>No hay productos disponibles.</div>";
-    return section;
+    list.innerHTML = "<div style='padding:16px;color:var(--muted);font-size:13px'>No hay productos disponibles.</div>";
+    wrap.appendChild(list);
+    return wrap;
   }
 
   component.items.forEach((item) => {
     const card = document.createElement("div");
     card.className = "product-card";
-    card.dataset.search =
-      String((item.name || "") + " " + (item.description || "")).toLowerCase();
+    card.dataset.search = String((item.name || "") + " " + (item.description || "")).toLowerCase();
 
     const main = document.createElement("div");
     main.className = "product-main";
@@ -853,7 +687,7 @@ function renderProducts(component) {
     const top = document.createElement("div");
     top.className = "product-top";
 
-    const name = document.createElement("h3");
+    const name = document.createElement("div");
     name.className = "product-name";
     name.textContent = item.name || "Producto";
 
@@ -864,12 +698,12 @@ function renderProducts(component) {
     top.appendChild(name);
     top.appendChild(price);
 
-    const description = document.createElement("p");
-    description.className = "product-description";
-    description.textContent = item.description || "Selecciona cantidad.";
+    const desc = document.createElement("div");
+    desc.className = "product-description";
+    desc.textContent = item.description || "";
 
     main.appendChild(top);
-    main.appendChild(description);
+    main.appendChild(desc);
 
     const qtyBox = document.createElement("div");
     qtyBox.className = "qty-box";
@@ -904,13 +738,8 @@ function renderProducts(component) {
       updateTotal();
     }
 
-    minusBtn.addEventListener("click", () => {
-      syncQty(Number(hiddenInput.value) - 1);
-    });
-
-    plusBtn.addEventListener("click", () => {
-      syncQty(Number(hiddenInput.value) + 1);
-    });
+    minusBtn.addEventListener("click", () => syncQty(Number(hiddenInput.value) - 1));
+    plusBtn.addEventListener("click", () => syncQty(Number(hiddenInput.value) + 1));
 
     qtyBox.appendChild(minusBtn);
     qtyBox.appendChild(valueEl);
@@ -919,22 +748,28 @@ function renderProducts(component) {
 
     card.appendChild(main);
     card.appendChild(qtyBox);
-
     list.appendChild(card);
   });
 
-  const searchInput = section.querySelector("#productsSearch");
+  wrap.appendChild(list);
 
+  const totalRow = document.createElement("div");
+  totalRow.className = "total-row";
+  totalRow.innerHTML = \`
+    <div class="total-title">Total estimado</div>
+    <div class="total-value" id="totalValue">\${formatCurrency(0)}</div>
+  \`;
+  wrap.appendChild(totalRow);
+
+  const searchInput = searchWrap.querySelector("#productsSearch");
   searchInput.addEventListener("input", (e) => {
     const value = e.target.value.toLowerCase().trim();
-
     list.querySelectorAll(".product-card").forEach((card) => {
-      const match = card.dataset.search.includes(value);
-      card.style.display = match ? "grid" : "none";
+      card.style.display = card.dataset.search.includes(value) ? "grid" : "none";
     });
   });
 
-  return section;
+  return wrap;
 }
 
 function renderForm(component) {
@@ -945,24 +780,20 @@ function renderForm(component) {
     <button class="form-toggle" type="button">
       <div class="form-toggle-left">
         <div class="form-icon">👤</div>
-
         <div>
           <div class="form-title">Mis datos</div>
-          <div class="form-subtitle">Completa tu información</div>
+          <div class="form-sub">Completa tu información</div>
         </div>
       </div>
-
       <div class="form-arrow">⌄</div>
     </button>
-
     <div class="form-content">
+      <div class="form-divider"></div>
       <div class="form-grid"></div>
     </div>
   \`;
 
-  const toggle = wrap.querySelector(".form-toggle");
-
-  toggle.addEventListener("click", () => {
+  wrap.querySelector(".form-toggle").addEventListener("click", () => {
     wrap.classList.toggle("open");
   });
 
@@ -971,31 +802,24 @@ function renderForm(component) {
   component.fields.forEach((field) => {
     const fieldWrap = document.createElement("div");
     fieldWrap.className = "field";
-
     if (field.inputType === "textarea") fieldWrap.classList.add("full");
 
     const label = document.createElement("label");
     label.className = "label";
     label.textContent = field.label + (field.required ? " *" : "");
 
-    const input =
-      field.inputType === "textarea"
-        ? document.createElement("textarea")
-        : document.createElement("input");
+    const input = field.inputType === "textarea"
+      ? document.createElement("textarea")
+      : document.createElement("input");
 
-    if (field.inputType !== "textarea") {
-      input.type = field.inputType || "text";
-    }
-
+    if (field.inputType !== "textarea") input.type = field.inputType || "text";
     input.name = field.name;
     input.dataset.kind = "form-field";
     input.placeholder = field.placeholder || "";
-
     if (field.required) input.required = true;
 
     fieldWrap.appendChild(label);
     fieldWrap.appendChild(input);
-
     grid.appendChild(fieldWrap);
   });
 
@@ -1010,48 +834,29 @@ function renderButton(component) {
   btn.type = "button";
   btn.className = "submit-btn";
   btn.textContent = component.label || "Enviar solicitud";
-
-  btn.addEventListener("click", () => {
-    onSubmit(btn, component.label || "Enviar solicitud");
-  });
+  btn.addEventListener("click", () => onSubmit(btn, component.label || "Enviar solicitud"));
 
   wrap.appendChild(btn);
-
   return wrap;
 }
 
 function renderComponent(component) {
   switch (component.type) {
-    case "text":
-      return renderText(component);
-
-    case "products":
-      return renderProducts(component);
-
-    case "form":
-      return renderForm(component);
-
-    case "button":
-      return renderButton(component);
-
-    default:
-      return document.createElement("div");
+    case "text": return renderText(component);
+    case "products": return renderProducts(component);
+    case "form": return renderForm(component);
+    case "button": return renderButton(component);
+    default: return document.createElement("div");
   }
 }
 
 async function onSubmit(btn, originalLabel) {
   const selectedItems = [];
-
-  document
-    .querySelectorAll('[data-kind="product-quantity"]')
-    .forEach((input) => {
-      const quantity = Number(input.value || 0);
-      const productId = input.dataset.productId;
-
-      if (quantity > 0 && productId) {
-        selectedItems.push({ productId, quantity });
-      }
-    });
+  document.querySelectorAll('[data-kind="product-quantity"]').forEach((input) => {
+    const quantity = Number(input.value || 0);
+    const productId = input.dataset.productId;
+    if (quantity > 0 && productId) selectedItems.push({ productId, quantity });
+  });
 
   if (selectedItems.length === 0) {
     showMessage("error", "Selecciona al menos un producto.");
@@ -1060,16 +865,13 @@ async function onSubmit(btn, originalLabel) {
 
   const customer = {};
   const formFields = document.querySelectorAll('[data-kind="form-field"]');
-
   for (const field of formFields) {
     const value = String(field.value || "").trim();
-
     if (field.required && !value) {
       document.querySelector(".form-collapse")?.classList.add("open");
       showMessage("error", "Completa los campos obligatorios.");
       return;
     }
-
     customer[field.name] = value;
   }
 
@@ -1079,15 +881,11 @@ async function onSubmit(btn, originalLabel) {
 
     const response = await fetch("/api/runtime-links/" + token + "/submit", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         customer,
         items: selectedItems,
-        raw: {
-          submittedAtClient: new Date().toISOString()
-        }
+        raw: { submittedAtClient: new Date().toISOString() }
       })
     });
 
@@ -1109,8 +907,7 @@ async function onSubmit(btn, originalLabel) {
 }
 
 config.components.forEach((component) => {
-  const el = renderComponent(component);
-  contentEl.appendChild(el);
+  contentEl.appendChild(renderComponent(component));
 });
 
 updateTotal();
