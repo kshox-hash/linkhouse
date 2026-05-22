@@ -2,7 +2,9 @@ import { RuntimeLinkRecord } from "../../types/runtime";
 import { escapeHtml } from "../../utils/html";
 
 export function renderMenuHtml(record: RuntimeLinkRecord): string {
-  const safeTitle = escapeHtml(record.config.title || "Menú de servicios");
+  const safeTitle = escapeHtml(
+    record.config.title || "Menú de servicios"
+  );
 
   const safeBrand = escapeHtml(
     record.config.brand || "Amaru Electric"
@@ -23,11 +25,17 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
         module.description
       );
 
-      const icon = escapeHtml(module.icon || "•");
+      const icon = escapeHtml(
+        module.icon || "•"
+      );
 
-      const url = escapeHtml(module.url || "#");
+      const url = escapeHtml(
+        module.url || "#"
+      );
 
-      const isEnabled = Boolean(module.enabled);
+      const isEnabled = Boolean(
+        module.enabled
+      );
 
       const tagText = isEnabled
         ? "Activo"
@@ -37,7 +45,9 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
         ? "module-card"
         : "module-card module-card-disabled";
 
-      const href = isEnabled ? url : "#";
+      const href = isEnabled
+        ? url
+        : "#";
 
       const loadingAttr = isEnabled
         ? `data-loading-link="true"`
@@ -123,35 +133,65 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
   <style>
     :root {
-      --bg: #1d1f27;
 
-      --surface: #1f1f20;
-      --surface-hover: #17181f;
+      /* BACKGROUNDS */
+      --bg: #1f2029;
+      --bg-soft: #252734;
 
-      --text: #e8eaed;
-      --text-strong: #f1f3f4;
+      /* SURFACES */
+      --surface: #11131a;
+      --surface-hover: #171923;
 
-      --muted: #bdc1c6;
-      --muted-soft: #8b8f97;
+      /* TEXT */
+      --text: #e5e7ef;
+      --text-strong: #f2f3f8;
 
-      --link: #c7d2ff;
-      --link-soft: rgba(199, 210, 255, 0.10);
+      /* MUTED */
+      --muted: #a7acbb;
+      --muted-soft: #7f8494;
 
-      --green: #81c995;
-      --green-soft: rgba(129, 201, 149, 0.10);
-
-      --red: #f28b82;
-      --red-soft: rgba(242, 139, 130, 0.10);
-
-      --border: #1d1f27;
-
-      --border-hover: rgba(
-        199,
-        210,
-        255,
-        0.22
+      /* ACCENT */
+      --primary: #b8bdf8;
+      --primary-soft: rgba(
+        184,
+        189,
+        248,
+        0.10
       );
 
+      /* STATUS */
+      --green: #7fd4a1;
+      --green-soft: rgba(
+        127,
+        212,
+        161,
+        0.10
+      );
+
+      --red: #f29a96;
+      --red-soft: rgba(
+        242,
+        154,
+        150,
+        0.10
+      );
+
+      /* BORDERS */
+      --border: rgba(
+        255,
+        255,
+        255,
+        0.06
+      );
+
+      --border-hover: rgba(
+        184,
+        189,
+        248,
+        0.18
+      );
+
+      /* RADII */
       --radius-xl: 32px;
       --radius-lg: 24px;
     }
@@ -181,7 +221,15 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       color: var(--text);
 
-      background: var(--bg);
+      background:
+        radial-gradient(
+          circle at top,
+          #262938 0%,
+          #1f2029 38%,
+          #1c1d27 100%
+        );
+
+      background-attachment: fixed;
 
       -webkit-font-smoothing:
         antialiased;
@@ -203,9 +251,9 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
       justify-content: center;
 
       background: rgba(
-        32,
-        33,
-        36,
+        20,
+        22,
+        31,
         0.82
       );
 
@@ -231,13 +279,14 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
       border-radius: 50%;
 
       border: 3px solid rgba(
-        199,
-        210,
-        255,
-        0.18
+        184,
+        189,
+        248,
+        0.16
       );
 
-      border-top-color: var(--link);
+      border-top-color:
+        var(--primary);
 
       animation:
         spin 760ms linear infinite;
@@ -246,7 +295,10 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
     .page {
       min-height: 100vh;
 
-      padding: 16px 14px 32px;
+      padding:
+        18px
+        14px
+        32px;
     }
 
     .shell {
@@ -266,11 +318,11 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       justify-content: center;
 
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .brand-name {
-      color: var(--text-strong);
+      color: #f2f3f8;
 
       font-size: 23px;
 
@@ -281,12 +333,29 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
       letter-spacing: -0.055em;
 
       text-align: center;
+
+      text-shadow:
+        0 1px 0 rgba(
+          255,
+          255,
+          255,
+          0.04
+        ),
+        0 0 18px rgba(
+          184,
+          189,
+          248,
+          0.08
+        );
     }
 
     .hero {
       text-align: center;
 
-      padding: 18px 10px 34px;
+      padding:
+        18px
+        10px
+        34px;
     }
 
     h1 {
@@ -302,13 +371,15 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       font-weight: 700;
 
-      color: var(--text-strong);
+      color:
+        var(--text-strong);
 
       text-wrap: balance;
     }
 
     .subtitle {
-      margin: 18px auto 0;
+      margin:
+        18px auto 0;
 
       max-width: 500px;
 
@@ -324,7 +395,10 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
     }
 
     .section-title {
-      margin: 0 4px 16px;
+      margin:
+        0
+        4px
+        16px;
 
       font-size: 24px;
 
@@ -334,14 +408,18 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       font-weight: 700;
 
-      color: var(--text-strong);
+      color:
+        var(--text-strong);
     }
 
     .modules {
       display: grid;
 
       grid-template-columns:
-        repeat(2, minmax(0, 1fr));
+        repeat(
+          2,
+          minmax(0, 1fr)
+        );
 
       gap: 14px;
     }
@@ -355,15 +433,24 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       flex-direction: column;
 
-      justify-content: space-between;
+      justify-content:
+        space-between;
 
       padding: 18px;
 
-      border-radius: var(--radius-lg);
+      border-radius:
+        var(--radius-lg);
 
-      background: var(--surface);
+      background: rgba(
+        17,
+        19,
+        26,
+        0.92
+      );
 
-      border: 1px solid var(--border);
+      border:
+        1px solid
+        var(--border);
 
       color: inherit;
 
@@ -371,12 +458,17 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       opacity: 0;
 
-      transform: translateY(10px);
+      transform:
+        translateY(10px);
 
       animation:
-        cardIn 380ms ease both;
+        cardIn
+        380ms
+        ease
+        both;
 
-      animation-delay: var(--delay);
+      animation-delay:
+        var(--delay);
 
       transition:
         transform 160ms ease,
@@ -386,13 +478,18 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
     }
 
     .module-card:hover {
-      transform: translateY(-2px);
+      transform:
+        translateY(-2px);
 
       border-color:
         var(--border-hover);
 
-      background:
-        var(--surface-hover);
+      background: rgba(
+        23,
+        25,
+        35,
+        0.96
+      );
     }
 
     .module-card-disabled {
@@ -404,9 +501,15 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
     .module-card-disabled:hover {
       transform: none;
 
-      border-color: var(--border);
+      border-color:
+        var(--border);
 
-      background: var(--surface);
+      background: rgba(
+        17,
+        19,
+        26,
+        0.92
+      );
     }
 
     .module-header {
@@ -414,7 +517,8 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       align-items: center;
 
-      justify-content: space-between;
+      justify-content:
+        space-between;
 
       gap: 12px;
 
@@ -435,16 +539,18 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       font-size: 23px;
 
-      color: var(--link);
+      color: var(--primary);
 
-      background: var(--link-soft);
+      background:
+        var(--primary-soft);
 
-      border: 1px solid rgba(
-        199,
-        210,
-        255,
-        0.10
-      );
+      border:
+        1px solid rgba(
+          184,
+          189,
+          248,
+          0.10
+        );
     }
 
     .module-status {
@@ -454,7 +560,8 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       gap: 6px;
 
-      padding: 6px 9px;
+      padding:
+        6px 9px;
 
       border-radius: 999px;
 
@@ -477,35 +584,41 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
     .module-status.active {
       color: var(--green);
 
-      background: var(--green-soft);
+      background:
+        var(--green-soft);
 
-      border: 1px solid rgba(
-        129,
-        201,
-        149,
-        0.10
-      );
+      border:
+        1px solid rgba(
+          127,
+          212,
+          161,
+          0.10
+        );
     }
 
     .module-status.active span {
-      background: var(--green);
+      background:
+        var(--green);
     }
 
     .module-status.inactive {
       color: var(--red);
 
-      background: var(--red-soft);
+      background:
+        var(--red-soft);
 
-      border: 1px solid rgba(
-        242,
-        139,
-        130,
-        0.10
-      );
+      border:
+        1px solid rgba(
+          242,
+          154,
+          150,
+          0.10
+        );
     }
 
     .module-status.inactive span {
-      background: var(--red);
+      background:
+        var(--red);
     }
 
     .module-title {
@@ -517,7 +630,8 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       letter-spacing: -0.04em;
 
-      color: var(--text-strong);
+      color:
+        var(--text-strong);
 
       margin-bottom: 8px;
     }
@@ -535,7 +649,8 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       -webkit-line-clamp: 3;
 
-      -webkit-box-orient: vertical;
+      -webkit-box-orient:
+        vertical;
 
       overflow: hidden;
     }
@@ -545,13 +660,14 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       align-items: center;
 
-      justify-content: space-between;
+      justify-content:
+        space-between;
 
       gap: 10px;
 
       margin-top: 20px;
 
-      color: var(--link);
+      color: var(--primary);
 
       font-size: 13px;
 
@@ -570,39 +686,43 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       justify-content: center;
 
-      color: var(--link);
+      color: var(--primary);
 
       font-size: 20px;
 
       font-weight: 700;
 
       background: rgba(
-        199,
-        210,
-        255,
+        184,
+        189,
+        248,
         0.08
       );
 
-      border: 1px solid rgba(
-        199,
-        210,
-        255,
-        0.10
-      );
+      border:
+        1px solid rgba(
+          184,
+          189,
+          248,
+          0.10
+        );
 
       transition:
         transform 160ms ease;
     }
 
-    .module-card:hover .module-arrow {
-      transform: translateX(2px);
+    .module-card:hover
+      .module-arrow {
+      transform:
+        translateX(2px);
     }
 
     .module-card-disabled
       .module-footer,
     .module-card-disabled
       .module-arrow {
-      color: var(--muted-soft);
+      color:
+        var(--muted-soft);
     }
 
     .empty {
@@ -618,11 +738,19 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       line-height: 1.45;
 
-      border-radius: var(--radius-lg);
+      border-radius:
+        var(--radius-lg);
 
-      background: var(--surface);
+      background: rgba(
+        17,
+        19,
+        26,
+        0.92
+      );
 
-      border: 1px solid var(--border);
+      border:
+        1px solid
+        var(--border);
     }
 
     .notice-card {
@@ -630,11 +758,19 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       padding: 18px;
 
-      border-radius: var(--radius-lg);
+      border-radius:
+        var(--radius-lg);
 
-      background: var(--surface);
+      background: rgba(
+        17,
+        19,
+        26,
+        0.92
+      );
 
-      border: 1px solid var(--border);
+      border:
+        1px solid
+        var(--border);
 
       display: flex;
 
@@ -657,21 +793,22 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       justify-content: center;
 
-      color: var(--link);
+      color: var(--primary);
 
       background: rgba(
-        199,
-        210,
-        255,
+        184,
+        189,
+        248,
         0.08
       );
 
-      border: 1px solid rgba(
-        199,
-        210,
-        255,
-        0.10
-      );
+      border:
+        1px solid rgba(
+          184,
+          189,
+          248,
+          0.10
+        );
 
       font-size: 20px;
     }
@@ -681,7 +818,8 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       font-weight: 650;
 
-      color: var(--text-strong);
+      color:
+        var(--text-strong);
 
       margin-bottom: 4px;
     }
@@ -691,7 +829,8 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       line-height: 1.35;
 
-      color: var(--muted-soft);
+      color:
+        var(--muted-soft);
     }
 
     .footer {
@@ -701,20 +840,22 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
       text-align: center;
 
-      color: var(--muted-soft);
+      color:
+        var(--muted-soft);
 
       font-size: 12px;
     }
 
     .footer strong {
-      color: var(--link);
+      color: var(--primary);
 
       font-weight: 650;
     }
 
     @keyframes spin {
       to {
-        transform: rotate(360deg);
+        transform:
+          rotate(360deg);
       }
     }
 
@@ -735,12 +876,19 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
     }
 
     @media (max-width: 560px) {
+
       .page {
-        padding: 12px 12px 28px;
+        padding:
+          12px
+          12px
+          28px;
       }
 
       .hero {
-        padding: 14px 4px 30px;
+        padding:
+          14px
+          4px
+          30px;
       }
 
       h1 {
@@ -772,11 +920,13 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
       .module-status {
         font-size: 10.5px;
 
-        padding: 5px 8px;
+        padding:
+          5px 8px;
       }
     }
 
     @media (max-width: 390px) {
+
       h1 {
         font-size: 32px;
       }
@@ -793,6 +943,7 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 </head>
 
 <body>
+
   <div
     id="appLoader"
     class="app-loader hidden"
@@ -810,6 +961,7 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
       </header>
 
       <section class="hero">
+
         <h1>
           ${safeTitle}
         </h1>
@@ -817,6 +969,7 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
         <p class="subtitle">
           ${safeSubtitle}
         </p>
+
       </section>
 
       <h2 class="section-title">
@@ -824,23 +977,28 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
       </h2>
 
       <section class="modules">
+
         ${
           cardsHtml ||
           `
             <div class="empty">
-              No hay módulos configurados
+              No hay módulos
+              configurados
               por el momento.
             </div>
           `
         }
+
       </section>
 
       <section class="notice-card">
+
         <div class="notice-icon">
           🔒
         </div>
 
         <div>
+
           <div class="notice-title">
             Acceso seguro
           </div>
@@ -850,7 +1008,9 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
             para acceder rápidamente
             a los servicios disponibles.
           </div>
+
         </div>
+
       </section>
 
       <footer class="footer">
@@ -865,6 +1025,7 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
 
   <script>
     window.AppLoader = {
+
       show() {
         const loader =
           document.getElementById(
@@ -893,26 +1054,31 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
     };
 
     function bindLoadingLinks() {
+
       document
         .querySelectorAll(
           "[data-loading-link]"
         )
         .forEach((link) => {
+
           link.addEventListener(
             "click",
             () => {
               window.AppLoader.show();
             }
           );
+
         });
     }
 
     document.addEventListener(
       "DOMContentLoaded",
       () => {
+
         window.AppLoader.hide();
 
         bindLoadingLinks();
+
       }
     );
 
@@ -926,15 +1092,18 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
     document.addEventListener(
       "visibilitychange",
       () => {
+
         if (
           document.visibilityState ===
           "visible"
         ) {
           window.AppLoader.hide();
         }
+
       }
     );
   </script>
+
 </body>
 </html>`;
 }
