@@ -18,44 +18,34 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
 <style>
 :root {
   --bg: #202124;
-
-  --app: #0b0c10;;
-  --app-2: #0b0c10;;
-  --app-3: #0b0c10;;
-  --app-4: #0b0c10;;
-
-  --section: #0b0c10;;
-  --section-soft: #0b0c10;;
+  --surface: #0b0c10;
+  --surface-hover: #101116;
+  --surface-soft: #11131a;
   --field: #1a1d27;
   --field-focus: #202536;
-
   --item: #1b1f2b;
   --item-hover: #232838;
 
   --text: #d8dbe2;
   --text-strong: #f1f3f4;
   --text-soft: #c4c8d4;
-
   --muted: #a6abb7;
   --muted-soft: #7e8491;
 
   --accent: #bfc7ff;
   --accent-strong: #d8ddff;
   --accent-bg: #252b45;
-  --accent-bg-2: #30395c;
+  --accent-btn: #40518e;
 
   --green: #81c995;
   --green-soft: #1d3428;
-
   --red: #f28b82;
   --red-soft: #34201f;
 
   --line: rgba(255,255,255,0.055);
 
-  --radius-sm: 12px;
   --radius-md: 16px;
-  --radius-lg: 22px;
-  --radius-xl: 28px;
+  --radius-lg: 20px;
 
   --page-max: 860px;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -99,6 +89,8 @@ button {
   touch-action: manipulation;
 }
 
+/* PAGE */
+
 .page {
   min-height: 100vh;
   padding: 12px 8px 32px;
@@ -133,27 +125,19 @@ button {
   text-transform: uppercase;
 }
 
-.module-title,
-.module-subtitle,
-.module-pill {
-  display: none;
-}
-
-.module-body {
-  display: grid;
-  gap: 14px;
-  padding: 0;
-}
-
+.module-body,
 .content-flow {
   display: grid;
   gap: 14px;
 }
 
-/* PRODUCT SECTION */
+.module-body {
+  padding: 0;
+}
+
+/* PRODUCTS */
 
 .section-wrap {
-  border-radius: 0;
   background: transparent;
 }
 
@@ -189,8 +173,6 @@ button {
   white-space: nowrap;
 }
 
-/* SEARCH */
-
 .search-wrap {
   padding: 0 0 10px;
 }
@@ -201,7 +183,7 @@ button {
   grid-template-columns: 1fr 36px;
   align-items: center;
   border-radius: 999px;
-  background: var(--section-soft);
+  background: var(--surface);
   border: 1px solid var(--line);
   padding: 0 5px 0 15px;
 }
@@ -226,17 +208,17 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--app-4);
+  background: var(--surface-hover);
   color: var(--muted);
   font-size: 15px;
 }
 
-/* ONLY REAL PRODUCT ITEMS ARE INSIDE THIS CARD */
+/* SOLO LOS ÍTEMS REALES VAN DENTRO DE ESTA CAJA */
 
 .products-scroll {
   padding: 7px;
-  border-radius: 20px;
-  background: var(--section-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
   border: 1px solid var(--line);
 }
 
@@ -276,16 +258,10 @@ button {
   border-radius: var(--radius-md);
   background: var(--item);
   border: 1px solid rgba(255,255,255,0.035);
-  transition:
-    background 140ms ease,
-    border-color 140ms ease,
-    transform 140ms ease;
 }
 
 .product-card:hover {
   background: var(--item-hover);
-  border-color: rgba(191,199,255,0.16);
-  transform: translateY(-1px);
 }
 
 .product-main {
@@ -328,7 +304,7 @@ button {
   overflow: hidden;
 }
 
-/* QTY */
+/* QUANTITY */
 
 .qty-box {
   display: grid;
@@ -336,7 +312,7 @@ button {
   height: 32px;
   border-radius: 999px;
   overflow: hidden;
-  background: #0c0e14;
+  background: var(--surface-soft);
   border: 1px solid rgba(255,255,255,0.05);
 }
 
@@ -349,7 +325,7 @@ button {
 }
 
 .qty-btn:hover {
-  background: var(--app-4);
+  background: var(--surface-hover);
 }
 
 .qty-value {
@@ -370,8 +346,8 @@ button {
 .total-row {
   margin-top: 10px;
   padding: 14px 15px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, var(--accent-bg), var(--accent-bg-2));
+  border-radius: var(--radius-lg);
+  background: var(--accent-bg);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -379,14 +355,14 @@ button {
 }
 
 .total-title {
-  color: #d6dbff;
+  color: var(--accent-strong);
   font-size: 12.5px;
   font-weight: 500;
   white-space: nowrap;
 }
 
 .total-value {
-  color: #f2f4ff;
+  color: var(--text-strong);
   font-size: clamp(22px, 7vw, 30px);
   font-weight: 650;
   letter-spacing: 0.035em;
@@ -401,19 +377,19 @@ button {
 
 .text-block {
   padding: 14px 15px;
-  border-radius: 20px;
-  background: var(--section-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
   border: 1px solid var(--line);
   color: var(--muted);
   font-size: 13.5px;
   line-height: 1.5;
 }
 
-/* FORM CARD */
+/* FORM */
 
 .form-collapse {
-  border-radius: 20px;
-  background: var(--section-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
   border: 1px solid var(--line);
   overflow: hidden;
 }
@@ -438,7 +414,6 @@ button {
 .form-icon {
   width: 36px;
   height: 36px;
-  flex-shrink: 0;
   border-radius: 14px;
   background: var(--accent-bg);
   color: var(--accent);
@@ -474,10 +449,7 @@ button {
   justify-content: center;
   color: var(--muted);
   background: rgba(255,255,255,0.035);
-  transition:
-    transform 160ms ease,
-    background 160ms ease,
-    color 160ms ease;
+  transition: transform 160ms ease;
 }
 
 .form-arrow svg {
@@ -488,8 +460,8 @@ button {
 
 .form-collapse.open .form-arrow {
   transform: rotate(180deg);
-  background: var(--accent-bg);
   color: var(--accent);
+  background: var(--accent-bg);
 }
 
 .form-content {
@@ -570,24 +542,19 @@ textarea {
   min-height: 54px;
   border: none;
   border-radius: 999px;
-  background: linear-gradient(135deg, #40518e, #5568b3);
+  background: var(--accent-btn);
   color: #f0f3ff;
-  box-shadow: 0 14px 32px rgba(0,0,0,0.32);
   font-size: 15px;
   font-weight: 650;
   cursor: pointer;
-  transition:
-    filter 130ms ease,
-    transform 130ms ease,
-    opacity 130ms ease;
 }
 
 .submit-btn:hover {
-  filter: brightness(1.06);
+  background: #485b9d;
 }
 
 .submit-btn:active {
-  transform: scale(0.99);
+  background: #3a4a82;
 }
 
 .submit-btn:disabled {
