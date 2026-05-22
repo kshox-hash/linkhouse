@@ -131,7 +131,7 @@ export function renderMenuHtml(record: RuntimeLinkRecord): string {
       --text: #e8eaed;
       --text-strong: #f1f3f4;
 
-      --muted: #bdc1c6;
+      --muted: #4f576d;
       --muted-soft: #8b8f97;
 
       --link: #c7d2ff;
