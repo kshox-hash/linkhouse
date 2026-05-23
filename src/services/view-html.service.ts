@@ -17,7 +17,7 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
 
 <style>
 :root {
---bg: #202124;
+--bg: #f3f3f3;
 --surface: #0b0c10;
 --surface-hover: #222638;
 --surface-soft: #20232f;
