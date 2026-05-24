@@ -20,7 +20,7 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
   /* =========================
      PALETA PROFESIONAL DARK
   ========================= */
-  --bg: #1b1d23;
+  --bg: #0f1011;
 
   --surface: #20242d;
   --surface-hover: #282d38;
