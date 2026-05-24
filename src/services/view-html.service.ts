@@ -24,8 +24,8 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
   --bg:           #0f1011;
 
   --surface-1:    #20242d;
-  --surface-2:    #1b1c25;
-  --surface-3:    #1b1c25;
+  --surface-2:    #20242d;
+  --surface-3:    #22263a;
 
   --on-bg:        #d8dbe2;
   --on-surface:   #e8eaed;
@@ -34,8 +34,7 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
   --primary:      #bfc7ff;
   --primary-c:    #111827;
   --primary-bg:   #22263a;
-  --primary-bg-2: #22263a;
-  --arrow-bg:    #1b1c25;
+  --primary-bg-2: #2b314a;
 
   --secondary:    #bfc7ff;
   --secondary-bg: #22263a;
@@ -113,22 +112,19 @@ button { touch-action: manipulation; cursor: pointer; }
 }
 
 .topbar-logo {
-  width: 48px;
-  height: 48px;
-  border-radius: 18px;
+  width: 42px;
+  height: 42px;
+  border-radius: 16px;
   background: var(--primary-bg);
-  color: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 23px;
-  line-height: 1;
 }
 
 .topbar-logo svg {
-  width: 23px;
-  height: 23px;
+  width: 22px;
+  height: 22px;
   fill: var(--primary);
 }
 
@@ -219,22 +215,20 @@ button { touch-action: manipulation; cursor: pointer; }
 }
 
 .section-icon {
-  width: 48px;
-  height: 48px;
+  width: 42px;
+  height: 42px;
   flex-shrink: 0;
-  border-radius: 18px;
+  border-radius: 16px;
   background: var(--primary-bg);
   color: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 23px;
-  line-height: 1;
 }
 
 .section-icon svg {
-  width: 23px;
-  height: 23px;
+  width: 21px;
+  height: 21px;
   display: block;
 }
 
@@ -283,31 +277,25 @@ button { touch-action: manipulation; cursor: pointer; }
   display: flex;
   align-items: center;
   border-radius: 999px;
-  background: var(--arrow-bg);
+  background: var(--surface-2);
   padding: 0 6px 0 16px;
   transition: background 150ms ease;
 }
 
 .search-inner:focus-within {
-  background: var(--primary-bg);
+  background: var(--surface-3);
 }
 
 .search-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
+  width: 20px;
   flex-shrink: 0;
-  color: var(--primary);
-  background: var(--primary-bg);
+  color: var(--muted);
   display: flex;
   align-items: center;
-  justify-content: center;
   margin-right: 10px;
-  font-size: 15px;
-  line-height: 1;
 }
 
-.search-icon svg { width: 17px; height: 17px; display: block; }
+.search-icon svg { width: 18px; height: 18px; display: block; }
 
 .search-input {
   flex: 1;
@@ -390,15 +378,11 @@ button { touch-action: manipulation; cursor: pointer; }
 }
 
 .product-price {
-  width: max-content;
-  margin-top: 7px;
-  padding: 5px 9px;
-  border-radius: 999px;
-  background: var(--arrow-bg);
-  color: var(--primary);
   font-size: 12.5px;
   font-weight: 500;
+  color: var(--primary);
   white-space: nowrap;
+  margin-top: 4px;
 }
 
 /* ─── STEPPER ─── */
@@ -408,13 +392,13 @@ button { touch-action: manipulation; cursor: pointer; }
   align-items: center;
   height: 36px;
   border-radius: 999px;
-  background: var(--arrow-bg);
+  background: var(--surface-3);
   overflow: hidden;
   transition: background 200ms ease;
 }
 
 .stepper.has-qty {
-  background: var(--arrow-bg);
+  background: var(--primary-bg-2);
 }
 
 .step-btn {
@@ -492,7 +476,7 @@ button { touch-action: manipulation; cursor: pointer; }
   margin: 8px 8px 8px;
   padding: 16px 18px;
   border-radius: var(--radius-l);
-  background: var(--arrow-bg);
+  background: var(--primary-bg);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -508,18 +492,6 @@ button { touch-action: manipulation; cursor: pointer; }
   color: var(--primary);
   letter-spacing: 0.02em;
   text-transform: uppercase;
-}
-
-.total-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
-  background: var(--primary-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  line-height: 1;
 }
 
 .total-label svg {
@@ -646,7 +618,7 @@ input, textarea {
   width: 100%;
   border: none;
   outline: none;
-  background: var(--arrow-bg);
+  background: var(--surface-2);
   color: var(--on-surface);
   border-radius: var(--radius-m);
   padding: 14px 15px;
@@ -657,7 +629,7 @@ input, textarea {
 input::placeholder, textarea::placeholder { color: var(--muted-2); }
 
 input:focus, textarea:focus {
-  background: var(--primary-bg);
+  background: var(--surface-3);
 }
 
 textarea {
@@ -697,20 +669,6 @@ textarea {
 
 .submit-btn:active { transform: scale(0.985); filter: brightness(0.95); }
 .submit-btn:disabled { opacity: 0.38; cursor: not-allowed; filter: none; transform: none; }
-
-.submit-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
-  background: var(--arrow-bg);
-  color: var(--primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  line-height: 1;
-  flex-shrink: 0;
-}
 
 .submit-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
@@ -782,7 +740,9 @@ textarea {
   <div class="shell">
 
     <header class="topbar">
-      <div class="topbar-logo" aria-hidden="true">⚡</div>
+      <div class="topbar-logo">
+        <svg viewBox="0 0 24 24"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.72 7.28L13 17v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.95-9.45-9-9.95M11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5V2.05Z"/></svg>
+      </div>
       <span class="topbar-name">Amaru Electric</span>
       <span class="topbar-chip">Cotizador</span>
     </header>
@@ -879,7 +839,11 @@ function renderProducts(c) {
   hdr.className = "section-header";
   hdr.innerHTML = \`
     <div class="section-heading">
-      <div class="section-icon" aria-hidden="true">🧾</div>
+      <div class="section-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2Zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2ZM7.2 14.5h7.45c.75 0 1.41-.41 1.75-1.03L20 6.96 18.25 6l-3.6 6.5H7.63L3.85 4H1v2h1.55l3.6 8.12L4.8 16.5C4.3 17.39 4.94 18.5 5.96 18.5H19v-2H6.42l.78-2Z"/>
+        </svg>
+      </div>
       <div>
         <div class="section-label">Catálogo</div>
         <div class="section-title">Productos</div>
@@ -894,7 +858,11 @@ function renderProducts(c) {
   sw.className = "search-wrap";
   sw.innerHTML = \`
     <div class="search-inner">
-      <div class="search-icon" aria-hidden="true">⌕</div>
+      <div class="search-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      </div>
       <input class="search-input" id="productsSearch" type="text" placeholder="Buscar productos" autocomplete="off" />
     </div>
   \`;
@@ -995,7 +963,9 @@ function renderProducts(c) {
   totalRow.className = "total-bar";
   totalRow.innerHTML = \`
     <div class="total-label">
-      <span class="total-icon" aria-hidden="true">💰</span>
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M4 4h16v16H4V4Zm2 2v12h12V6H6Zm2 2h8v2H8V8Zm0 4h8v2H8v-2Z"/>
+      </svg>
       <span>Total estimado</span>
     </div>
     <div class="total-amount" id="totalValue">\${formatCurrency(0)}</div>
@@ -1025,7 +995,11 @@ function renderForm(c) {
   const head = document.createElement("div");
   head.className = "form-head";
   head.innerHTML = \`
-    <div class="form-avatar" aria-hidden="true">👤</div>
+    <div class="form-avatar">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5Zm0 2c-3.3 0-10 1.7-10 5v1h20v-1c0-3.3-6.7-5-10-5Z"/>
+      </svg>
+    </div>
     <div>
       <div class="form-head-title">Mis datos</div>
       <div class="form-head-sub">Completa tu información de contacto</div>
@@ -1079,7 +1053,9 @@ function renderButton(c) {
   btn.type = "button";
   btn.className = "submit-btn";
   btn.innerHTML = \`
-    <span class="submit-icon" aria-hidden="true">→</span>
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/>
+    </svg>
     <span>\${c.label || "Enviar cotización"}</span>
   \`;
 
@@ -1159,7 +1135,7 @@ async function onSubmit(btn, originalLabel) {
     if (!res.ok) {
       showMessage("error", data.message || "No se pudo enviar la solicitud.");
       btn.disabled = false;
-      btn.innerHTML = \`<span class="submit-icon" aria-hidden="true">→</span><span>\${originalLabel}</span>\`;
+      btn.innerHTML = \`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg><span>\${originalLabel}</span>\`;
       return;
     }
 
@@ -1167,7 +1143,7 @@ async function onSubmit(btn, originalLabel) {
   } catch (_) {
     showMessage("error", "Ocurrió un error al enviar la solicitud.");
     btn.disabled = false;
-    btn.innerHTML = \`<span class="submit-icon" aria-hidden="true">→</span><span>\${originalLabel}</span>\`;
+    btn.innerHTML = \`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg><span>\${originalLabel}</span>\`;
   }
 }
 
