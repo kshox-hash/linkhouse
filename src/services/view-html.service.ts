@@ -17,49 +17,38 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
 
 <style>
 :root {
-/* Fondo general */
---bg: #202124;
+  --bg: #202124;
+  --surface: #10151b;
+  --surface-hover: #161d25;
+  --surface-soft: #1b242e;
 
-/* Superficies */
---surface: #0f1418;
---surface-hover: #151c22;
---surface-soft: #182027;
+  --field: #141b23;
+  --field-focus: #1a2430;
 
-/* Inputs */
---field: #111820;
---field-focus: #182231;
+  --item: #151d26;
+  --item-hover: #1b2632;
 
-/* Productos */
---item: #171f2a;
---item-hover: #202b3a;
+  --text: #cdd3dd;
+  --text-strong: #f2f5f8;
+  --text-soft: #aeb7c6;
+  --muted: #7f8997;
+  --muted-soft: #687382;
 
-/* Textos */
---text: #cdd3dd;
---text-strong: #f2f5f8;
---text-soft: #aeb7c6;
---muted: #7f8997;
---muted-soft: #5f6875;
+  --accent: #9fb8ff;
+  --accent-strong: #d5e0ff;
+  --accent-bg: #1c2738;
+  --accent-btn: #2f456b;
+  --accent-btn-hover: #38517c;
+  --accent-btn-active: #283b5d;
 
-/* Acento principal */
---accent: #9fb8ff;
---accent-strong: #d5e0ff;
---accent-bg: #1e2a3f;
---accent-btn: #3f5f9f;
-
-/* Estados */
---green: #74d39b;
---green-soft: #153123;
---red: #ee8d86;
---red-soft: #341c1c;
-
-/* Bordes */
---line: rgba(255,255,255,0.045);
+  --green: #74d39b;
+  --green-soft: #153123;
+  --red: #ee8d86;
+  --red-soft: #341c1c;
 
   --radius-md: 16px;
   --radius-lg: 20px;
-
   --page-max: 860px;
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 * {
@@ -214,7 +203,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface-hover);
+  background: var(--surface-soft);
   color: var(--muted);
   font-size: 15px;
 }
@@ -226,11 +215,11 @@ button {
 }
 
 .products-scroll.is-scrollable {
-  max-height: min(52vh, 560px);
+  max-height: min(56vh, 620px);
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
-  scrollbar-color: #3a4054 transparent;
+  scrollbar-color: #334152 transparent;
 }
 
 .products-scroll.is-scrollable::-webkit-scrollbar {
@@ -242,7 +231,7 @@ button {
 }
 
 .products-scroll.is-scrollable::-webkit-scrollbar-thumb {
-  background: #3a4054;
+  background: #334152;
   border-radius: 999px;
 }
 
@@ -386,11 +375,12 @@ button {
 }
 
 .form-head {
-  padding: 14px 14px 12px;
+  min-height: 64px;
+  padding: 13px 14px;
   display: grid;
-  grid-template-columns: 36px minmax(0, 1fr);
+  grid-template-columns: 36px minmax(0, 1fr) 36px;
   align-items: center;
-  gap: 11px;
+  gap: 10px;
 }
 
 .form-icon {
@@ -406,6 +396,7 @@ button {
 
 .form-copy {
   min-width: 0;
+  text-align: center;
 }
 
 .form-title {
@@ -422,13 +413,12 @@ button {
 }
 
 .form-content {
-  display: block;
   padding: 0 14px 14px;
 }
 
 .form-divider {
   height: 1px;
-  background: var(--line);
+  background: rgba(255,255,255,0.055);
   margin-bottom: 14px;
 }
 
@@ -482,9 +472,6 @@ textarea {
 
 .submit-wrap {
   display: grid;
-  position: sticky;
-  bottom: calc(10px + var(--safe-bottom));
-  z-index: 5;
 }
 
 .submit-btn {
@@ -493,18 +480,18 @@ textarea {
   border: none;
   border-radius: 999px;
   background: var(--accent-btn);
-  color: #f0f3ff;
+  color: #edf3ff;
   font-size: 15px;
   font-weight: 650;
   cursor: pointer;
 }
 
 .submit-btn:hover {
-  background: #485b9d;
+  background: var(--accent-btn-hover);
 }
 
 .submit-btn:active {
-  background: #3a4a82;
+  background: var(--accent-btn-active);
 }
 
 .submit-btn:disabled {
@@ -570,7 +557,7 @@ textarea {
 
 @media (max-width: 520px) {
   .products-scroll.is-scrollable {
-    max-height: 50vh;
+    max-height: 54vh;
   }
 
   .form-grid {
@@ -869,6 +856,8 @@ function renderForm(component) {
         <div class="form-title">Mis datos</div>
         <div class="form-sub">Completa tu información</div>
       </div>
+
+      <div></div>
     </div>
 
     <div class="form-content">
@@ -883,7 +872,9 @@ function renderForm(component) {
     const fieldWrap = document.createElement("div");
     fieldWrap.className = "field";
 
-    if (field.inputType === "textarea") fieldWrap.classList.add("full");
+    if (field.inputType === "textarea") {
+      fieldWrap.classList.add("full");
+    }
 
     const label = document.createElement("label");
     label.className = "label";
@@ -902,11 +893,12 @@ function renderForm(component) {
     input.dataset.kind = "form-field";
     input.placeholder = field.placeholder || "";
 
-    if (field.required) input.required = true;
+    if (field.required) {
+      input.required = true;
+    }
 
     fieldWrap.appendChild(label);
     fieldWrap.appendChild(input);
-
     grid.appendChild(fieldWrap);
   });
 
@@ -933,20 +925,39 @@ function renderButton(component) {
 
 function renderComponent(component) {
   switch (component.type) {
-    case "text":
-      return renderText(component);
+    case "form":
+      return renderForm(component);
 
     case "products":
       return renderProducts(component);
 
-    case "form":
-      return renderForm(component);
+    case "text":
+      return renderText(component);
 
     case "button":
       return renderButton(component);
 
     default:
       return document.createElement("div");
+  }
+}
+
+function getComponentPriority(component) {
+  switch (component.type) {
+    case "form":
+      return 1;
+
+    case "products":
+      return 2;
+
+    case "text":
+      return 3;
+
+    case "button":
+      return 4;
+
+    default:
+      return 9;
   }
 }
 
@@ -974,6 +985,7 @@ async function onSubmit(btn, originalLabel) {
     const value = String(field.value || "").trim();
 
     if (field.required && !value) {
+      field.focus();
       showMessage("error", "Completa los campos obligatorios.");
       return;
     }
@@ -1012,14 +1024,11 @@ async function onSubmit(btn, originalLabel) {
   }
 }
 
-const orderedComponents = [
-  ...config.components.filter((component) => component.type === "form"),
-  ...config.components.filter((component) => component.type !== "form")
-];
-
-orderedComponents.forEach((component) => {
-  contentEl.appendChild(renderComponent(component));
-});
+[...config.components]
+  .sort((a, b) => getComponentPriority(a) - getComponentPriority(b))
+  .forEach((component) => {
+    contentEl.appendChild(renderComponent(component));
+  });
 
 updateTotal();
 </script>
