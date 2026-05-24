@@ -14,289 +14,309 @@ export function renderViewHtml(record: RuntimeLinkRecord): string {
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Cotizador online</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&family=Google+Sans+Display:wght@400;500&display=swap" rel="stylesheet" />
 
 <style>
 :root {
-  /* =========================
-     PALETA PROFESIONAL DARK
-  ========================= */
-  --bg: #0f1011;
+  /* Google Material You — dark scheme */
+  --bg:           #1a1c1e;
+  --surface-1:    #21242a;
+  --surface-2:    #272b32;
+  --surface-3:    #2d3139;
 
-  --surface: #20242d;
-  --surface-hover: #282d38;
-  --surface-soft: #29313d;
+  --on-bg:        #e2e2e6;
+  --on-surface:   #e2e2e6;
+  --on-surface-v: #c5c6cb;
+  --outline:      rgba(255,255,255,0.08);
+  --outline-v:    rgba(255,255,255,0.05);
 
-  --field: #191c24;
-  --field-focus: #232836;
+  --primary:      #aac7ff;
+  --primary-c:    #002e6a;
+  --primary-bg:   #1b2d45;
 
+  --secondary:    #bfc8db;
+  --secondary-bg: #232c3b;
 
-  --item: #191c24;
-  --item-hover: #172131;
+  --muted:        #8d9199;
+  --muted-2:      #5f6368;
 
-  --text: #d2d7e2;
-  --text-strong: #f5f7fb;
-  --text-soft: #afb6c5;
-  --muted: #838b9c;
-  --muted-soft: #636b7a;
+  --green:        #6dd58c;
+  --green-bg:     #0a3818;
+  --red:          #ffb4ab;
+  --red-bg:       #690005;
 
-  --accent: #9db7ff;
-  --accent-strong: #d9e2ff;
-  --accent-bg: #2a3550;
+  --radius-s:  12px;
+  --radius-m:  16px;
+  --radius-l:  20px;
+  --radius-xl: 28px;
 
-  --accent-btn: #516da8;
-  --accent-btn-hover: #5f7bbb;
-  --accent-btn-active: #456196;
+  --page-max: 840px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
 
-  --green: #7bd6a3;
-  --green-soft: #1b3527;
-  --red: #f0948d;
-  --red-soft: #3a2020;
-
-  --line: rgba(255, 255, 255, 0.34);
-
-  --radius-md: 18px;
-  --radius-lg: 24px;
-  --page-max: 860px;
+  /* elevation via box-shadow (Material 3) */
+  --elev-1: 0 1px 2px rgba(0,0,0,.3), 0 1px 3px 1px rgba(0,0,0,.15);
+  --elev-2: 0 1px 2px rgba(0,0,0,.3), 0 2px 6px 2px rgba(0,0,0,.15);
+  --elev-3: 0 4px 8px 3px rgba(0,0,0,.15), 0 1px 3px rgba(0,0,0,.3);
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
-  margin: 0;
-  padding: 0;
+  margin: 0; padding: 0;
 }
 
-html,
-body {
-  min-height: 100vh;
-}
+html, body { min-height: 100vh; }
 
 body {
   background: var(--bg);
-  color: var(--text);
-  font-family:
-    "Google Sans",
-    Inter,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  color: var(--on-bg);
+  font-family: "Google Sans", system-ui, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
-button,
-input,
-textarea {
-  font: inherit;
-  color: inherit;
-}
+button, input, textarea { font: inherit; color: inherit; }
+button { touch-action: manipulation; cursor: pointer; }
 
-button {
-  touch-action: manipulation;
-}
+/* ─── PAGE ─── */
 
 .page {
   min-height: 100vh;
-  padding: 14px 10px 34px;
+  padding: 0 0 calc(32px + var(--safe-b));
 }
 
 .shell {
   width: 100%;
   max-width: var(--page-max);
   margin: 0 auto;
+  padding: 0 16px;
 }
 
-.module-shell {
-  min-height: calc(100vh - 48px);
-  background: var(--bg);
-}
+/* ─── TOPBAR ─── */
 
-.module-head {
-  padding: 4px 2px 18px;
-}
-
-.module-title-row {
+.topbar {
+  height: 64px;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-}
-
-.module-kicker {
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 650;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.module-body,
-.content-flow {
-  display: grid;
-  gap: 18px;
-}
-
-.module-body {
-  padding: 0;
-}
-
-.section-wrap {
-  background: transparent;
-}
-
-.section-header {
-  padding: 0 2px 14px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
   gap: 12px;
 }
 
-.section-title {
-  color: var(--text-strong);
-  font-size: 18px;
-  font-weight: 650;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
+.topbar-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.section-sub {
-  color: var(--muted-soft);
-  font-size: 12px;
-  margin-top: 5px;
+.topbar-logo svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--primary);
 }
 
-.badge-count {
-  padding: 8px 11px;
+.topbar-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--on-surface-v);
+  letter-spacing: 0.01em;
+}
+
+.topbar-chip {
+  margin-left: auto;
+  padding: 5px 12px;
   border-radius: 999px;
-  background: var(--accent-bg);
-  color: var(--accent);
-  font-size: 11.5px;
-  font-weight: 650;
-  white-space: nowrap;
+  background: var(--primary-bg);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
+
+/* ─── HERO ─── */
+
+.hero {
+  padding: 24px 0 36px;
+}
+
+.hero-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--primary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.hero-title {
+  font-family: "Google Sans Display", "Google Sans", sans-serif;
+  font-size: clamp(28px, 6vw, 40px);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+  color: var(--on-surface);
+  max-width: 560px;
+}
+
+.hero-sub {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 460px;
+}
+
+/* ─── CONTENT ─── */
+
+.content-flow {
+  display: grid;
+  gap: 12px;
+}
+
+/* ─── CARD SHELL ─── */
+
+.card {
+  background: var(--surface-1);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--elev-1);
+  overflow: hidden;
+}
+
+/* ─── SECTION HEADER ─── */
+
+.section-header {
+  padding: 20px 20px 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--primary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.section-title {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--on-surface);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.badge {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--primary-bg);
+  color: var(--primary);
+  font-size: 11.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+/* ─── SEARCH ─── */
 
 .search-wrap {
-  padding: 0 0 12px;
+  padding: 0 12px 12px;
 }
 
-.search-shell {
+.search-inner {
   height: 48px;
-  display: grid;
-  grid-template-columns: 1fr 36px;
+  display: flex;
   align-items: center;
+  gap: 0;
   border-radius: 999px;
-  background: var(--surface);
+  background: var(--surface-2);
   padding: 0 6px 0 16px;
 }
 
+.search-icon {
+  width: 20px;
+  flex-shrink: 0;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.search-icon svg { width: 18px; height: 18px; display: block; }
+
 .search-input {
+  flex: 1;
   min-width: 0;
   border: none;
   outline: none;
   background: transparent;
-  color: var(--text);
+  color: var(--on-surface);
   font-size: 14px;
 }
 
-.search-input::placeholder {
-  color: var(--muted-soft);
+.search-input::placeholder { color: var(--muted-2); }
+
+/* ─── PRODUCT LIST ─── */
+
+.products-body {
+  padding: 0 8px 8px;
 }
 
-.search-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--surface-soft);
-  color: var(--muted);
-  font-size: 15px;
-}
-
-.products-scroll {
-  padding: 10px;
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-}
-
-.products-scroll.is-scrollable {
-  max-height: min(54vh, 620px);
+.products-body.scrollable {
+  max-height: min(52vh, 600px);
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
-  scrollbar-color: #3b4658 transparent;
+  scrollbar-color: var(--surface-3) transparent;
 }
 
-.products-scroll.is-scrollable::-webkit-scrollbar {
-  width: 6px;
-}
-
-.products-scroll.is-scrollable::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.products-scroll.is-scrollable::-webkit-scrollbar-thumb {
-  background: #3b4658;
+.products-body.scrollable::-webkit-scrollbar { width: 4px; }
+.products-body.scrollable::-webkit-scrollbar-track { background: transparent; }
+.products-body.scrollable::-webkit-scrollbar-thumb {
+  background: var(--surface-3);
   border-radius: 999px;
 }
 
-.products-list {
-  display: grid;
-  gap: 10px;
-}
+.product-list { display: grid; gap: 2px; }
 
-.product-card {
+/* ─── PRODUCT ITEM ─── */
+
+.product-item {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 12px;
-  min-height: 60px;
-  padding: 13px 14px;
-  border-radius: var(--radius-md);
-  background: var(--item);
-  border: 1px solid rgba(255,255,255,0.055);
+  gap: 16px;
+  padding: 12px 12px 12px 14px;
+  border-radius: var(--radius-m);
+  transition: background 120ms ease;
 }
 
-.product-card:hover {
-  background: var(--item-hover);
-}
-
-.product-main {
-  min-width: 0;
-}
-
-.product-top {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: baseline;
-  gap: 10px;
-  margin-bottom: 4px;
-}
+.product-item:hover { background: var(--surface-2); }
 
 .product-name {
-  color: var(--text-strong);
   font-size: 14px;
-  line-height: 1.25;
-  font-weight: 560;
-  letter-spacing: -0.02em;
+  font-weight: 500;
+  color: var(--on-surface);
+  letter-spacing: -0.01em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.3;
+  margin-bottom: 2px;
 }
 
-.product-price {
-  color: var(--accent);
-  font-size: 13px;
-  font-weight: 620;
-  white-space: nowrap;
-}
-
-.product-description {
-  color: var(--muted-soft);
+.product-desc {
   font-size: 12px;
+  color: var(--muted);
   line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 1;
@@ -304,183 +324,199 @@ button {
   overflow: hidden;
 }
 
-.qty-box {
-  display: grid;
-  grid-template-columns: 30px 34px 30px;
-  height: 34px;
-  border-radius: 999px;
-  overflow: hidden;
-  background: var(--surface-soft);
+.product-price {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--primary);
+  white-space: nowrap;
+  margin-top: 3px;
 }
 
-.qty-btn {
+/* ─── STEPPER ─── */
+
+.stepper {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+
+.step-btn {
+  width: 36px;
+  height: 36px;
   border: none;
   background: transparent;
-  color: var(--text-soft);
-  font-size: 15px;
-  cursor: pointer;
-}
-
-.qty-btn:hover {
-  background: var(--surface-hover);
-}
-
-.qty-value {
+  color: var(--on-surface-v);
+  font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-strong);
+  flex-shrink: 0;
+  transition: background 100ms ease, color 100ms ease;
+}
+
+.step-btn:hover { background: rgba(255,255,255,0.06); color: var(--on-surface); }
+.step-btn:active { background: rgba(255,255,255,0.1); }
+
+.step-val {
+  width: 32px;
+  text-align: center;
   font-size: 13px;
-  font-weight: 620;
+  font-weight: 500;
+  color: var(--on-surface);
+  user-select: none;
 }
 
-.qty-hidden {
-  display: none;
-}
+.qty-hidden { display: none; }
 
-.total-row {
-  margin-top: 12px;
-  padding: 18px;
-  border-radius: var(--radius-lg);
-  background: var(--accent-bg);
+/* ─── TOTAL ─── */
+
+.total-bar {
+  margin: 8px 8px 8px;
+  padding: 16px 18px;
+  border-radius: var(--radius-l);
+  background: var(--primary-bg);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: 12px;
 }
 
-.total-title {
-  color: var(--accent-strong);
-  font-size: 13px;
+.total-label {
+  font-size: 12px;
   font-weight: 500;
-  white-space: nowrap;
+  color: var(--primary);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
-.total-value {
-  color: var(--text-strong);
-  font-size: clamp(24px, 7vw, 32px);
-  font-weight: 650;
-  letter-spacing: 0.04em;
-  line-height: 1.05;
-  text-align: right;
+.total-amount {
+  font-family: "Google Sans Display", "Google Sans", sans-serif;
+  font-size: clamp(22px, 6vw, 28px);
+  font-weight: 400;
+  color: var(--on-surface);
+  letter-spacing: -0.02em;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
-  overflow-wrap: anywhere;
+  text-align: right;
 }
 
-.text-block {
-  padding: 16px;
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  color: var(--muted);
-  font-size: 13.5px;
-  line-height: 1.5;
-}
+/* ─── FORM CARD ─── */
 
-.form-collapse {
-  border-radius: var(--radius-lg);
-  background: var(--surface);
+.form-card {
+  background: var(--surface-1);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--elev-1);
   overflow: hidden;
 }
 
 .form-head {
-  min-height: 72px;
-  padding: 16px;
+  padding: 20px 20px 20px;
   display: grid;
-  grid-template-columns: 42px minmax(0, 1fr) 42px;
-  align-items: center;
+  grid-template-columns: 44px 1fr;
   gap: 14px;
+  align-items: center;
 }
 
-.form-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 16px;
-  background: var(--accent-bg);
-  color: var(--accent);
+.form-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--secondary-bg);
+  color: var(--secondary);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.form-copy {
-  min-width: 0;
-  text-align: center;
-}
+.form-avatar svg { width: 22px; height: 22px; }
 
-.form-title {
-  color: var(--text-strong);
-  font-size: 15px;
-  font-weight: 650;
+.form-head-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--on-surface);
   letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
-.form-sub {
-  color: var(--muted-soft);
+.form-head-sub {
   font-size: 12px;
-  margin-top: 4px;
-}
-
-.form-content {
-  padding: 0 16px 16px;
+  color: var(--muted);
+  margin-top: 2px;
 }
 
 .form-divider {
   height: 1px;
-  background: var(--line);
-  margin-bottom: 16px;
+  background: var(--outline);
+  margin: 0 20px 20px;
+}
+
+.form-body {
+  padding: 0 20px 20px;
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 12px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
-.field.full {
-  grid-column: 1 / -1;
-}
+.field.full { grid-column: 1 / -1; }
 
 .label {
+  font-size: 11.5px;
+  font-weight: 500;
   color: var(--muted);
-  font-size: 12px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
-input,
-textarea {
+input, textarea {
   width: 100%;
   border: none;
   outline: none;
-  background: var(--field);
-  color: var(--text);
-  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  color: var(--on-surface);
+  border-radius: var(--radius-m);
   padding: 14px 15px;
   font-size: 14px;
+  transition: background 120ms ease;
 }
 
-input::placeholder,
-textarea::placeholder {
-  color: var(--muted-soft);
-}
-
-input:focus,
-textarea:focus {
-  background: var(--field-focus);
-}
+input::placeholder, textarea::placeholder { color: var(--muted-2); }
+input:focus, textarea:focus { background: var(--surface-3); }
 
 textarea {
-  min-height: 96px;
+  min-height: 92px;
   resize: vertical;
 }
 
+/* ─── TEXT BLOCK ─── */
+
+.text-block {
+  background: var(--surface-1);
+  border-radius: var(--radius-xl);
+  padding: 18px 20px;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.6;
+  box-shadow: var(--elev-1);
+}
+
+/* ─── SUBMIT ─── */
+
 .submit-wrap {
-  display: grid;
+  position: sticky;
+  bottom: calc(12px + var(--safe-b));
+  z-index: 10;
 }
 
 .submit-btn {
@@ -488,116 +524,79 @@ textarea {
   min-height: 56px;
   border: none;
   border-radius: 999px;
-  background: var(--accent-btn);
-  color: #f5f7fb;
+  background: var(--primary);
+  color: var(--primary-c);
   font-size: 15px;
-  font-weight: 650;
-  cursor: pointer;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  box-shadow: var(--elev-3);
+  transition: filter 120ms ease, transform 80ms ease;
 }
 
-.submit-btn:hover {
-  background: var(--accent-btn-hover);
-}
+.submit-btn:hover { filter: brightness(1.06); }
+.submit-btn:active { transform: scale(0.985); filter: brightness(0.95); }
+.submit-btn:disabled { opacity: 0.38; cursor: not-allowed; filter: none; transform: none; }
 
-.submit-btn:active {
-  background: var(--accent-btn-active);
-}
-
-.submit-btn:disabled {
-  opacity: 0.48;
-  cursor: not-allowed;
-}
+/* ─── MESSAGE ─── */
 
 .message {
   display: none;
-  padding: 16px;
-  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  border-radius: var(--radius-l);
   font-size: 13px;
   line-height: 1.5;
-  white-space: pre-wrap;
   text-align: center;
 }
 
-.message.success {
-  display: block;
-  background: var(--green-soft);
-  color: var(--green);
-}
+.message.success { display: block; background: var(--green-bg); color: var(--green); }
+.message.error   { display: block; background: var(--red-bg);   color: var(--red); }
 
-.message.error {
-  display: block;
-  background: var(--red-soft);
-  color: var(--red);
-}
+/* ─── EXPIRES ─── */
 
 .expires {
-  margin-top: 16px;
+  margin-top: 20px;
   text-align: center;
-  color: var(--muted-soft);
+  color: var(--muted-2);
   font-size: 11px;
+  line-height: 1.5;
 }
 
-@media (min-width: 640px) {
-  .page {
-    padding: 18px 16px 42px;
-  }
+/* ─── RESPONSIVE ─── */
 
-  .content-flow {
-    gap: 20px;
-  }
+@media (min-width: 640px) {
+  .shell { padding: 0 24px; }
+  .topbar { height: 72px; }
+  .hero { padding: 28px 0 44px; }
+  .content-flow { gap: 14px; }
 }
 
 @media (max-width: 520px) {
-  .products-scroll.is-scrollable {
-    max-height: 52vh;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
+  .form-grid { grid-template-columns: 1fr; }
+  .products-body.scrollable { max-height: 48vh; }
 }
 
-@media (max-width: 390px) {
-  .page {
-    padding: 12px 8px 30px;
-  }
+@media (max-width: 380px) {
+  .hero-title { font-size: 26px; }
 
-  .section-header {
+  .section-header { flex-direction: column; }
+
+  .product-item {
     grid-template-columns: 1fr;
-  }
-
-  .badge-count {
-    width: max-content;
-  }
-
-  .product-card {
-    grid-template-columns: 1fr;
-    align-items: start;
-  }
-
-  .qty-box {
-    justify-self: start;
-  }
-
-  .product-top {
-    grid-template-columns: 1fr;
-    gap: 3px;
-  }
-
-  .product-price {
-    justify-self: start;
-  }
-
-  .total-row {
-    align-items: flex-start;
-    flex-direction: column;
     gap: 8px;
   }
 
-  .total-value {
-    text-align: left;
-    font-size: 24px;
+  .stepper { justify-self: start; }
+
+  .total-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
   }
+
+  .total-amount { font-size: 24px; }
+
+  .form-head { grid-template-columns: 1fr; }
+  .form-avatar { display: none; }
 }
 </style>
 </head>
@@ -606,18 +605,22 @@ textarea {
 <main class="page">
   <div class="shell">
 
-    <section class="module-shell">
-      <header class="module-head">
-        <div class="module-title-row">
-          <div class="module-kicker">Cotizador online</div>
-        </div>
-      </header>
-
-      <div class="module-body">
-        <div id="content" class="content-flow"></div>
-        <div id="message" class="message"></div>
+    <header class="topbar">
+      <div class="topbar-logo">
+        <svg viewBox="0 0 24 24"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.72 7.28L13 17v5h5l-1.22-1.22C19.91 19.07 22 15.76 22 12c0-5.18-3.95-9.45-9-9.95M11 2.05C5.95 2.55 2 6.82 2 12c0 3.76 2.09 7.07 5.22 8.78L6 22h5V2.05Z"/></svg>
       </div>
+      <span class="topbar-name">Amaru Electric</span>
+      <span class="topbar-chip">Cotizador</span>
+    </header>
+
+    <section class="hero">
+      <div class="hero-label">Cotizador online</div>
+      <h1 class="hero-title">Solicita tu cotización</h1>
+      <p class="hero-sub">Selecciona los productos que necesitas y envía tu solicitud en segundos.</p>
     </section>
+
+    <div id="content" class="content-flow"></div>
+    <div id="message" class="message" style="margin-top:12px"></div>
 
     <p class="expires">
       Este enlace expira el <span id="expiresAt"></span>
@@ -657,312 +660,250 @@ function showMessage(type, text) {
 function updateSelectedCount() {
   const inputs = document.querySelectorAll('[data-kind="product-quantity"]');
   let selected = 0;
-
-  inputs.forEach((input) => {
-    if (Number(input.value || 0) > 0) selected++;
-  });
-
+  inputs.forEach((inp) => { if (Number(inp.value || 0) > 0) selected++; });
   const badge = document.getElementById("productsSelected");
-
-  if (badge) {
-    badge.textContent =
-      selected === 1 ? "1 seleccionado" : selected + " seleccionados";
-  }
+  if (badge) badge.textContent = selected === 1 ? "1 seleccionado" : selected + " seleccionados";
 }
 
 function updateTotal() {
   const inputs = document.querySelectorAll('[data-kind="product-quantity"]');
   let total = 0;
-
-  inputs.forEach((input) => {
-    total += Number(input.value || 0) * Number(input.dataset.productPrice || 0);
-  });
-
-  const totalValue = document.getElementById("totalValue");
-
-  if (totalValue) totalValue.textContent = formatCurrency(total);
-
+  inputs.forEach((inp) => { total += Number(inp.value || 0) * Number(inp.dataset.productPrice || 0); });
+  const el = document.getElementById("totalValue");
+  if (el) el.textContent = formatCurrency(total);
   updateSelectedCount();
 }
 
-function renderText(component) {
-  const box = document.createElement("div");
-  box.className = "text-block";
-  box.textContent = component.value || "";
-  return box;
+/* ── RENDER TEXT ── */
+function renderText(c) {
+  const d = document.createElement("div");
+  d.className = "text-block";
+  d.textContent = c.value || "";
+  return d;
 }
 
-function renderProducts(component) {
+/* ── RENDER PRODUCTS ── */
+function renderProducts(c) {
   const wrap = document.createElement("div");
-  wrap.className = "section-wrap";
+  wrap.className = "card";
 
-  const header = document.createElement("div");
-  header.className = "section-header";
-  header.innerHTML = \`
+  /* header */
+  const hdr = document.createElement("div");
+  hdr.className = "section-header";
+  hdr.innerHTML = \`
     <div>
+      <div class="section-label">Catálogo</div>
       <div class="section-title">Productos</div>
-      <div class="section-sub">Busca y selecciona productos</div>
     </div>
-    <div class="badge-count" id="productsSelected">0 seleccionados</div>
+    <div class="badge" id="productsSelected">0 seleccionados</div>
   \`;
-  wrap.appendChild(header);
+  wrap.appendChild(hdr);
 
-  const searchWrap = document.createElement("div");
-  searchWrap.className = "search-wrap";
-  searchWrap.innerHTML = \`
-    <div class="search-shell">
+  /* search */
+  const sw = document.createElement("div");
+  sw.className = "search-wrap";
+  sw.innerHTML = \`
+    <div class="search-inner">
+      <div class="search-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      </div>
       <input class="search-input" id="productsSearch" type="text" placeholder="Buscar productos" autocomplete="off" />
-      <div class="search-icon">⌕</div>
     </div>
   \`;
-  wrap.appendChild(searchWrap);
+  wrap.appendChild(sw);
 
-  const scrollBox = document.createElement("div");
-  scrollBox.className = "products-scroll";
-
+  /* list */
+  const body = document.createElement("div");
+  body.className = "products-body" + (Array.isArray(c.items) && c.items.length >= 20 ? " scrollable" : "");
   const list = document.createElement("div");
-  list.className = "products-list";
+  list.className = "product-list";
   list.id = "productsList";
 
-  if (!Array.isArray(component.items) || component.items.length === 0) {
+  if (!Array.isArray(c.items) || c.items.length === 0) {
     list.innerHTML = "<div style='padding:16px;color:var(--muted);font-size:13px;text-align:center'>No hay productos disponibles.</div>";
-    scrollBox.appendChild(list);
-    wrap.appendChild(scrollBox);
+    body.appendChild(list);
+    wrap.appendChild(body);
     return wrap;
   }
 
-  if (component.items.length >= 20) {
-    scrollBox.classList.add("is-scrollable");
-  }
-
-  component.items.forEach((item) => {
+  c.items.forEach((item) => {
     const card = document.createElement("div");
-    card.className = "product-card";
+    card.className = "product-item";
     card.dataset.search = String((item.name || "") + " " + (item.description || "")).toLowerCase();
 
-    const main = document.createElement("div");
-    main.className = "product-main";
+    const info = document.createElement("div");
+    info.innerHTML = \`
+      <div class="product-name">\${item.name || "Producto"}</div>
+      \${item.description ? \`<div class="product-desc">\${item.description}</div>\` : ""}
+      <div class="product-price">\${formatCurrency(item.price || 0)}</div>
+    \`;
 
-    const top = document.createElement("div");
-    top.className = "product-top";
+    const stepper = document.createElement("div");
+    stepper.className = "stepper";
 
-    const name = document.createElement("div");
-    name.className = "product-name";
-    name.textContent = item.name || "Producto";
+    const minus = document.createElement("button");
+    minus.className = "step-btn";
+    minus.type = "button";
+    minus.setAttribute("aria-label", "Disminuir");
+    minus.innerHTML = "<svg width='16' height='16' viewBox='0 0 24 24'><path d='M5 12h14' stroke='currentColor' stroke-width='2' stroke-linecap='round'/></svg>";
 
-    const price = document.createElement("div");
-    price.className = "product-price";
-    price.textContent = formatCurrency(item.price || 0);
+    const valEl = document.createElement("div");
+    valEl.className = "step-val";
+    valEl.textContent = "0";
 
-    top.appendChild(name);
-    top.appendChild(price);
+    const plus = document.createElement("button");
+    plus.className = "step-btn";
+    plus.type = "button";
+    plus.setAttribute("aria-label", "Aumentar");
+    plus.innerHTML = "<svg width='16' height='16' viewBox='0 0 24 24'><path d='M12 5v14M5 12h14' stroke='currentColor' stroke-width='2' stroke-linecap='round'/></svg>";
 
-    const desc = document.createElement("div");
-    desc.className = "product-description";
-    desc.textContent = item.description || "";
+    const hidden = document.createElement("input");
+    hidden.type = "number";
+    hidden.min = "0";
+    hidden.value = "0";
+    hidden.className = "qty-hidden";
+    hidden.dataset.productId = item.id;
+    hidden.dataset.productPrice = String(item.price || 0);
+    hidden.dataset.kind = "product-quantity";
 
-    main.appendChild(top);
-    main.appendChild(desc);
-
-    const qtyBox = document.createElement("div");
-    qtyBox.className = "qty-box";
-
-    const minusBtn = document.createElement("button");
-    minusBtn.className = "qty-btn";
-    minusBtn.type = "button";
-    minusBtn.setAttribute("aria-label", "Disminuir cantidad");
-    minusBtn.textContent = "−";
-
-    const valueEl = document.createElement("div");
-    valueEl.className = "qty-value";
-    valueEl.textContent = "0";
-
-    const plusBtn = document.createElement("button");
-    plusBtn.className = "qty-btn";
-    plusBtn.type = "button";
-    plusBtn.setAttribute("aria-label", "Aumentar cantidad");
-    plusBtn.textContent = "+";
-
-    const hiddenInput = document.createElement("input");
-    hiddenInput.type = "number";
-    hiddenInput.min = "0";
-    hiddenInput.value = "0";
-    hiddenInput.className = "qty-hidden";
-    hiddenInput.dataset.productId = item.id;
-    hiddenInput.dataset.productPrice = String(item.price || 0);
-    hiddenInput.dataset.kind = "product-quantity";
-
-    function syncQty(value) {
-      const safe = Math.max(0, Number(value) || 0);
-      hiddenInput.value = String(safe);
-      valueEl.textContent = String(safe);
+    function sync(v) {
+      const s = Math.max(0, Number(v) || 0);
+      hidden.value = String(s);
+      valEl.textContent = String(s);
       updateTotal();
     }
 
-    minusBtn.addEventListener("click", () => syncQty(Number(hiddenInput.value) - 1));
-    plusBtn.addEventListener("click", () => syncQty(Number(hiddenInput.value) + 1));
+    minus.addEventListener("click", () => sync(Number(hidden.value) - 1));
+    plus.addEventListener("click", () => sync(Number(hidden.value) + 1));
 
-    qtyBox.appendChild(minusBtn);
-    qtyBox.appendChild(valueEl);
-    qtyBox.appendChild(plusBtn);
-    qtyBox.appendChild(hiddenInput);
+    stepper.appendChild(minus);
+    stepper.appendChild(valEl);
+    stepper.appendChild(plus);
+    stepper.appendChild(hidden);
 
-    card.appendChild(main);
-    card.appendChild(qtyBox);
+    card.appendChild(info);
+    card.appendChild(stepper);
     list.appendChild(card);
   });
 
-  scrollBox.appendChild(list);
-  wrap.appendChild(scrollBox);
+  body.appendChild(list);
+  wrap.appendChild(body);
 
+  /* total */
   const totalRow = document.createElement("div");
-  totalRow.className = "total-row";
+  totalRow.className = "total-bar";
   totalRow.innerHTML = \`
-    <div class="total-title">Total estimado</div>
-    <div class="total-value" id="totalValue">\${formatCurrency(0)}</div>
+    <div class="total-label">Total estimado</div>
+    <div class="total-amount" id="totalValue">\${formatCurrency(0)}</div>
   \`;
   wrap.appendChild(totalRow);
 
-  const searchInput = searchWrap.querySelector("#productsSearch");
-
-  searchInput.addEventListener("input", (e) => {
-    const value = e.target.value.toLowerCase().trim();
-
-    list.querySelectorAll(".product-card").forEach((card) => {
-      card.style.display = card.dataset.search.includes(value) ? "grid" : "none";
+  /* search filter */
+  sw.querySelector("#productsSearch").addEventListener("input", (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    list.querySelectorAll(".product-item").forEach((el) => {
+      el.style.display = el.dataset.search.includes(q) ? "grid" : "none";
     });
   });
 
   return wrap;
 }
 
-function renderForm(component) {
+/* ── RENDER FORM ── */
+function renderForm(c) {
   const wrap = document.createElement("div");
-  wrap.className = "form-collapse";
+  wrap.className = "form-card";
 
-  wrap.innerHTML = \`
-    <div class="form-head">
-      <div class="form-icon" aria-hidden="true">👤</div>
-
-      <div class="form-copy">
-        <div class="form-title">Mis datos</div>
-        <div class="form-sub">Completa tu información</div>
-      </div>
-
-      <div></div>
+  const head = document.createElement("div");
+  head.className = "form-head";
+  head.innerHTML = \`
+    <div class="form-avatar">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5Zm0 2c-3.3 0-10 1.7-10 5v1h20v-1c0-3.3-6.7-5-10-5Z"/>
+      </svg>
     </div>
-
-    <div class="form-content">
-      <div class="form-divider"></div>
-      <div class="form-grid"></div>
+    <div>
+      <div class="form-head-title">Mis datos</div>
+      <div class="form-head-sub">Completa tu información de contacto</div>
     </div>
   \`;
+  wrap.appendChild(head);
 
-  const grid = wrap.querySelector(".form-grid");
+  const div = document.createElement("div");
+  div.className = "form-divider";
+  wrap.appendChild(div);
 
-  component.fields.forEach((field) => {
-    const fieldWrap = document.createElement("div");
-    fieldWrap.className = "field";
+  const body = document.createElement("div");
+  body.className = "form-body";
 
-    if (field.inputType === "textarea") {
-      fieldWrap.classList.add("full");
-    }
+  const grid = document.createElement("div");
+  grid.className = "form-grid";
 
-    const label = document.createElement("label");
-    label.className = "label";
-    label.textContent = field.label + (field.required ? " *" : "");
+  c.fields.forEach((field) => {
+    const fw = document.createElement("div");
+    fw.className = "field" + (field.inputType === "textarea" ? " full" : "");
 
-    const input =
-      field.inputType === "textarea"
-        ? document.createElement("textarea")
-        : document.createElement("input");
+    const lbl = document.createElement("label");
+    lbl.className = "label";
+    lbl.textContent = field.label + (field.required ? " *" : "");
 
-    if (field.inputType !== "textarea") {
-      input.type = field.inputType || "text";
-    }
+    const inp = field.inputType === "textarea"
+      ? document.createElement("textarea")
+      : document.createElement("input");
 
-    input.name = field.name;
-    input.dataset.kind = "form-field";
-    input.placeholder = field.placeholder || "";
+    if (field.inputType !== "textarea") inp.type = field.inputType || "text";
+    inp.name = field.name;
+    inp.dataset.kind = "form-field";
+    inp.placeholder = field.placeholder || "";
+    if (field.required) inp.required = true;
 
-    if (field.required) {
-      input.required = true;
-    }
-
-    fieldWrap.appendChild(label);
-    fieldWrap.appendChild(input);
-    grid.appendChild(fieldWrap);
+    fw.appendChild(lbl);
+    fw.appendChild(inp);
+    grid.appendChild(fw);
   });
 
+  body.appendChild(grid);
+  wrap.appendChild(body);
   return wrap;
 }
 
-function renderButton(component) {
+/* ── RENDER BUTTON ── */
+function renderButton(c) {
   const wrap = document.createElement("div");
   wrap.className = "submit-wrap";
 
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = "submit-btn";
-  btn.textContent = component.label || "Enviar solicitud";
-
-  btn.addEventListener("click", () => {
-    onSubmit(btn, component.label || "Enviar solicitud");
-  });
+  btn.textContent = c.label || "Enviar cotización";
+  btn.addEventListener("click", () => onSubmit(btn, c.label || "Enviar cotización"));
 
   wrap.appendChild(btn);
-
   return wrap;
 }
 
-function renderComponent(component) {
-  switch (component.type) {
-    case "form":
-      return renderForm(component);
-
-    case "products":
-      return renderProducts(component);
-
-    case "text":
-      return renderText(component);
-
-    case "button":
-      return renderButton(component);
-
-    default:
-      return document.createElement("div");
+function renderComponent(c) {
+  switch (c.type) {
+    case "text":     return renderText(c);
+    case "products": return renderProducts(c);
+    case "form":     return renderForm(c);
+    case "button":   return renderButton(c);
+    default:         return document.createElement("div");
   }
 }
 
-function getComponentPriority(component) {
-  switch (component.type) {
-    case "form":
-      return 1;
-
-    case "products":
-      return 2;
-
-    case "text":
-      return 3;
-
-    case "button":
-      return 4;
-
-    default:
-      return 9;
-  }
+function getPriority(c) {
+  return { form: 1, products: 2, text: 3, button: 4 }[c.type] ?? 9;
 }
 
+/* ── SUBMIT ── */
 async function onSubmit(btn, originalLabel) {
   const selectedItems = [];
-
-  document.querySelectorAll('[data-kind="product-quantity"]').forEach((input) => {
-    const quantity = Number(input.value || 0);
-    const productId = input.dataset.productId;
-
-    if (quantity > 0 && productId) {
-      selectedItems.push({ productId, quantity });
-    }
+  document.querySelectorAll('[data-kind="product-quantity"]').forEach((inp) => {
+    const qty = Number(inp.value || 0);
+    if (qty > 0 && inp.dataset.productId) selectedItems.push({ productId: inp.dataset.productId, quantity: qty });
   });
 
   if (selectedItems.length === 0) {
@@ -971,37 +912,29 @@ async function onSubmit(btn, originalLabel) {
   }
 
   const customer = {};
-  const formFields = document.querySelectorAll('[data-kind="form-field"]');
-
-  for (const field of formFields) {
-    const value = String(field.value || "").trim();
-
-    if (field.required && !value) {
+  for (const field of document.querySelectorAll('[data-kind="form-field"]')) {
+    const val = String(field.value || "").trim();
+    if (field.required && !val) {
       field.focus();
       showMessage("error", "Completa los campos obligatorios.");
       return;
     }
-
-    customer[field.name] = value;
+    customer[field.name] = val;
   }
 
   try {
     btn.disabled = true;
-    btn.textContent = "Enviando...";
+    btn.textContent = "Enviando…";
 
-    const response = await fetch("/api/runtime-links/" + token + "/submit", {
+    const res = await fetch("/api/runtime-links/" + token + "/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        customer,
-        items: selectedItems,
-        raw: { submittedAtClient: new Date().toISOString() }
-      })
+      body: JSON.stringify({ customer, items: selectedItems, raw: { submittedAtClient: new Date().toISOString() } })
     });
 
-    const data = await response.json();
+    const data = await res.json();
 
-    if (!response.ok) {
+    if (!res.ok) {
       showMessage("error", data.message || "No se pudo enviar la solicitud.");
       btn.disabled = false;
       btn.textContent = originalLabel;
@@ -1017,10 +950,8 @@ async function onSubmit(btn, originalLabel) {
 }
 
 [...config.components]
-  .sort((a, b) => getComponentPriority(a) - getComponentPriority(b))
-  .forEach((component) => {
-    contentEl.appendChild(renderComponent(component));
-  });
+  .sort((a, b) => getPriority(a) - getPriority(b))
+  .forEach((c) => contentEl.appendChild(renderComponent(c)));
 
 updateTotal();
 </script>
