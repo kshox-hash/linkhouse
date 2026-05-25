@@ -1,32 +1,44 @@
 import { Request, Response } from "express";
 import { BASE_URL } from "../config/env";
+
 import {
   buildChatbotConfig,
   buildCotizadorConfig,
   buildReservasConfig,
 } from "../builders/view-config.builder";
+
 import { buildRuntimeConfigFromSavedPdf } from "../modules/quotes/runtime-config-from-quote.builder";
 import { generateQuotePdf } from "../modules/quotes/quote.service";
+
 import {
   createRuntimeRecord,
   getRecordOrNull,
   runtimeLinks,
 } from "./runtime-links.service";
+
 import { renderViewHtml } from "../modules/quotes/quote-html.service";
+
 import { sendWhatsAppTextMessage } from "../whatsapp/whatsapp.service";
 import { findWhatsAppConfigByUserId } from "../whatsapp/whatsapp_configuration_repository";
+
 import {
   CreateRuntimeLinkBody,
   RuntimeLinkRecord,
   SubmitBody,
   ViewConfig,
 } from "./runtime";
+
 import { generateToken } from "../utils/token";
 
 import { buildMenuConfig } from "../modules/menus/menu.builder";
 import { renderMenuHtml } from "../modules/menus/menu-html.service";
 
 import { renderBookingHtml } from "../modules/appointments/appointments.screen";
+
+import {
+  buildCalendarSlots,
+  reserveCalendarSlot,
+} from "../modules/appointments/appointments.service";
 
 function validateConfig(config: unknown): config is ViewConfig {
   if (!config || typeof config !== "object") return false;
@@ -41,116 +53,162 @@ function validateConfig(config: unknown): config is ViewConfig {
 }
 
 export const runtimeController = {
-
   async openCalendar(
-  req: Request<{ userId: string; leadId: string }>,
-  res: Response
-) {
-  try {
-    const { userId, leadId } = req.params;
+    req: Request<{ userId: string; leadId: string }>,
+    res: Response
+  ) {
+    try {
+      const { userId, leadId } = req.params;
 
-    if (!userId || !leadId) {
-      return res.status(400).send("Parámetros inválidos.");
+      if (!userId || !leadId) {
+        return res.status(400).send("Parámetros inválidos.");
+      }
+
+      const config: ViewConfig = {
+        viewType: "appointments",
+        brand: "Automatiza Fácil",
+        title: "Reserva tu hora",
+        subtitle: "Elige el día y horario disponible para agendar tu atención.",
+        successMessage: "Tu hora fue reservada correctamente.",
+        userId,
+        leadId,
+        recipientPhone: leadId,
+        components: [],
+      };
+
+      const record = createRuntimeRecord(config, 30);
+
+      return res.redirect(`/calendar/${record.token}`);
+    } catch (error) {
+      console.error("Error abriendo calendario:", error);
+
+      return res.status(500).send(
+        `No se pudo abrir el calendario: ${
+          error instanceof Error ? error.message : "error desconocido"
+        }`
+      );
+    }
+  },
+
+  renderCalendarView(
+    req: Request<{ token: string }>,
+    res: Response
+  ) {
+    const { token } = req.params;
+
+    const record = getRecordOrNull(token);
+
+    if (!record) {
+      return res
+        .status(404)
+        .send("<h1>404</h1><p>Calendario no encontrado.</p>");
     }
 
-    const config: ViewConfig = {
-      viewType: "appointments",
-      brand: "amaru electric",
-      title: "Reserva tu hora",
-      subtitle: "Elige un día y horario disponible para agendar tu atención.",
-      successMessage: "Tu hora fue reservada correctamente.",
-      userId,
-      leadId,
-      components: [],
-    };
+    if (record.status === "expired") {
+      return res
+        .status(410)
+        .send("<h1>Calendario expirado</h1><p>Este enlace ya no está disponible.</p>");
+    }
 
-    const record = createRuntimeRecord(config, 30);
+    record.openedAt = Date.now();
 
-    return res.redirect(`/calendar/${record.token}`);
-  } catch (error) {
-    console.error("Error abriendo calendario:", error);
+    return res.send(renderBookingHtml(record));
+  },
 
-    return res.status(500).send(
-      `No se pudo abrir el calendario: ${
-        error instanceof Error ? error.message : "error desconocido"
-      }`
-    );
-  }
-},
+  async getCalendarSlots(
+    req: Request<{ token: string }>,
+    res: Response
+  ) {
+    try {
+      const { token } = req.params;
 
-renderCalendarView(
-  req: Request<{ token: string }>,
-  res: Response
-) {
-  const { token } = req.params;
+      const record = getRecordOrNull(token);
 
-  const record = getRecordOrNull(token);
+      if (!record) {
+        return res.status(404).json({
+          ok: false,
+          message: "Link no encontrado.",
+        });
+      }
 
-  if (!record) {
-    return res
-      .status(404)
-      .send("<h1>404</h1><p>Calendario no encontrado.</p>");
-  }
+      if (record.status === "expired") {
+        return res.status(410).json({
+          ok: false,
+          message: "Este enlace expiró.",
+        });
+      }
 
-  if (record.status === "expired") {
-    return res
-      .status(410)
-      .send("<h1>Calendario expirado</h1><p>Este enlace ya no está disponible.</p>");
-  }
+      const userId = String(record.config.userId || "");
 
-  record.openedAt = Date.now();
+      if (!userId) {
+        return res.status(400).json({
+          ok: false,
+          message: "Usuario inválido.",
+        });
+      }
 
-  return res.send(renderBookingHtml(record));
-},
+      const data = await buildCalendarSlots(userId);
+
+      return res.json(data);
+    } catch (error) {
+      console.error("Error obteniendo disponibilidad:", error);
+
+      return res.status(500).json({
+        ok: false,
+        message: "No se pudo cargar la disponibilidad.",
+      });
+    }
+  },
 
   async openMenu(
-  req: Request<{ userId: string; leadId: string }>,
-  res: Response
-) {
-  try {
-    const { userId, leadId } = req.params;
+    req: Request<{ userId: string; leadId: string }>,
+    res: Response
+  ) {
+    try {
+      const { userId, leadId } = req.params;
 
-    if (!userId || !leadId) {
-      return res.status(400).send("Parámetros inválidos.");
+      if (!userId || !leadId) {
+        return res.status(400).send("Parámetros inválidos.");
+      }
+
+      const config = await buildMenuConfig(userId, leadId);
+      const record = createRuntimeRecord(config, 30);
+
+      return res.redirect(`/menu/${record.token}`);
+    } catch (error) {
+      console.error("Error abriendo menú:", error);
+
+      return res.status(500).send(
+        `No se pudo abrir el menú: ${
+          error instanceof Error ? error.message : "error desconocido"
+        }`
+      );
+    }
+  },
+
+  renderMenuView(
+    req: Request<{ token: string }>,
+    res: Response
+  ) {
+    const { token } = req.params;
+
+    const record = getRecordOrNull(token);
+
+    if (!record) {
+      return res.status(404).send("<h1>404</h1><p>Menú no encontrado.</p>");
     }
 
-    const config = await buildMenuConfig(userId, leadId);
-    const record = createRuntimeRecord(config, 30);
+    if (record.status === "expired") {
+      return res
+        .status(410)
+        .send("<h1>Menú expirado</h1><p>Este enlace ya no está disponible.</p>");
+    }
 
-    return res.redirect(`/menu/${record.token}`);
-  } catch (error) {
-    console.error("Error abriendo menú:", error);
+    record.openedAt = Date.now();
 
-    return res.status(500).send(
-      `No se pudo abrir el menú: ${
-        error instanceof Error ? error.message : "error desconocido"
-      }`
-    );
-  }
-},
+    return res.send(renderMenuHtml(record));
+  },
 
-renderMenuView(
-  req: Request<{ token: string }>,
-  res: Response
-) {
-  const { token } = req.params;
-  const record = getRecordOrNull(token);
-
-  if (!record) {
-    return res.status(404).send("<h1>404</h1><p>Menú no encontrado.</p>");
-  }
-
-  if (record.status === "expired") {
-    return res
-      .status(410)
-      .send("<h1>Menú expirado</h1><p>Este enlace ya no está disponible.</p>");
-  }
-
-  record.openedAt = Date.now();
-
-  return res.send(renderMenuHtml(record));
-},
-  
   createRuntimeLink(
     req: Request<{}, {}, CreateRuntimeLinkBody>,
     res: Response
@@ -197,8 +255,12 @@ renderMenuView(
     });
   },
 
-  getRuntimeLink(req: Request<{ token: string }>, res: Response) {
+  getRuntimeLink(
+    req: Request<{ token: string }>,
+    res: Response
+  ) {
     const { token } = req.params;
+
     const record = getRecordOrNull(token);
 
     if (!record) {
@@ -231,6 +293,7 @@ renderMenuView(
   ) {
     try {
       const { token } = req.params;
+
       const record = getRecordOrNull(token);
 
       if (!record) {
@@ -248,6 +311,61 @@ renderMenuView(
       }
 
       const body = req.body || {};
+
+      if (record.config.viewType === "appointments") {
+        const customer = body.customer || {};
+        const slot = body.slot || {};
+
+        const userId = String(record.config.userId || "");
+        const leadId = String(record.config.leadId || "");
+
+        const customerName = String(customer.name || "").trim();
+        const customerPhone = String(customer.phone || "").trim();
+        const notes = String(customer.notes || "").trim();
+
+        const bookingDate = String(slot.date || "").trim();
+        const startTime = String(slot.time || "").trim();
+
+        if (!userId || !leadId) {
+          return res.status(400).json({
+            ok: false,
+            message: "Datos del calendario inválidos.",
+          });
+        }
+
+        if (!customerName || !customerPhone || !bookingDate || !startTime) {
+          return res.status(400).json({
+            ok: false,
+            message: "Faltan datos para reservar.",
+          });
+        }
+
+        const booking = await reserveCalendarSlot({
+          userId,
+          leadId,
+          customerName,
+          customerPhone,
+          notes,
+          bookingDate,
+          startTime,
+        });
+
+        record.submissions.push({
+          ...body,
+          booking,
+          submittedAt: new Date().toISOString(),
+        });
+
+        record.submittedAt = Date.now();
+        record.status = "used";
+
+        return res.json({
+          ok: true,
+          message: "Hora reservada correctamente.",
+          booking,
+        });
+      }
+
       const pdfResult = await generateQuotePdf(record, body);
       const pdfUrl = `${BASE_URL}/generated-pdfs/${pdfResult.fileName}`;
 
@@ -268,25 +386,17 @@ renderMenuView(
       const userId =
         typeof record.config.userId === "string" ? record.config.userId : "";
 
-      console.log("📌 CONFIG EN SUBMIT:", record.config);
-      console.log("📌 recipientPhone:", recipientPhone);
-      console.log("📌 userId:", userId);
-
       if (recipientPhone && userId) {
         try {
           const whatsappConfig = await findWhatsAppConfigByUserId(userId);
 
-          if (!whatsappConfig) {
-            console.warn("Usuario sin configuración WhatsApp:", userId);
-          } else if (
-            !whatsappConfig.phone_number_id ||
-            !whatsappConfig.whatsapp_access_token
+          if (
+            whatsappConfig?.phone_number_id &&
+            whatsappConfig?.whatsapp_access_token
           ) {
-            console.warn("Configuración WhatsApp incompleta:", userId);
-          } else {
             await sendWhatsAppTextMessage(
               recipientPhone,
-              `Tu cotización está lista:\n ${pdfUrl}`,
+              `Tu cotización está lista:\n${pdfUrl}`,
               whatsappConfig.phone_number_id,
               whatsappConfig.whatsapp_access_token
             );
@@ -302,17 +412,22 @@ renderMenuView(
         pdfUrl,
       });
     } catch (error) {
-      console.error("Error al generar PDF:", error);
+      console.error("Error submitRuntimeLink:", error);
 
       return res.status(500).json({
         ok: false,
-        message: "No se pudo generar el PDF.",
+        message:
+          error instanceof Error ? error.message : "Error interno del servidor.",
       });
     }
   },
 
-  getSubmissions(req: Request<{ token: string }>, res: Response) {
+  getSubmissions(
+    req: Request<{ token: string }>,
+    res: Response
+  ) {
     const { token } = req.params;
+
     const record = runtimeLinks.get(token);
 
     if (!record) {
@@ -337,8 +452,12 @@ renderMenuView(
     });
   },
 
-  renderRuntimeView(req: Request<{ token: string }>, res: Response) {
+  renderRuntimeView(
+    req: Request<{ token: string }>,
+    res: Response
+  ) {
     const { token } = req.params;
+
     const record = getRecordOrNull(token);
 
     if (!record) {
@@ -431,42 +550,31 @@ renderMenuView(
     });
   },
 
-  async openCotizador(req: Request<{ leadId: string }>, res: Response) {
+  async openCotizador(
+    req: Request<{ leadId: string }>,
+    res: Response
+  ) {
     try {
       const rawLeadId = req.params.leadId;
-
-      console.log("🔵 rawLeadId:", rawLeadId);
 
       if (rawLeadId.includes("__")) {
         const [userId, leadId] = rawLeadId.split("__");
 
-        console.log("🟢 userId:", userId);
-        console.log("🟢 leadId:", leadId);
-
         if (!userId || !leadId) {
-          console.log("🔴 payload inválido");
           return res.status(400).send("Parámetros inválidos.");
         }
 
         const config = await buildRuntimeConfigFromSavedPdf(userId, leadId);
-
-        console.log("🟡 config desde DB:");
-        console.log(JSON.stringify(config, null, 2));
-
         const record = createRuntimeRecord(config, 15);
-
-        console.log("🟣 token generado:", record.token);
 
         return res.redirect(`/v/${record.token}`);
       }
-
-      console.log("⚠️ usando builder viejo (NO DB)");
 
       const record = createRuntimeRecord(buildCotizadorConfig(rawLeadId), 15);
 
       return res.redirect(`/v/${record.token}`);
     } catch (error) {
-      console.error("🔥 Error abriendo cotizador:", error);
+      console.error("Error abriendo cotizador:", error);
 
       return res.status(500).send(
         `No se pudo abrir el cotizador: ${
@@ -476,13 +584,19 @@ renderMenuView(
     }
   },
 
-  openReservas(req: Request<{ leadId: string }>, res: Response) {
+  openReservas(
+    req: Request<{ leadId: string }>,
+    res: Response
+  ) {
     const record = createRuntimeRecord(buildReservasConfig(req.params.leadId), 15);
 
     return res.redirect(`/v/${record.token}`);
   },
 
-  openChatbot(req: Request<{ leadId: string }>, res: Response) {
+  openChatbot(
+    req: Request<{ leadId: string }>,
+    res: Response
+  ) {
     const record = createRuntimeRecord(buildChatbotConfig(req.params.leadId), 15);
 
     return res.redirect(`/v/${record.token}`);

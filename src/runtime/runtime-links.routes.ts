@@ -33,4 +33,11 @@ router.get(
   runtimeController.openCalendar
 );
 
+router.get(
+  "/api/runtime-links/:token/slots",
+  runtimeController.getCalendarSlots
+);
+
+
+
 export default router;

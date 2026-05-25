@@ -9,6 +9,7 @@ import { GENERATED_PDFS_DIR } from "./modules/quotes/quote.service";
 import generatePdfRouter from "./modules/quotes/quote-config.routes";
 import companyProfileRoutes from "./modules/profiles/company-profile.router";
 import loginRoutes from "./login/login.router";
+import calendarAdminRoutes from "./modules/appointments/appointments-admin.routes";
 
 
 const app = express();
@@ -20,6 +21,9 @@ app.use("/generated-pdfs", express.static(GENERATED_PDFS_DIR));
 app.use(runtimeLinksRouter);
 app.use(generatePdfRouter);
 app.use(companyProfileRoutes);
+
+
+app.use(calendarAdminRoutes);
 
 app.use("/auth", loginRoutes);
 

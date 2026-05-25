@@ -91,6 +91,10 @@ export type CreateRuntimeLinkBody = {
 export type SubmitBody = {
   customer?: Record<string, unknown>;
   items?: Array<{ productId: string; quantity: number }>;
+  slot?: {
+    date?: string;
+    time?: string;
+  };
   appointment?: Record<string, unknown>;
   raw?: Record<string, unknown>;
 };
