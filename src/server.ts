@@ -9,6 +9,7 @@ import generatePdfRouter from "./modules/quotes/quote-config.routes";
 import companyProfileRoutes from "./modules/profiles/company-profile.router";
 import loginRoutes from "./login/login.router";
 import calendarAdminRoutes from "./modules/appointments/appointments-admin.routes";
+import bookingConfirmationRoutes from "./runtime/booking/routes/bookingConfirmationRoutes";
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use(generatePdfRouter);
 app.use(companyProfileRoutes);
 app.use(calendarAdminRoutes);
 app.use("/auth", loginRoutes);
+app.use(bookingConfirmationRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en ${BASE_URL}`);

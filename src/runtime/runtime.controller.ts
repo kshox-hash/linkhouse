@@ -352,14 +352,17 @@ export const runtimeController = {
         const confirmationUrl =
           `${publicBaseUrl}/api/bookings/confirm/${confirmationToken}`;
 
-        const booking = await reserveCalendarSlot({
+       const booking = await reserveCalendarSlot({
           userId,
           leadId,
           customerName,
           customerPhone,
+          customerEmail,
           notes,
           bookingDate,
           startTime,
+          confirmationToken,
+          confirmationExpiresAt,
         });
 
         await sendBookingConfirmationEmail({

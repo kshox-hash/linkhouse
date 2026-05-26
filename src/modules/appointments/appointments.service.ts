@@ -44,15 +44,11 @@ function getChileWeekday(date: Date): number {
 export async function buildCalendarSlots(userId: string) {
   const settings = await getCalendarSettings(userId);
 
-  if (!settings) {
-    return { slots: [] };
-  }
+  if (!settings) return { slots: [] };
 
   const availability = await getCalendarAvailability(userId);
 
-  if (!availability.length) {
-    return { slots: [] };
-  }
+  if (!availability.length) return { slots: [] };
 
   const today = new Date();
   const maxDaysAhead = Number(settings.max_advance_days || 30);
@@ -142,9 +138,12 @@ export async function reserveCalendarSlot(input: {
   leadId?: string;
   customerName: string;
   customerPhone: string;
+  customerEmail: string;
   notes?: string;
   bookingDate: string;
   startTime: string;
+  confirmationToken: string;
+  confirmationExpiresAt: Date;
 }) {
   const settings = await getCalendarSettings(input.userId);
 
@@ -189,9 +188,12 @@ export async function reserveCalendarSlot(input: {
     userId: input.userId,
     customerName: input.customerName,
     customerPhone: input.customerPhone,
+    customerEmail: input.customerEmail,
     notes: input.notes,
     bookingDate: input.bookingDate,
     startTime: input.startTime,
     endTime,
+    confirmationToken: input.confirmationToken,
+    confirmationExpiresAt: input.confirmationExpiresAt,
   });
 }
