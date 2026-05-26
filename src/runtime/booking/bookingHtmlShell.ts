@@ -1,55 +1,12 @@
-import { RuntimeLinkRecord } from "../../runtime/runtime";
-import { escapeHtml } from "../../utils/html";
+import { BookingHtmlViewModel } from "./bookingTypes";
 
-/**
- * renderBookingHtml
- * ─────────────────
- * Genera la página web que el cliente ve al abrir el link de reserva
- * de horas. El flujo es:
- *
- *   1. La página carga los horarios disponibles desde la API:
- *      GET /api/runtime-links/:token/slots
- *      → { slots: { date: string, times: string[] }[] }
- *
- *   2. El cliente elige fecha y hora.
- *
- *   3. Rellena sus datos (nombre, teléfono, notas).
- *
- *   4. POST /api/runtime-links/:token/submit
- *      { customer: { name, phone, notes }, slot: { date, time } }
- *
- * La respuesta esperada de /slots sigue esta forma:
- * {
- *   slots: [
- *     { date: "2025-05-24", times: ["09:00", "09:30", "10:00"] },
- *     { date: "2025-05-25", times: ["11:00", "14:00"] }
- *   ]
- * }
- *
- * Si el backend devuelve `slots` vacío, se muestra un estado "sin
- * disponibilidad" en lugar de romper la UI.
- */
-export function renderBookingHtml(record: RuntimeLinkRecord): string {
-  const safeTitle = escapeHtml(record.config.title || "Reservar hora");
-  const safeBrand = escapeHtml(record.config.brand || "amaru electric");
-  const safeSubtitle = escapeHtml(
-    record.config.subtitle ||
-      "Elige el día y la hora que mejor se adapte a ti."
-  );
-  const safeSuccessMessage = escapeHtml(
-    record.config.successMessage || "¡Hora reservada correctamente!"
-  );
-
-  const expiresAtFormatted = new Date(record.expiresAt).toLocaleString(
-    "es-CL"
-  );
-
+export function renderBookingHtmlShell(vm: BookingHtmlViewModel): string {
   return `<!doctype html>
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>${safeTitle}</title>
+<title>${vm.title}</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -58,34 +15,32 @@ export function renderBookingHtml(record: RuntimeLinkRecord): string {
   rel="stylesheet"
 />
 
-
- 
+<style>
+${vm.styles}
+</style>
 </head>
 
 <body>
 <main class="shell">
 
-  <!-- TOPBAR -->
   <header class="topbar animate">
     <div class="logo-icon" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
       </svg>
     </div>
-    <span class="brand-name">${safeBrand}</span>
+    <span class="brand-name">${vm.brand}</span>
   </header>
 
-  <!-- HERO -->
   <section class="hero animate" style="animation-delay:.08s">
     <div class="hero-label">
       <span></span>
       Reserva online
     </div>
-    <h1 class="hero-title">${safeTitle}</h1>
-    <p class="hero-sub">${safeSubtitle}</p>
+    <h1 class="hero-title">${vm.title}</h1>
+    <p class="hero-sub">${vm.subtitle}</p>
   </section>
 
-  <!-- STEP TRACK -->
   <div class="steps-track animate" style="animation-delay:.14s" id="stepsTrack">
     <div class="step-node active" id="step-node-1">
       <div class="step-circle">1</div>
@@ -101,10 +56,8 @@ export function renderBookingHtml(record: RuntimeLinkRecord): string {
     </div>
   </div>
 
-  <!-- MAIN CONTENT (steps) -->
   <div id="mainContent" class="animate" style="animation-delay:.2s">
 
-    <!-- STEP 1: DATE -->
     <div id="stepDate">
       <p class="sec-title">Elige un día</p>
       <div class="card">
@@ -117,7 +70,6 @@ export function renderBookingHtml(record: RuntimeLinkRecord): string {
       </div>
     </div>
 
-    <!-- STEP 2: TIME (hidden initially) -->
     <div id="stepTime" style="display:none">
       <p class="sec-title" id="timeSectionTitle">Horarios disponibles</p>
       <div class="card">
@@ -125,14 +77,12 @@ export function renderBookingHtml(record: RuntimeLinkRecord): string {
           <div id="timesContainer" class="times-grid"></div>
         </div>
       </div>
-      <button class="summary-edit" id="btnBackDate" style="margin-bottom:14px; display:block; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--r-m); padding:10px 16px; color:var(--muted); font-size:12px; font-weight:700; cursor:pointer;">
+      <button class="summary-edit" id="btnBackDate">
         ← Cambiar fecha
       </button>
     </div>
 
-    <!-- STEP 3: FORM (hidden initially) -->
     <div id="stepForm" style="display:none">
-      <!-- Selection summary -->
       <div class="summary-bar" id="summaryBar">
         <div class="summary-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -162,6 +112,10 @@ export function renderBookingHtml(record: RuntimeLinkRecord): string {
               <input type="tel" id="inputPhone" placeholder="+56 9 1234 5678" autocomplete="tel" inputmode="tel" />
             </div>
             <div class="field">
+              <label class="label" for="inputEmail">Correo electrónico *</label>
+              <input type="email" id="inputEmail" placeholder="correo@ejemplo.cl" autocomplete="email" />
+            </div>
+            <div class="field">
               <label class="label" for="inputNotes">Notas adicionales</label>
               <textarea id="inputNotes" placeholder="Dirección, descripción del trabajo, observaciones…"></textarea>
             </div>
@@ -170,36 +124,40 @@ export function renderBookingHtml(record: RuntimeLinkRecord): string {
       </div>
 
       <button class="btn-submit" id="btnSubmit">
-        <span>Confirmar reserva</span>
+        <span>Solicitar reserva</span>
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
         </svg>
       </button>
     </div>
 
-  </div><!-- /mainContent -->
+  </div>
 
-  <!-- SUCCESS SCREEN -->
   <div class="success-screen animate" id="successScreen" style="animation-delay:.1s">
     <div class="success-icon-wrap">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <polyline points="20 6 9 17 4 12"/>
       </svg>
     </div>
-    <h2 class="success-title">¡Hora reservada!</h2>
-    <p class="success-sub" id="successSubText">${safeSuccessMessage}</p>
+    <h2 class="success-title">Solicitud recibida</h2>
+    <p class="success-sub" id="successSubText">
+      Te enviamos un correo para confirmar tu hora.
+    </p>
     <div class="success-detail" id="successDetail"></div>
   </div>
 
   <div id="messageEl" class="message"></div>
 
   <footer class="footer">
-    Enlace válido hasta <strong id="expiresAt">${escapeHtml(expiresAtFormatted)}</strong>
+    Enlace válido hasta <strong id="expiresAt">${vm.expiresAtFormatted}</strong>
     &nbsp;·&nbsp; Desarrollado por <strong>Automatiza Fácil</strong>
   </footer>
 
 </main>
 
+<script>
+${vm.script}
+</script>
 </body>
 </html>`;
 }
