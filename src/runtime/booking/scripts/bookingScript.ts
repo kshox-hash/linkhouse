@@ -4,7 +4,7 @@ import { bookingStateScript } from "./bookingState";
 import { bookingDomScript } from "./bookingDom";
 import { bookingHelpersScript } from "./bookingHelpers";
 import { bookingStepNavigationScript } from "./bookingStepNavigation";
-import { bookingDateRendererScript } from "./bookingDataRenderer";
+import { bookingDateRendererScript } from "./bookingDateRenderer";
 import { bookingTimeRendererScript } from "./bookingTimeRenderer";
 import { bookingSubmitHandlerScript } from "./bookingSubmitHandler";
 import { bookingSlotsLoaderScript } from "./bookingSlotsLoader";
