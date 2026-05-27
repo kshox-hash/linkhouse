@@ -5,26 +5,21 @@ export async function buildRuntimeConfigFromSavedPdf(
   userId: string,
   leadId: string
 ): Promise<ViewConfig> {
-  console.log("🔵 buildRuntimeConfigFromSavedPdf()");
-  console.log("userId:", userId);
-  console.log("leadId:", leadId);
+
 
   const saved = await getPdfConfig(userId);
 
-  console.log("🟡 resultado getPdfConfig:", JSON.stringify(saved, null, 2));
-
   if (!saved) {
-    console.log("🔴 NO existe config en DB para este userId");
     throw new Error("No existe configuración PDF para este usuario.");
   }
 
   if (!saved.products || saved.products.length === 0) {
-    console.log("⚠️ config existe pero SIN productos");
+    throw new Error("config existe pero SIN productos");
   }
 
   return {
     userId,
-    brand: saved.businessName || "Automatiza Fácil",
+    brand: saved.businessName || "",
     title: "Cotización Inteligente",
     subtitle:
       saved.businessSubtitle || "Selecciona productos y envía tu solicitud.",
@@ -48,14 +43,14 @@ export async function buildRuntimeConfigFromSavedPdf(
             label: "Nombre completo",
             inputType: "text",
             required: true,
-            placeholder: "Ej: Juan Pérez",
+            placeholder: "Ej: josé ignacio",
           },
           {
             name: "email",
             label: "Correo electrónico",
             inputType: "email",
             required: true,
-            placeholder: "Ej: juan@correo.com",
+            placeholder: "Ej: kshox@hotmail.com",
           },
           {
             name: "phone",

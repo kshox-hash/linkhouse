@@ -13,7 +13,9 @@ export async function getPdfConfig(
   const data = await findPdfConfigByUserId(userId);
 
   if (!data) {
-    return null;
+   throw new Error(
+  "[findPdfConfigByUserId] quote-config template does not exist"
+);
   }
 
   return {
