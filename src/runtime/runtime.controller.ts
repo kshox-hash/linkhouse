@@ -296,7 +296,6 @@ paymentPending(req: Request, res: Response) {
   `);
 },
 
-
 async mercadoPagoWebhook(req: Request, res: Response) {
   try {
     const topic = req.query.topic || req.query.type || req.body?.type;
@@ -324,12 +323,24 @@ async mercadoPagoWebhook(req: Request, res: Response) {
 
     console.log("Payment ID recibido:", paymentId);
 
+    const accessToken = process.env.ACCESS_TOKEN_MP;
+
+    if (!accessToken) {
+      throw new Error("ACCESS_TOKEN_MP no configurado");
+    }
+
     const paymentInfo = await getPaymentById(
-      process.env.ACCESS_TOKEN_MP!,
+      accessToken,
       String(paymentId)
     );
 
-    console.log("Pago Mercado Pago:", paymentInfo);
+    console.log("Pago Mercado Pago:", {
+      id: paymentInfo.id,
+      status: paymentInfo.status,
+      status_detail: paymentInfo.status_detail,
+      external_reference: paymentInfo.external_reference,
+      transaction_amount: paymentInfo.transaction_amount,
+    });
 
     if (paymentInfo.status !== "approved") {
       return res.status(200).json({
@@ -362,6 +373,7 @@ async mercadoPagoWebhook(req: Request, res: Response) {
         paid_at = NOW()
       WHERE booking_id = $2
         AND provider = 'mercadopago'
+        AND status <> 'paid'
       RETURNING *
       `,
       [String(paymentId), bookingId]
@@ -373,62 +385,66 @@ async mercadoPagoWebhook(req: Request, res: Response) {
       return res.status(200).json({
         ok: true,
         ignored: true,
-        message: "Pago aprobado, pero no existe payment interno.",
+        message: "Pago ya procesado anteriormente.",
         paymentId,
         bookingId,
       });
     }
 
     const bookingUpdateResult = await pool.query(
-  `
-  UPDATE calendar_bookings
-  SET
-    payment_status = 'paid',
-    paid_at = NOW(),
-    status = 'confirmed'
-  WHERE id = $1
-  RETURNING
-    id,
-    user_id,
-    client_name,
-    client_email,
-    client_phone,
-    booking_date,
-    start_time
-  `,
-  [bookingId]
-);
+      `
+      UPDATE calendar_bookings
+      SET
+        payment_status = 'paid',
+        paid_at = NOW(),
+        status = 'confirmed'
+      WHERE id = $1
+      RETURNING
+        id,
+        user_id,
+        client_name,
+        client_email,
+        client_phone,
+        booking_date,
+        start_time
+      `,
+      [bookingId]
+    );
 
-const confirmedBooking = bookingUpdateResult.rows[0];
+    const confirmedBooking = bookingUpdateResult.rows[0];
 
-if (confirmedBooking?.client_email) {
-  await sendBookingPaidEmail({
-    to: confirmedBooking.client_email,
-    customerName: confirmedBooking.client_name || "Cliente",
-    businessName: "Flowers",
-    bookingDate: new Date(confirmedBooking.booking_date).toLocaleDateString("es-CL"),
-    bookingTime: String(confirmedBooking.start_time).slice(0, 5),
-  });
-}
+    if (confirmedBooking?.client_email) {
+      await sendBookingPaidEmail({
+        to: confirmedBooking.client_email,
+        customerName: confirmedBooking.client_name || "Cliente",
+        businessName: "Flowers",
+        bookingDate: new Date(
+          confirmedBooking.booking_date
+        ).toLocaleDateString("es-CL"),
+        bookingTime: String(confirmedBooking.start_time).slice(0, 5),
+      });
+    }
 
-const businessEmail = process.env.BUSINESS_NOTIFICATION_EMAIL;
+    const businessEmail = process.env.BUSINESS_NOTIFICATION_EMAIL;
 
-if (businessEmail && confirmedBooking) {
-  await sendBusinessBookingPaidEmail({
-    to: businessEmail,
-    businessName: "Flowers",
-    customerName: confirmedBooking.client_name || "Cliente",
-    customerEmail: confirmedBooking.client_email || "",
-    customerPhone: confirmedBooking.client_phone || "",
-    bookingDate: new Date(confirmedBooking.booking_date).toLocaleDateString("es-CL"),
-    bookingTime: String(confirmedBooking.start_time).slice(0, 5),
-    amount: Number(payment.amount || 0),
-  });
-}
+    if (businessEmail && confirmedBooking) {
+      await sendBusinessBookingPaidEmail({
+        to: businessEmail,
+        businessName: "Flowers",
+        customerName: confirmedBooking.client_name || "Cliente",
+        customerEmail: confirmedBooking.client_email || "",
+        customerPhone: confirmedBooking.client_phone || "",
+        bookingDate: new Date(
+          confirmedBooking.booking_date
+        ).toLocaleDateString("es-CL"),
+        bookingTime: String(confirmedBooking.start_time).slice(0, 5),
+        amount: Number(payment.amount || 0),
+      });
+    }
 
     return res.status(200).json({
       ok: true,
-      message: "Pago aprobado y reserva actualizada.",
+      message: "Pago aprobado, reserva actualizada y correos enviados.",
       paymentId,
       bookingId,
       payment,
@@ -442,7 +458,6 @@ if (businessEmail && confirmedBooking) {
     });
   }
 },
-
 async createPublicBookingPayment(req: Request, res: Response) {
   try {
     const rawPublicSlug = req.params.publicSlug;
@@ -511,36 +526,38 @@ async createPublicBookingPayment(req: Request, res: Response) {
     }
 
     const existingPaymentResult = await pool.query(
-  `
-  SELECT
-    id,
-    status,
-    checkout_url,
-    amount,
-    provider,
-    created_at
-  FROM payments
-  WHERE booking_id = $1
-    AND user_id = $2
-    AND status = 'pending'
-    AND checkout_url IS NOT NULL
-  ORDER BY created_at DESC
-  LIMIT 1
-  `,
-  [booking.id, profile.user_id]
-);
+      `
+      SELECT
+        id,
+        status,
+        checkout_url,
+        preference_id,
+        amount,
+        provider,
+        created_at
+      FROM payments
+      WHERE booking_id = $1
+        AND user_id = $2
+        AND status = 'pending'
+        AND checkout_url IS NOT NULL
+      ORDER BY created_at DESC
+      LIMIT 1
+      `,
+      [booking.id, profile.user_id]
+    );
 
-const existingPayment = existingPaymentResult.rows[0];
+    const existingPayment = existingPaymentResult.rows[0];
 
-if (existingPayment?.checkout_url) {
-  return res.json({
-    ok: true,
-    message: "Ya existe un pago pendiente para esta reserva.",
-    checkoutUrl: existingPayment.checkout_url,
-    booking,
-    payment: existingPayment,
-  });
-}
+    if (existingPayment?.checkout_url) {
+      return res.json({
+        ok: true,
+        message: "Ya existe un pago pendiente para esta reserva.",
+        checkoutUrl: existingPayment.checkout_url,
+        preferenceId: existingPayment.preference_id,
+        booking,
+        payment: existingPayment,
+      });
+    }
 
     const amount = Number(booking.payment_amount || 3000);
 
@@ -550,23 +567,6 @@ if (existingPayment?.checkout_url) {
         message: "Monto inválido para el pago.",
       });
     }
-
-    const paymentResult = await pool.query(
-      `
-      INSERT INTO payments (
-        user_id,
-        booking_id,
-        amount,
-        status,
-        provider
-      )
-      VALUES ($1, $2, $3, 'pending', 'mercadopago')
-      RETURNING *
-      `,
-      [profile.user_id, booking.id, amount]
-    );
-
-    const payment = paymentResult.rows[0];
 
     const connectionResult = await pool.query(
       `
@@ -588,6 +588,23 @@ if (existingPayment?.checkout_url) {
       });
     }
 
+    const paymentResult = await pool.query(
+      `
+      INSERT INTO payments (
+        user_id,
+        booking_id,
+        amount,
+        status,
+        provider
+      )
+      VALUES ($1, $2, $3, 'pending', 'mercadopago')
+      RETURNING *
+      `,
+      [profile.user_id, booking.id, amount]
+    );
+
+    const payment = paymentResult.rows[0];
+
     const mercadoPagoPreference = await createPreference({
       accessToken: connection.access_token,
       bookingId: booking.id,
@@ -597,7 +614,7 @@ if (existingPayment?.checkout_url) {
 
     const updatedPaymentResult = await pool.query(
       `
-    UPDATE payments
+      UPDATE payments
       SET
         checkout_url = $1,
         preference_id = $2
@@ -605,10 +622,10 @@ if (existingPayment?.checkout_url) {
       RETURNING *
       `,
       [
-  mercadoPagoPreference.checkoutUrl,
-  mercadoPagoPreference.preferenceId,
-  payment.id,
-]
+        mercadoPagoPreference.checkoutUrl,
+        mercadoPagoPreference.preferenceId,
+        payment.id,
+      ]
     );
 
     const updatedPayment = updatedPaymentResult.rows[0];

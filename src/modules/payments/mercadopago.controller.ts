@@ -8,7 +8,7 @@ export const paymentsController = {
         const accessToken = process.env.ACCESS_TOKEN_MP;
 
         if (!accessToken) {
-        throw new Error("ACCESS_TOKEN_MP no configurado");
+        throw new Error("ACCESS_TOKEN no configurado");
         }
 
         const payment = await createPreference({
