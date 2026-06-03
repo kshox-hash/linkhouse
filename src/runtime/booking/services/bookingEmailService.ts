@@ -4,8 +4,6 @@ import {
   renderConfirmationEmailTemplate,
 } from "../templates/confirmationEmailTemplate";
 
-
-
 type SendBookingConfirmationEmailInput = {
   to: string;
   customerName: string;
@@ -14,16 +12,26 @@ type SendBookingConfirmationEmailInput = {
   confirmationUrl: string;
 };
 
+function createTransporter() {
+  if (
+    !process.env.SMTP_HOST ||
+    !process.env.SMTP_USER ||
+    !process.env.SMTP_PASS ||
+    !process.env.SMTP_FROM_EMAIL
+  ) {
+    throw new Error("Faltan variables SMTP");
+  }
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: Number(process.env.SMTP_PORT || 587  || 465),
-  secure: process.env.SMTP_SECURE === "true",
-  auth: {
-    user: "automatizafacil.chile@gmail.com",
-    pass: "vguf xwsg qnmn chjn",
-  },
-});
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: process.env.SMTP_SECURE === "true",
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+}
 
 export async function sendBookingConfirmationEmail(
   input: SendBookingConfirmationEmailInput
@@ -35,8 +43,10 @@ export async function sendBookingConfirmationEmail(
     confirmationUrl: input.confirmationUrl,
   });
 
+  const transporter = createTransporter();
+
   await transporter.sendMail({
-    from: `"Automatiza Fácil" <automatizafacil.chile@gmail.com>`,
+    from: `"Automatiza Fácil" <${process.env.SMTP_FROM_EMAIL}>`,
     to: input.to,
     subject: "Confirma tu reserva",
     html,

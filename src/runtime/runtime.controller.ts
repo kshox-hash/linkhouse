@@ -1119,192 +1119,166 @@ async openPublicPortal(req: Request, res: Response) {
     });
   },
 
-  async submitRuntimeLink(
-    req: Request<{ token: string }, {}, SubmitBody>,
-    res: Response
-  ) {
-    try {
-      const { token } = req.params;
-
-      const record = getRecordOrNull(token);
-
-      if (!record) {
-        return res.status(404).json({
-          ok: false,
-          message: "Link no encontrado.",
-        });
-      }
-
-      if (record.status === "expired") {
-        return res.status(410).json({
-          ok: false,
-          message: "Este enlace expiró.",
-        });
-      }
-
-      const body = req.body || {};
-
-      if (record.config.viewType === "appointments") {
-        const customer = body.customer || {};
-        const slot = body.slot || {};
-
-        const userId = String(record.config.userId || "");
-        const leadId = String(record.config.leadId || "");
-
-        const customerName = String(customer.name || "").trim();
-        const customerPhone = String(customer.phone || "").trim();
-        const customerEmail = String(customer.email || "").trim();
-        const notes = String(customer.notes || "").trim();
-
-        const bookingDate = String(slot.date || "").trim();
-        const startTime = String(slot.time || "").trim();
-
-        if (!userId || !leadId) {
-          return res.status(400).json({
-            ok: false,
-            message: "Datos del calendario inválidos.",
-          });
-        }
-
-        if (
-          !customerName ||
-          !customerPhone ||
-          !customerEmail ||
-          !bookingDate ||
-          !startTime
-        ) {
-          return res.status(400).json({
-            ok: false,
-            message: "Faltan datos para reservar.",
-          });
-        }
-
-        const confirmationToken = createBookingConfirmationToken();
-        const confirmationExpiresAt = createBookingConfirmationExpiresAt();
-
-        const publicBaseUrl =
-          process.env.PUBLIC_BASE_URL || BASE_URL;
-
-        const confirmationUrl =
-          `${publicBaseUrl}/api/bookings/confirm/${confirmationToken}`;
-
-       const booking = await reserveCalendarSlot({
-          userId,
-          leadId,
-          customerName,
-          customerPhone,
-          customerEmail,
-          notes,
-          bookingDate,
-          startTime,
-          confirmationToken,
-          confirmationExpiresAt,
-        });
-
-        await sendBookingConfirmationEmail({
-          to: customerEmail,
-          customerName,
-          bookingDate,
-          bookingTime: startTime,
-          confirmationUrl,
-        });
-
-        record.submissions.push({
-          ...body,
-          booking,
-          confirmationToken,
-          confirmationExpiresAt: confirmationExpiresAt.toISOString(),
-          confirmationUrl,
-          emailSentAt: new Date().toISOString(),
-          status: "pending_email_confirmation",
-          submittedAt: new Date().toISOString(),
-        });
-
-        record.submittedAt = Date.now();
-        record.status = "used";
-
-        return res.json({
-          ok: true,
-          status: "pending_email_confirmation",
-          message: "Te enviamos un correo para confirmar tu hora.",
-          booking,
-        });
-      }
-
-const pdfResult = await generateQuotePdf(record, body);
-const pdfUrl = `${BASE_URL}/generated-pdfs/${pdfResult.fileName}`;
-
-record.submissions.push({
-  ...body,
-  submittedAt: new Date().toISOString(),
-  pdfUrl,
-});
-
-record.submittedAt = Date.now();
-record.status = "used";
-
-const recipientPhone =
-  typeof record.config.recipientPhone === "string"
-    ? record.config.recipientPhone
-    : "";
-
-const userId =
-  typeof record.config.userId === "string"
-    ? record.config.userId
-    : "";
-
-const customerName =
-  typeof body.customer?.name === "string"
-    ? body.customer.name
-    : "Cliente";
-
-// NOTIFICACIÓN
-if (userId) {
-  await notificationService.quoteCreated({
-    userId,
-    quoteId: token,
-    customerName,
-  });
-}
-
-if (recipientPhone && userId) {
+async submitRuntimeLink(
+  req: Request<{ token: string }, {}, SubmitBody>,
+  res: Response
+) {
   try {
-    const whatsappConfig = await findWhatsAppConfigByUserId(userId);
+    const { token } = req.params;
 
-    if (
-      whatsappConfig?.phone_number_id &&
-      whatsappConfig?.whatsapp_access_token
-    ) {
-      await sendWhatsAppTextMessage(
-        recipientPhone,
-        `Tu cotización está lista:\n${pdfUrl}`,
-        whatsappConfig.phone_number_id,
-        whatsappConfig.whatsapp_access_token
-      );
-    }
-  } catch (whatsAppError) {
-    console.error(
-      "Error enviando link a WhatsApp:",
-      whatsAppError
-    );
-  }
-}
+    const record = getRecordOrNull(token);
 
-return res.json({
-  ok: true,
-  message: "Tu cotización está lista",
-  pdfUrl,
-});
-    } catch (error) {
-      console.error("Error submitRuntimeLink:", error);
-
-      return res.status(500).json({
+    if (!record) {
+      return res.status(404).json({
         ok: false,
-        message:
-          error instanceof Error ? error.message : "Error interno del servidor.",
+        message: "Link no encontrado.",
       });
     }
-  },
+
+    if (record.status === "expired") {
+      return res.status(410).json({
+        ok: false,
+        message: "Este enlace expiró.",
+      });
+    }
+
+    const body = req.body || {};
+
+    if (record.config.viewType === "appointments") {
+      const customer = body.customer || {};
+      const slot = body.slot || {};
+
+      const userId = String(record.config.userId || "");
+      const leadId = String(record.config.leadId || "");
+
+      const customerName = String(customer.name || "").trim();
+      const customerPhone = String(customer.phone || "").trim();
+      const customerEmail = String(customer.email || "").trim();
+      const notes = String(customer.notes || "").trim();
+
+      const bookingDate = String(slot.date || "").trim();
+      const startTime = String(slot.time || "").trim();
+
+      if (!userId || !leadId) {
+        return res.status(400).json({
+          ok: false,
+          message: "Datos del calendario inválidos.",
+        });
+      }
+
+      if (
+        !customerName ||
+        !customerPhone ||
+        !customerEmail ||
+        !bookingDate ||
+        !startTime
+      ) {
+        return res.status(400).json({
+          ok: false,
+          message: "Faltan datos para reservar.",
+        });
+      }
+
+      const confirmationToken = createBookingConfirmationToken();
+      const confirmationExpiresAt = createBookingConfirmationExpiresAt();
+
+      const booking = await reserveCalendarSlot({
+        userId,
+        leadId,
+        customerName,
+        customerPhone,
+        customerEmail,
+        notes,
+        bookingDate,
+        startTime,
+        confirmationToken,
+        confirmationExpiresAt,
+      });
+
+      record.submissions.push({
+        ...body,
+        booking,
+        status: "pending_payment",
+        submittedAt: new Date().toISOString(),
+      });
+
+      record.submittedAt = Date.now();
+      record.status = "used";
+
+      return res.json({
+        ok: true,
+        status: "pending_payment",
+        message: "Reserva creada. Continúa con el pago.",
+        booking,
+      });
+    }
+
+    const pdfResult = await generateQuotePdf(record, body);
+    const pdfUrl = `${BASE_URL}/generated-pdfs/${pdfResult.fileName}`;
+
+    record.submissions.push({
+      ...body,
+      submittedAt: new Date().toISOString(),
+      pdfUrl,
+    });
+
+    record.submittedAt = Date.now();
+    record.status = "used";
+
+    const recipientPhone =
+      typeof record.config.recipientPhone === "string"
+        ? record.config.recipientPhone
+        : "";
+
+    const userId =
+      typeof record.config.userId === "string" ? record.config.userId : "";
+
+    const customerName =
+      typeof body.customer?.name === "string" ? body.customer.name : "Cliente";
+
+    if (userId) {
+      await notificationService.quoteCreated({
+        userId,
+        quoteId: token,
+        customerName,
+      });
+    }
+
+    if (recipientPhone && userId) {
+      try {
+        const whatsappConfig = await findWhatsAppConfigByUserId(userId);
+
+        if (
+          whatsappConfig?.phone_number_id &&
+          whatsappConfig?.whatsapp_access_token
+        ) {
+          await sendWhatsAppTextMessage(
+            recipientPhone,
+            `Tu cotización está lista:\n${pdfUrl}`,
+            whatsappConfig.phone_number_id,
+            whatsappConfig.whatsapp_access_token
+          );
+        }
+      } catch (whatsAppError) {
+        console.error("Error enviando link a WhatsApp:", whatsAppError);
+      }
+    }
+
+    return res.json({
+      ok: true,
+      message: "Tu cotización está lista",
+      pdfUrl,
+    });
+  } catch (error) {
+    console.error("Error submitRuntimeLink:", error);
+
+    return res.status(500).json({
+      ok: false,
+      message:
+        error instanceof Error ? error.message : "Error interno del servidor.",
+    });
+  }
+},
 
   getSubmissions(req: Request<{ token: string }>, res: Response) {
     const { token } = req.params;

@@ -43,7 +43,10 @@ export type CalendarBookingRow = {
   client_email: string | null;
   client_phone: string | null;
   status: string;
+  payment_status?: string | null;
+  payment_amount?: number | null;
   notes: string | null;
+  expires_at?: Date | null;
   confirmation_token?: string | null;
   confirmation_expires_at?: Date | null;
   confirmation_email_sent_at?: Date | null;
@@ -110,7 +113,13 @@ export async function getCalendarBookings(
     FROM calendar_bookings
     WHERE user_id = $1
       AND booking_date BETWEEN $2 AND $3
-      AND status <> 'cancelled'
+      AND (
+        status = 'confirmed'
+        OR (
+          status = 'pending_payment'
+          AND expires_at > NOW()
+        )
+      )
     ORDER BY booking_date ASC, start_time ASC
     `,
     [userId, from, to]
@@ -142,17 +151,23 @@ export async function createCalendarBooking(input: {
       client_email,
       client_phone,
       status,
+      payment_status,
       notes,
       confirmation_token,
       confirmation_expires_at,
       confirmation_email_sent_at,
+      expires_at,
       created_at,
       updated_at
     )
     VALUES (
-      $1,$2,$3,$4,$5,$6,$7,
-      'pending_email_confirmation',
-      $8,$9,$10,NOW(),NOW(),NOW()
+      $1, $2, $3, $4, $5, $6, $7,
+      'pending_payment',
+      'unpaid',
+      $8, $9, $10, NOW(),
+      NOW() + INTERVAL '10 minutes',
+      NOW(),
+      NOW()
     )
     RETURNING *
     `,
@@ -185,11 +200,12 @@ export async function bookingExists(input: {
     WHERE user_id = $1
       AND booking_date = $2
       AND start_time = $3
-      AND status IN (
-        'pending',
-        'pending_email_confirmation',
-        'email_confirmed',
-        'confirmed'
+      AND (
+        status = 'confirmed'
+        OR (
+          status = 'pending_payment'
+          AND expires_at > NOW()
+        )
       )
     LIMIT 1
     `,
