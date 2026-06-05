@@ -14,7 +14,8 @@ import loginRoutes from "./login/login.router";
 import calendarAdminRoutes from "./modules/appointments/appointments-admin.routes";
 import bookingConfirmationRoutes from "./runtime/booking/routes/bookingConfirmationRoutes";
 import notificationRoutes from "./modules/notifications/notification.routes";
-
+import passport from "passport";
+import "./login/strategies/google.strategy";
 
 
 
@@ -33,7 +34,7 @@ app.options(/.*/, cors());
 app.use(express.json({ limit: "1mb" }));
 
 app.use("/generated-pdfs", express.static(GENERATED_PDFS_DIR));
-
+app.use(passport.initialize());
 app.use(runtimeLinksRouter);
 app.use(generatePdfRouter);
 app.use(companyProfileRoutes);
@@ -41,6 +42,7 @@ app.use(calendarAdminRoutes);
 app.use("/auth", loginRoutes);
 app.use(bookingConfirmationRoutes);
 app.use("/api", notificationRoutes);
+
 
 
 app.listen(PORT, () => {

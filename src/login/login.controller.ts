@@ -1,6 +1,33 @@
 import { Request, Response } from "express";
 import { loginUser } from "./login.service";
 
+import passport from "passport";
+
+export function googleStartController(req: Request, res: Response, next: any) {
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    session: false,
+  })(req, res, next);
+}
+
+export async function googleCallbackController(req: Request, res: Response) {
+  const authUser = req.user as any;
+
+  if (!authUser?.token || !authUser?.user) {
+    return res.status(401).send("No se pudo iniciar sesión");
+  }
+
+  const deeplinkBase = process.env.APP_DEEPLINK_URL || "automatiza://auth";
+
+  const redirectUrl =
+    `${deeplinkBase}` +
+    `?token=${encodeURIComponent(authUser.token)}` +
+    `&userId=${encodeURIComponent(authUser.user.id)}` +
+    `&email=${encodeURIComponent(authUser.user.email)}`;
+
+  return res.redirect(redirectUrl);
+}
+
 
 export async function loginController(req: Request, res: Response) {
   try {
