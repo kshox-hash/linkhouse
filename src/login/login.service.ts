@@ -22,12 +22,7 @@ export async function loginUser(email: string, password: string) {
 
   const user = result.rows[0];
 
-  console.log("PASSWORD DB:", user.password);
-  console.log("PASSWORD INPUT:", password);
-
   const isValid = await bcrypt.compare(password, user.password);
-
-  console.log("MATCH:", isValid);
 
   if (!isValid) {
     throw new Error("Credenciales inválidas");
@@ -54,14 +49,14 @@ export async function loginUser(email: string, password: string) {
 }
 
 
-
-
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export async function loginWithGoogle(idToken: string) {
+
+  //get 
   const ticket = await googleClient.verifyIdToken({
     idToken,
-    audience: "681122732716-k229s2a7gkvdd4q0vmn4i89kg1d52pfu.apps.googleusercontent.com",
+    audience: process.env.GOOGLE_CLIENT_ID,
   });
 
   const payload = ticket.getPayload();
