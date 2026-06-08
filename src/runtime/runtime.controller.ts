@@ -14,7 +14,7 @@ import {
   createRuntimeRecord,
   getRecordOrNull,
   runtimeLinks,
-} from "./runtime-links.service";
+} from "./runtime.service";
 
 import { renderViewHtml } from "../modules/quotes/quote-html.service";
 
@@ -26,7 +26,7 @@ import {
   RuntimeLinkRecord,
   SubmitBody,
   ViewConfig,
-} from "./runtime";
+} from "./runtime.types";
 
 import { generateToken } from "../utils/token";
 
