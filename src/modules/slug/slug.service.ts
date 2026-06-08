@@ -1,19 +1,27 @@
+import {
+  insertSlugRepository,
+  findSlugByUserIdRepository,
+} from "./slug.repository";
 
-import { insertSlugRepository } from "./slug.repository";
-import { insertSlugSchema, InsertSlugDto } from "./slug.schema";
+export async function getSlugByUserIdService(userId: string) {
+  return findSlugByUserIdRepository(userId);
+}
 
-export async function insertSlugService(
-    params : {
-        userId : string,
-        slug : string,
-        
-    }) :Promise<void> {
+export async function insertSlugService({
+  userId,
+  slug,
+}: {
+  userId: string;
+  slug: string;
+}) {
+  const existingSlug = await findSlugByUserIdRepository(userId);
 
-        const validatedData = insertSlugSchema.parse({
-            slug : params.slug
-        })
-       return await insertSlugRepository({
-        userId : params.userId,
-        slug : validatedData.slug
-       });
-    }
+  if (existingSlug) {
+    throw new Error("Este usuario ya tiene un slug configurado");
+  }
+
+  return insertSlugRepository({
+    userId,
+    slug,
+  });
+}

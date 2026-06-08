@@ -2,6 +2,22 @@
 import DB from "../../db/db_configuration";
 
 
+export async function findSlugByUserIdRepository(userId: string) {
+  const pool = DB.getPool();
+
+  const result = await pool.query(
+    `
+    SELECT *
+    FROM slugs
+    WHERE user_id = $1
+    LIMIT 1
+    `,
+    [userId]
+  );
+
+  return result.rows[0] ?? null;
+}
+
  export async function insertSlugRepository(
     params : {
         userId : string,
