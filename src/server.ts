@@ -16,6 +16,7 @@ import bookingConfirmationRoutes from "./runtime/booking/routes/bookingConfirmat
 import notificationRoutes from "./modules/notifications/notification.routes";
 import passport from "passport";
 import "./login/strategies/google.strategy";
+import slugRoutes from "./modules/slug/slug.router";
 import { errorMiddleware } from './middlewares/error_middleware';
 
 
@@ -43,6 +44,7 @@ app.use(calendarAdminRoutes);
 app.use("/auth", loginRoutes);
 app.use(bookingConfirmationRoutes);
 app.use("/api", notificationRoutes);
+app.use("/api/slugs", slugRoutes);
 
 app.use(errorMiddleware);
 
