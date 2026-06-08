@@ -59,6 +59,7 @@ const getByPublicSlug = async (
   return result.rows[0] ?? null;
 };
 
+
 const upsert = async (
   input: CompanyProfileInput,
 ): Promise<CompanyProfile> => {

@@ -4,7 +4,7 @@ dotenv.config();
 import express from "express";
 import cors from "cors";
 
-import runtimeLinksRouter from "./runtime/runtime-links.routes";
+import runtimeLinksRouter from "./runtime/runtime.routes";
 import { PORT, BASE_URL } from "./config/env";
 import { GENERATED_PDFS_DIR } from "./modules/quotes/quote.service";
 
@@ -16,6 +16,7 @@ import bookingConfirmationRoutes from "./runtime/booking/routes/bookingConfirmat
 import notificationRoutes from "./modules/notifications/notification.routes";
 import passport from "passport";
 import "./login/strategies/google.strategy";
+import { errorMiddleware } from './middlewares/error_middleware';
 
 
 
@@ -42,6 +43,8 @@ app.use(calendarAdminRoutes);
 app.use("/auth", loginRoutes);
 app.use(bookingConfirmationRoutes);
 app.use("/api", notificationRoutes);
+
+app.use(errorMiddleware);
 
 
 
