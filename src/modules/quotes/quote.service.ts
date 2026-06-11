@@ -259,4 +259,4 @@ export function generateQuotePdf(input: QuotePdfInput) {
       reject(error);
     }
   });
-}
+} 
