@@ -13,7 +13,7 @@ import { getProductsRepository } from "../../quotes/products/products.repository
 
 type Params = {
   publicSlug: string;
-};
+}; 
 
 type ConfiguractionViewType = {
     title : string,
