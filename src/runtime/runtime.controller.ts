@@ -1120,7 +1120,6 @@ async submitRuntimeLink(
     if (userId) {
       await notificationService.quoteCreated({
         userId,
-        quoteId: token,
         customerName,
       });
     }
