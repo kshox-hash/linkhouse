@@ -18,27 +18,6 @@ type Params = {
   publicSlug: string;
 }; 
 
-type ConfiguractionViewType = {
-    title : string,
-    subTitle : string,
-    modulesShop? : [],
-    businessName : string,
-
-}
-
-type ConfigurationModuleView = {
-    title : string,
-    description : string,
-    icon : IconsType,
-    enabled : true,
-    sortOrder : 1,
-} 
-
-type IconsType = {
-    calendario : '📅',
-    phone : '📅',
-    resevas : '📅',
-}
 
 export const publicPortalController = {
 
@@ -57,6 +36,8 @@ export const publicPortalController = {
       if (!slug) {
         return res.status(404).send("Negocio no encontrado");
       }
+
+      statsService.increment(slug.user_id, "open_quote_screen").catch(() => {});
 
       const products = await getProductsRepository(slug.user_id);
 
@@ -96,11 +77,15 @@ export const publicPortalController = {
 
       //GET MODULES SERVICES ENABLED
       const modules = await findEnabledModulesByUserId(slug.user_id);
-      //crear url
+      const moduleRoutes: Record<string, string> = {
+        cotizador: `/shop/${slug.public_slug}/cotizador`,
+        reservas:  `/open/${slug.public_slug}/reservas`,
+      };
+
       const modulesWithUrl = modules.map((m) => ({
-      ...m,
-      url: `/shop/${slug.public_slug}/${m.code}` 
-        }));
+        ...m,
+        url: moduleRoutes[m.code] ?? `/shop/${slug.public_slug}/${m.code}`,
+      }));
 
       //INSER PARAMS INTO VIEW
       const mainMenuHtml = menuPublicHtml({

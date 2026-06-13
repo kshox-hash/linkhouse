@@ -7,6 +7,9 @@ import { generateQuotePdf } from "../quotes/quote.service";
 import { sendQuoteEmail } from "../quotes/quote-email.service";
 
 import { notificationService } from "../notifications/notification.service";
+import { StatisticsService } from "../stadistics/stadistics.service";
+
+const statsService = new StatisticsService();
 type SubmitQuoteBody = {
   customer: {
     name: string;
@@ -139,6 +142,8 @@ if (customer.email?.trim()) {
   quoteId: `${publicSlug}-${Date.now()}`,
   customerName: customer.name,
 });
+
+statsService.increment(slug.user_id, "quote_submitted").catch(() => {});
 
 return res.status(200).json({
   ok: true,
