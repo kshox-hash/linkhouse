@@ -21,6 +21,7 @@ import { errorMiddleware } from "./middlewares/error_middleware";
 import publicPortalRouter from "./modules/menus/public-portal/public-portal.routes";
 import productsRouter from "./modules/quotes/quotes.router";
 import statisticsRouter from "./modules/stadistics/stadistics.router";
+import quoteSendRouter from "./modules/quotes/quote-send.routes";
 import DB from "./db/db_configuration";
 
 // ─── Proceso ────────────────────────────────────────────────────────────────
@@ -90,6 +91,7 @@ app.use("/api", slugRoutes);
 app.use(publicPortalRouter);
 app.use("/products", productsRouter);
 app.use("/api", statisticsRouter);
+app.use("/api", quoteSendRouter);
 app.use(errorMiddleware);
 
 // ─── Arranque ─────────────────────────────────────────────────────────────────
