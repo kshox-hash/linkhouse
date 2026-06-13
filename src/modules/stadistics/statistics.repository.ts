@@ -25,16 +25,25 @@ export class StatisticsRepository {
     try {
       await client.query("BEGIN");
 
-      // 1) Igual que tu código original: suma 1 al total acumulado
-      await client.query(
+      // 1) Suma 1 al total acumulado usando IS NOT DISTINCT FROM para manejar NULLs
+      const updated = await client.query(
         `
-        INSERT INTO statistics (user_id, module_id, metric, count, updated_at)
-        VALUES ($1, $2, $3, 1, NOW())
-        ON CONFLICT (user_id, module_id, metric)
-        DO UPDATE SET count = statistics.count + 1, updated_at = NOW()
+        UPDATE statistics
+        SET count = count + 1, updated_at = NOW()
+        WHERE user_id = $1 AND metric = $3 AND module_id IS NOT DISTINCT FROM $2
         `,
-        [userId, moduleId ?? '', metric]
+        [userId, moduleId ?? null, metric]
       );
+
+      if ((updated.rowCount ?? 0) === 0) {
+        await client.query(
+          `
+          INSERT INTO statistics (user_id, module_id, metric, count, updated_at)
+          VALUES ($1, $2, $3, 1, NOW())
+          `,
+          [userId, moduleId ?? null, metric]
+        );
+      }
 
       // 2) NUEVO: suma 1 al contador de HOY en statistics_daily
       //    COALESCE(module_id, '') convierte NULL en '' para que
@@ -166,7 +175,7 @@ export class StatisticsRepository {
         AND metric = $2
         AND module_id IS NOT DISTINCT FROM $3
       `,
-      [userId, metric, moduleId ?? '']
+      [userId, metric, moduleId ?? null]
     );
   }
 }
