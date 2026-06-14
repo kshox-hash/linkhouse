@@ -81,6 +81,50 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 .ai-chip:active{transform:scale(.95)}
 .ai-chip.used{opacity:.28;pointer-events:none}
 
+/* CHAT — formulario inline */
+.chat-form{display:flex;flex-direction:column;gap:9px;margin-top:13px}
+.chat-form-input{background:var(--s3);border:1px solid var(--border);border-radius:11px;padding:12px 14px;color:var(--text);font-size:14.5px;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .18s;-webkit-appearance:none}
+.chat-form-input:focus{border-color:rgba(91,156,246,.5);box-shadow:0 0 0 3px rgba(91,156,246,.07)}
+.chat-form-input:disabled{opacity:.45}
+.chat-form-input::placeholder{color:var(--muted)}
+.chat-form-error{font-size:12.5px;color:#f87171;display:none;padding:2px 2px 0}
+.chat-form-btn{background:linear-gradient(135deg,var(--primary),#4a8de0);border:none;border-radius:12px;padding:13px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.01em;transition:opacity .15s,transform .12s;-webkit-tap-highlight-color:transparent}
+.chat-form-btn:hover{opacity:.88}
+.chat-form-btn:active{transform:scale(.98)}
+.chat-form-btn:disabled{opacity:.45;cursor:default}
+
+/* CHAT — tarjetas de producto */
+.product-cards{display:flex;flex-direction:column;gap:8px;margin-top:13px}
+.product-card{background:var(--s3);border:1px solid var(--border);border-radius:13px;padding:13px 14px;display:flex;align-items:center;gap:12px;transition:border-color .15s}
+.product-card:has(.qty-num:not(:empty)[data-qty]):not([data-qty="0"]){border-color:rgba(91,156,246,.25)}
+.product-info{flex:1;min-width:0}
+.product-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.product-desc{font-size:12px;color:var(--muted2);line-height:1.35;margin-bottom:4px}
+.product-price{font-size:13px;font-weight:600;color:var(--primary)}
+.qty-ctrl{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.qty-btn{width:30px;height:30px;border-radius:9px;background:var(--s2);border:1px solid var(--border);color:var(--text);font-size:17px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .12s,border-color .12s;-webkit-tap-highlight-color:transparent;font-family:inherit}
+.qty-btn:hover{background:var(--s1);border-color:rgba(91,156,246,.3)}
+.qty-btn:active{transform:scale(.9)}
+.qty-btn:disabled{opacity:.28;cursor:default}
+.qty-num{font-size:15px;font-weight:700;min-width:18px;text-align:center;color:var(--text)}
+.cart-summary{margin-top:10px;background:var(--s3);border:1px solid rgba(91,156,246,.18);border-radius:12px;padding:11px 13px;display:none}
+.cart-summary.visible{display:block}
+.cart-line{display:flex;justify-content:space-between;font-size:13px;color:var(--muted2);margin-bottom:5px}
+.cart-total{display:flex;justify-content:space-between;font-size:14px;font-weight:700;color:var(--primary);padding-top:7px;border-top:1px solid var(--border);margin-top:3px}
+.cart-hint{font-size:12.5px;color:var(--muted2);text-align:center;padding:2px 0}
+.cart-confirm-btn{margin-top:12px;width:100%;background:linear-gradient(135deg,var(--primary),var(--accent));border:none;border-radius:13px;padding:14px;color:#fff;font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.02em;transition:opacity .15s,transform .12s;-webkit-tap-highlight-color:transparent}
+.cart-confirm-btn:hover{opacity:.88}
+.cart-confirm-btn:active{transform:scale(.98)}
+.cart-confirm-btn:disabled{opacity:.4;cursor:default}
+
+/* CHAT — tarjeta de confirmación */
+.confirm-card{background:linear-gradient(145deg,rgba(91,156,246,.07),rgba(167,139,250,.04));border:1px solid rgba(91,156,246,.22);border-radius:14px;padding:16px;margin-top:4px}
+.confirm-title{font-size:15.5px;font-weight:700;margin-bottom:12px;color:#fff}
+.confirm-row{display:flex;gap:10px;margin-bottom:7px;font-size:13.5px}
+.confirm-label{color:var(--muted2);flex-shrink:0;min-width:60px}
+.confirm-value{color:var(--text);font-weight:500}
+.confirm-note{font-size:12px;color:var(--muted2);margin-top:10px;padding-top:9px;border-top:1px solid var(--border)}
+
 /* CHAT — input */
 .chat-bar{padding:10px 14px 10px;background:transparent;flex-shrink:0}
 .input-box{position:relative;background:var(--s1);border:1px solid var(--border);border-radius:18px;transition:border-color .2s,box-shadow .2s}

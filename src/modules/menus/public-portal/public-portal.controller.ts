@@ -80,6 +80,12 @@ export const publicPortalController = {
         address: profile?.address ?? null,
         city:    profile?.city    ?? null,
         enabledModules,
+        products: products.map((p: any) => ({
+          id:          String(p.id),
+          name:        String(p.name || ""),
+          price:       Number(p.price || 0),
+          description: p.description ?? null,
+        })),
       });
 
       return res.status(200).send(html);

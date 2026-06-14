@@ -15,10 +15,11 @@ export type PortalViewData = {
   address?: string | null;
   city?: string | null;
   enabledModules: MenuModuleItem[];
+  products: { id: string | number; name: string; price: number; description?: string | null }[];
 };
 
 export function renderPortalHtml(data: PortalViewData): string {
-  const { businessName, publicSlug, productCount, phone, address, city, enabledModules } = data;
+  const { businessName, publicSlug, productCount, phone, address, city, enabledModules, products } = data;
 
   const safe = {
     name:    escapeHtml(businessName),
@@ -64,7 +65,7 @@ export function renderPortalHtml(data: PortalViewData): string {
   Volver al chat
 </button>
 
-<script>${portalScripts(publicSlug, safe.name, enabledModules)}</script>
+<script>${portalScripts(publicSlug, safe.name, enabledModules, products)}</script>
 </body>
 </html>`;
 }
