@@ -241,7 +241,7 @@ function closeBookingPanel(){
 function renderBPLoading(){
   var panel=document.getElementById('bookingPanel');
   panel.innerHTML='';
-  panel.appendChild(makeBPHeader('Reservar hora',closeBookingPanelWithRecovery));
+  panel.appendChild(makeBPHeader('Reservar hora',closeBookingPanelWithRecovery,'Volver'));
   var body=document.createElement('div'); body.className='qp-body';
   var loading=document.createElement('div'); loading.className='qp-loading';
   loading.innerHTML='<div class="qp-loading-spinner"></div><span>Buscando disponibilidad...</span>';
@@ -252,7 +252,7 @@ function renderBPLoading(){
 function renderBPEmpty(msg){
   var panel=document.getElementById('bookingPanel');
   panel.innerHTML='';
-  panel.appendChild(makeBPHeader('Reservar hora',closeBookingPanel));
+  panel.appendChild(makeBPHeader('Reservar hora',closeBookingPanelWithRecovery,'Volver'));
   var body=document.createElement('div'); body.className='qp-body';
   var empty=document.createElement('div'); empty.className='qp-empty';
   var icon=document.createElement('div'); icon.className='qp-empty-icon'; icon.textContent='📅';
@@ -271,7 +271,7 @@ function renderBPEmpty(msg){
 function renderBPDates(dates){
   var panel=document.getElementById('bookingPanel');
   panel.innerHTML='';
-  panel.appendChild(makeBPHeader('Reservar hora',closeBookingPanelWithRecovery));
+  panel.appendChild(makeBPHeader('Reservar hora',closeBookingPanelWithRecovery,'Volver'));
   var body=document.createElement('div'); body.className='qp-body';
   var lbl=document.createElement('p'); lbl.className='qp-section-title'; lbl.textContent='Elige un día';
   body.appendChild(lbl);
