@@ -1,18 +1,14 @@
 export function portalScripts(slug: string, bizName: string, initial: string): string {
-  const safeSlug = slug;
-  const safeBiz  = JSON.stringify(bizName);
-  const safeInit = initial;
-
   return `
-const SLUG = '${safeSlug}';
-const BIZ  = ${safeBiz};
-const INIT = '${safeInit}';
-const TABS = ['chat','reservas','cotizar','nosotros'];
-let chatStarted = false;
-let sending     = false;
+const SLUG='${slug}';
+const BIZ=${JSON.stringify(bizName)};
+const INIT='${initial}';
+const TABS=['chat','reservas','cotizar','nosotros'];
+let chatStarted=false;
+let sending=false;
 
 function showTab(t){
-  TABS.forEach(x=>{
+  TABS.forEach(function(x){
     document.getElementById('panel-'+x).classList.toggle('active',x===t);
     document.getElementById('nb-'+x).classList.toggle('active',x===t);
   });
@@ -20,7 +16,7 @@ function showTab(t){
 }
 
 function scrollChat(){
-  const el=chatStarted?document.getElementById('chatMsgs'):document.getElementById('chatWelcome');
+  var el=chatStarted?document.getElementById('chatMsgs'):document.getElementById('chatWelcome');
   if(el) requestAnimationFrame(function(){ el.scrollTop=el.scrollHeight; });
 }
 
@@ -33,20 +29,22 @@ function startChat(){
 
 function renderMd(t){
   return t
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/\*\*([\s\S]+?)\*\*/g,'<b>$1</b>')
-    .replace(/\n/g,'<br>');
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/\\*\\*([^]+?)\\*\\*/g,'<b>$1</b>')
+    .replace(/\\n/g,'<br>');
 }
 
 function typeWrite(el,rawText){
   el.classList.add('typing');
-  const chars=Array.from(rawText);
-  let i=0;
+  var chars=Array.from(rawText);
+  var i=0;
   (function tick(){
     if(i<chars.length){
-      i++;
+      var c=chars[i]; i++;
       el.innerHTML=renderMd(chars.slice(0,i).join(''));
-      setTimeout(tick,chars[i-1]==='\n'?80:12);
+      setTimeout(tick,c==='\\n'?80:12);
       scrollChat();
     } else {
       el.innerHTML=renderMd(rawText);
@@ -58,9 +56,9 @@ function typeWrite(el,rawText){
 
 function addUser(text){
   startChat();
-  const row=document.createElement('div');
+  var row=document.createElement('div');
   row.className='user-row';
-  const pill=document.createElement('div');
+  var pill=document.createElement('div');
   pill.className='user-pill';
   pill.textContent=text;
   row.appendChild(pill);
@@ -70,17 +68,17 @@ function addUser(text){
 
 function addAi(text,animate){
   startChat();
-  const row=document.createElement('div');
+  var row=document.createElement('div');
   row.className='ai-row';
-  const icon=document.createElement('div');
+  var icon=document.createElement('div');
   icon.className='ai-icon-sm';
-  icon.textContent='✦';
-  const body=document.createElement('div');
+  icon.textContent='\\u2726';
+  var body=document.createElement('div');
   body.className='ai-body';
-  const label=document.createElement('div');
+  var label=document.createElement('div');
   label.className='ai-label';
   label.textContent=BIZ;
-  const textEl=document.createElement('div');
+  var textEl=document.createElement('div');
   textEl.className='ai-text';
   body.appendChild(label);
   body.appendChild(textEl);
@@ -93,13 +91,13 @@ function addAi(text,animate){
 
 function showTyping(){
   startChat();
-  const row=document.createElement('div');
+  var row=document.createElement('div');
   row.className='typing-row';
   row.id='typingRow';
-  const icon=document.createElement('div');
+  var icon=document.createElement('div');
   icon.className='ai-icon-sm';
-  icon.textContent='✦';
-  const dots=document.createElement('div');
+  icon.textContent='\\u2726';
+  var dots=document.createElement('div');
   dots.className='typing-dots';
   dots.innerHTML='<span></span><span></span><span></span>';
   row.appendChild(icon);
@@ -109,14 +107,14 @@ function showTyping(){
 }
 
 function hideTyping(){
-  const r=document.getElementById('typingRow');
+  var r=document.getElementById('typingRow');
   if(r) r.remove();
 }
 
 async function sendMsg(){
   if(sending) return;
-  const inp=document.getElementById('chatInput');
-  const q=inp.value.trim();
+  var inp=document.getElementById('chatInput');
+  var q=inp.value.trim();
   if(!q) return;
   inp.value=''; inp.style.height='auto';
   addUser(q);
@@ -124,17 +122,17 @@ async function sendMsg(){
   sending=true;
   document.getElementById('sendBtn').disabled=true;
   try{
-    const r=await fetch('/api/public/'+SLUG+'/chat',{
+    var r=await fetch('/api/public/'+SLUG+'/chat',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({question:q})
     });
-    const d=await r.json();
+    var d=await r.json();
     hideTyping();
     addAi(d.answer||'No pude procesar tu pregunta. Intenta de nuevo.');
   }catch(e){
     hideTyping();
-    addAi('Hubo un problema al conectar. Por favor intenta de nuevo.',false);
+    addAi('Hubo un problema al conectar. Intenta de nuevo.',false);
   }finally{
     sending=false;
     document.getElementById('sendBtn').disabled=false;
@@ -147,22 +145,22 @@ function quickAction(a){
     showTyping();
     setTimeout(function(){
       hideTyping();
-      addAi('Con gusto 📅 Te llevo a la sección de reservas donde puedes ver la disponibilidad y agendar tu hora.');
+      addAi('Con gusto! Te llevo a la seccion de reservas donde puedes ver la disponibilidad y agendar tu hora.');
       setTimeout(function(){ showTab('reservas'); },2400);
     },900);
   } else if(a==='cotizar'){
-    addUser('Quiero pedir una cotización');
+    addUser('Quiero pedir una cotizacion');
     showTyping();
     setTimeout(function(){
       hideTyping();
-      addAi('Claro 🧾 En la sección Servicios puedes seleccionar lo que necesitas y recibirás el presupuesto por correo.');
+      addAi('Claro! En la seccion Servicios puedes seleccionar lo que necesitas y recibiras el presupuesto por correo.');
       setTimeout(function(){ showTab('cotizar'); },2600);
     },900);
   } else if(a==='precios'){
-    document.getElementById('chatInput').value='¿Cuáles son los precios?';
+    document.getElementById('chatInput').value='Cuales son los precios?';
     sendMsg();
   } else if(a==='info'){
-    document.getElementById('chatInput').value='¿Qué servicios ofrecen?';
+    document.getElementById('chatInput').value='Que servicios ofrecen?';
     sendMsg();
   }
 }
@@ -193,9 +191,12 @@ function quickAction(a){
   if(cards[2]) cards[2].addEventListener('click',function(){ quickAction('precios'); });
   if(cards[3]) cards[3].addEventListener('click',function(){ quickAction('info'); });
 
+  var gotoChat=document.getElementById('btn-goto-chat');
+  if(gotoChat) gotoChat.addEventListener('click',function(){ showTab('chat'); });
+
   setTimeout(function(){
     startChat();
-    addAi('¡Hola! 👋 Soy el asistente de **'+BIZ+'**. Estoy aquí para ayudarte con preguntas sobre nuestros servicios, precios y disponibilidad. ¿En qué te puedo ayudar hoy?');
+    addAi('Hola! Soy el asistente de **'+BIZ+'**. Estoy aqui para ayudarte con preguntas sobre nuestros servicios, precios y disponibilidad. En que te puedo ayudar hoy?');
   },600);
 })();
 `;
