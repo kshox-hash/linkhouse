@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { getSlugByValueService } from "../slug/slug.service";
 import { getChunksByUserId } from "./chat.repository";
+import { getBusinessChatConfig } from "./chat-config.repository";
 import {
   detectIntent,
   findBestMatch,
@@ -12,6 +13,21 @@ import { getActiveProductsRepository } from "../quotes/products/products.reposit
 import { buildCalendarSlots } from "../appointments/appointments.service";
 
 export const chatPublicController = {
+
+  async getProducts(req: Request, res: Response): Promise<Response> {
+    try {
+      const publicSlug = String(req.params["publicSlug"] || "").trim();
+      if (!publicSlug) return res.status(400).json({ ok: false });
+
+      const slug = await getSlugByValueService(publicSlug);
+      if (!slug) return res.status(404).json({ ok: false, message: "Negocio no encontrado." });
+
+      const products = await getActiveProductsRepository(slug.user_id);
+      return res.json({ ok: true, products });
+    } catch {
+      return res.status(500).json({ ok: false, message: "Error cargando productos." });
+    }
+  },
 
   async answer(req: Request, res: Response): Promise<Response> {
     try {
@@ -49,8 +65,11 @@ export const chatPublicController = {
         const slots = await buildCalendarSlots(slug.user_id);
         answer = buildAvailabilityAnswer(slots);
       } else {
-        const chunks = await getChunksByUserId(slug.user_id);
-        answer = findBestMatch(question, chunks);
+        const [chunks, config] = await Promise.all([
+          getChunksByUserId(slug.user_id),
+          getBusinessChatConfig(slug.user_id).catch(() => null),
+        ]);
+        answer = findBestMatch(question, chunks, config);
       }
 
       return res.json({ ok: true, answer });

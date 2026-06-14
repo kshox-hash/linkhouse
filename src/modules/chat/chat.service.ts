@@ -1,4 +1,5 @@
 import { KnowledgeChunk, Intent } from "./chat.types";
+import { BusinessChatConfig } from "./chat-config.repository";
 import { formatCurrencyCLP } from "../../utils/format";
 
 const STOPWORDS = new Set([
@@ -65,18 +66,49 @@ function scoreChunk(keywords: string[], chunkText: string): number {
   return keywords.filter(w => chunkSet.has(w)).length;
 }
 
-export function findBestMatch(
-  question: string,
-  chunks: KnowledgeChunk[]
-): string {
-  if (chunks.length === 0) {
-    return "No tengo información disponible en este momento. Contáctanos directamente para más detalles.";
+function searchInConfig(words: string[], config: BusinessChatConfig): string | null {
+  if (!words.length) return null;
+
+  // 1. FAQ: máxima prioridad — Q&A estructurada por el negocio
+  if (config.faq?.length) {
+    const best = config.faq
+      .map(f => ({ answer: f.answer, score: scoreChunk(words, f.question + " " + f.answer) }))
+      .filter(x => x.score > 0)
+      .sort((a, b) => b.score - a.score)[0];
+    if (best) return best.answer;
   }
 
+  // 2. Descripción + info extra: busca en texto libre configurado
+  const texts: { text: string; score: number }[] = [];
+  if (config.description) texts.push({ text: config.description, score: scoreChunk(words, config.description) });
+  if (config.extraInfo)   texts.push({ text: config.extraInfo,   score: scoreChunk(words, config.extraInfo)   });
+
+  const bestText = texts.filter(t => t.score > 0).sort((a, b) => b.score - a.score)[0];
+  if (bestText) return bestText.text;
+
+  return null;
+}
+
+export function findBestMatch(
+  question: string,
+  chunks: KnowledgeChunk[],
+  config?: BusinessChatConfig | null
+): string {
   const words = extractKeywords(question);
 
   if (words.length === 0) {
     return "Hola, ¿en qué puedo ayudarte? Puedo responder preguntas sobre nuestros servicios, precios y disponibilidad.";
+  }
+
+  // Primero: config estructurada (más confiable que PDF)
+  if (config) {
+    const configAnswer = searchInConfig(words, config);
+    if (configAnswer) return configAnswer;
+  }
+
+  // Fallback: chunks de PDF
+  if (!chunks.length) {
+    return "No tengo información disponible en este momento. Contáctanos directamente para más detalles.";
   }
 
   const scored = chunks
@@ -84,21 +116,15 @@ export function findBestMatch(
     .filter(c => c.score > 0)
     .sort((a, b) => b.score - a.score);
 
-  if (scored.length === 0) {
+  if (!scored.length) {
     return "No encontré información específica sobre eso. ¿Puedes reformular tu pregunta o contactarnos directamente?";
   }
 
-  const top = scored[0];
+  const top    = scored[0];
   const second = scored[1];
-
-  if (
-    second &&
-    second.score >= top.score * 0.8 &&
-    (top.text + " " + second.text).length < 700
-  ) {
+  if (second && second.score >= top.score * 0.8 && (top.text + " " + second.text).length < 700) {
     return `${top.text}\n\n${second.text}`;
   }
-
   return top.text;
 }
 

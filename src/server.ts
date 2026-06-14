@@ -15,6 +15,7 @@ import calendarAdminRoutes from "./modules/appointments/appointments-admin.route
 import calendarPublicRouter from "./modules/calendar/calendar-public.router";
 import chatAdminRouter from "./modules/chat/chat-admin.router";
 import chatPublicRouter from "./modules/chat/chat-public.router";
+import chatConfigRouter from "./modules/chat/chat-config.router";
 import notificationRoutes from "./modules/notifications/notification.routes";
 import passport from "passport";
 import "./login/strategies/google.strategy";
@@ -89,6 +90,7 @@ app.use(calendarAdminRoutes);
 app.use("/auth", authLimiter, loginRoutes);
 app.use(calendarPublicRouter);
 app.use("/api", chatAdminRouter);
+app.use("/api", chatConfigRouter);
 app.use("/api", chatPublicRouter);
 app.use("/api", notificationRoutes);
 app.use("/api", slugRoutes);
