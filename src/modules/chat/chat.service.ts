@@ -141,7 +141,8 @@ export function buildAvailabilityAnswer(slotsData: unknown): string {
 
 export async function extractChunksFromPdf(buffer: Buffer): Promise<string[]> {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const pdfParse = require("pdf-parse") as (b: Buffer) => Promise<{ text: string }>;
+  const pdfParseModule = require("pdf-parse");
+  const pdfParse: (b: Buffer) => Promise<{ text: string }> = pdfParseModule.default ?? pdfParseModule;
   const { text } = await pdfParse(buffer);
 
   const rawChunks = text
