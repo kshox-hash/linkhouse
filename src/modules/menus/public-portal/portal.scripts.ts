@@ -268,7 +268,10 @@ function startReservasFlow(){
       S.slots=parseSlotsResponse(data);
       var dates=Object.keys(S.slots);
       if(!dates.length){
-        addAi('No hay horarios disponibles por el momento. Contáctanos directamente.',false); return;
+        addAiWithChips('No hay horarios disponibles por el momento.',[
+          {label:'🔄 Intentar de nuevo',onClick:function(){startReservasFlow();}},
+          {label:'🏠 Ver otras opciones',onClick:function(){addAiWithModules();}}
+        ]); return;
       }
       addAiWithChips(
         '¿Qué día prefieres?',
@@ -277,12 +280,18 @@ function startReservasFlow(){
         })
       );
     })
-    .catch(function(){ hideTyping(); addAi('No pude cargar la disponibilidad. Intenta de nuevo.',false); });
+    .catch(function(){ hideTyping(); addAiWithChips('No pude cargar la disponibilidad.',[
+      {label:'🔄 Intentar de nuevo',onClick:function(){startReservasFlow();}},
+      {label:'🏠 Ver otras opciones',onClick:function(){addAiWithModules();}}
+    ]); });
 }
 
 function showTimesStep(date){
   var times=S.slots[date]||[];
-  if(!times.length){ addAi('No hay horarios para ese día. Elige otro.',false); return; }
+  if(!times.length){ addAiWithChips('No hay horarios disponibles para ese día.',[
+    {label:'← Elegir otro día',onClick:function(){startReservasFlow();}},
+    {label:'🏠 Ver otras opciones',onClick:function(){addAiWithModules();}}
+  ]); return; }
   addAiWithChips(
     '¿A qué hora?',
     times.map(function(t){
@@ -321,16 +330,23 @@ function submitBooking(v){
         {label:'Hora',   value:S.time},
       ],'📧 Te enviamos un correo de confirmación.');
     } else {
-      addAi(d.message||'No se pudo crear la reserva. Intenta de nuevo.',false);
+      addAiWithChips(d.message||'No se pudo crear la reserva.',[
+        {label:'🔄 Intentar de nuevo',onClick:function(){showBookingFormStep();}},
+        {label:'🏠 Ver otras opciones',onClick:function(){addAiWithModules();}}
+      ]);
     }
   })
-  .catch(function(){ hideTyping(); addAi('Error de conexión. Intenta de nuevo.',false); });
+  .catch(function(){ hideTyping(); addAiWithChips('Error de conexión.',[
+    {label:'🔄 Intentar de nuevo',onClick:function(){showBookingFormStep();}},
+    {label:'🏠 Ver otras opciones',onClick:function(){addAiWithModules();}}
+  ]); });
 }
 
 // ── FLOW: COTIZACIONES ────────────────────────────────────────────────────────
 function startCotizarFlow(){
   S.flow='cotizar'; S.cart={};
-  addAiWithProductCards('¿Qué servicios te interesan? Elige la cantidad de cada uno.',PRODUCTS);
+  addAi('Perfecto, te llevo al cotizador para que puedas elegir los servicios que necesitas.',false);
+  setTimeout(function(){ showTab('cotizar'); },700);
 }
 
 function showQuoteFormStep(){
