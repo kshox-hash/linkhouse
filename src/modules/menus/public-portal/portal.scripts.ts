@@ -204,6 +204,16 @@ function makeBPHeader(title,onBack){
   return hdr;
 }
 
+function closeBookingPanelWithRecovery(){
+  closeBookingPanel();
+  setTimeout(function(){
+    addAiWithChips('¿Hay algo más en lo que te pueda ayudar?',[
+      {label:'🔄 Intentar de nuevo',onClick:function(){openBookingPanel();}},
+      {label:'🏠 Ver opciones',onClick:function(){addAiWithModules();}}
+    ]);
+  },420);
+}
+
 function fetchAndRenderDates(){
   fetch('/api/public/'+SLUG+'/slots')
     .then(function(r){ return r.json(); })
@@ -231,7 +241,7 @@ function closeBookingPanel(){
 function renderBPLoading(){
   var panel=document.getElementById('bookingPanel');
   panel.innerHTML='';
-  panel.appendChild(makeBPHeader('Reservar hora',closeBookingPanel));
+  panel.appendChild(makeBPHeader('Reservar hora',closeBookingPanelWithRecovery));
   var body=document.createElement('div'); body.className='qp-body';
   var loading=document.createElement('div'); loading.className='qp-loading';
   loading.innerHTML='<div class="qp-loading-spinner"></div><span>Buscando disponibilidad...</span>';
@@ -261,7 +271,7 @@ function renderBPEmpty(msg){
 function renderBPDates(dates){
   var panel=document.getElementById('bookingPanel');
   panel.innerHTML='';
-  panel.appendChild(makeBPHeader('Reservar hora',closeBookingPanel));
+  panel.appendChild(makeBPHeader('Reservar hora',closeBookingPanelWithRecovery));
   var body=document.createElement('div'); body.className='qp-body';
   var lbl=document.createElement('p'); lbl.className='qp-section-title'; lbl.textContent='Elige un día';
   body.appendChild(lbl);
@@ -287,6 +297,7 @@ function renderBPDates(dates){
 }
 
 function renderBPTimes(date,times){
+  if(!times||!times.length){ renderBPEmpty('No hay horarios disponibles para ese día. Elige otro.'); return; }
   var panel=document.getElementById('bookingPanel');
   panel.innerHTML='';
   var allDates=Object.keys(S.slots);
@@ -332,12 +343,9 @@ function renderBPForm(){
   var confirmBtn=document.createElement('button'); confirmBtn.type='button'; confirmBtn.className='qp-btn'; confirmBtn.textContent='Confirmar reserva';
   confirmBtn.addEventListener('click',function(){
     var name=nameInp.value.trim(); var phone=phoneInp.value.trim(); var email=emailInp.value.trim();
-    if(!name||!phone){ errEl.textContent='El nombre y teléfono son obligatorios.'; errEl.style.display='block'; return; }
+    if(!name||!phone||!email){ errEl.textContent='Nombre, teléfono y email son obligatorios.'; errEl.style.display='block'; return; }
     errEl.style.display='none';
     nameInp.disabled=true; phoneInp.disabled=true; emailInp.disabled=true;
-    if(!name||!phone||!email){ errEl.textContent='Nombre, teléfono y email son obligatorios.'; errEl.style.display='block';
-      nameInp.disabled=false; phoneInp.disabled=false; emailInp.disabled=false;
-      confirmBtn.disabled=false; confirmBtn.textContent='Confirmar reserva'; return; }
     confirmBtn.disabled=true; confirmBtn.textContent='Confirmando...';
     fetch('/api/public/'+SLUG+'/bookings',{
       method:'POST',headers:{'Content-Type':'application/json'},
@@ -367,7 +375,15 @@ function renderBPForm(){
 function renderBPPayment(bookingId,name){
   var panel=document.getElementById('bookingPanel');
   panel.innerHTML='';
-  panel.appendChild(makeBPHeader('Reserva lista',closeBookingPanel,'Cerrar'));
+  var _bpDate=S.date; var _bpTime=S.time;
+  panel.appendChild(makeBPHeader('Reserva lista',function(){
+    closeBookingPanel();
+    setTimeout(function(){
+      addAiWithChips('Tu reserva para el '+formatDate(_bpDate)+' a las '+_bpTime+' está pendiente de pago.',[
+        {label:'🏠 Ver opciones',onClick:function(){addAiWithModules();}}
+      ]);
+    },420);
+  },'Cerrar'));
   // Body
   var body=document.createElement('div'); body.className='qp-body';
   // Indicador de éxito
@@ -441,7 +457,15 @@ function renderQPStep1(){
   var hdr=document.createElement('div'); hdr.className='qp-header';
   var back=document.createElement('button'); back.type='button'; back.className='qp-back';
   back.innerHTML='<svg viewBox="0 0 24 24" fill="none"><polyline points="15 18 9 12 15 6"/></svg>Volver';
-  back.addEventListener('click',closeQuotePanel);
+  back.addEventListener('click',function(){
+    closeQuotePanel();
+    setTimeout(function(){
+      addAiWithChips('¿Hay algo más en lo que te pueda ayudar?',[
+        {label:'🔄 Nueva cotización',onClick:function(){openQuotePanel();}},
+        {label:'🏠 Ver opciones',onClick:function(){addAiWithModules();}}
+      ]);
+    },420);
+  });
   var ttl=document.createElement('div'); ttl.className='qp-title'; ttl.textContent='Cotización';
   var spc=document.createElement('div'); spc.className='qp-spacer';
   hdr.appendChild(back); hdr.appendChild(ttl); hdr.appendChild(spc);
@@ -562,7 +586,7 @@ function renderQPStep2(){
           if(email) rows.push({label:'Email',value:email});
           addConfirmCard('✅','Cotización enviada!',rows,d.message||'Te contactaremos pronto con el presupuesto.');
           addAiWithChips('¿Hay algo más en lo que te pueda ayudar?',[
-            {label:'🔄 Nueva cotización',onClick:function(){quickAction('cotizar');}},
+            {label:'🔄 Nueva cotización',onClick:function(){openQuotePanel();}},
             {label:'🏠 Ver opciones',onClick:function(){addAiWithModules();}}
           ]);
         },420);
