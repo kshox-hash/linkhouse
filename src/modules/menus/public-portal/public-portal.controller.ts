@@ -1,12 +1,10 @@
 import { Request, Response } from "express";
-import { findEnabledModulesByUserId } from "../user-modules.repository";
-import  {getSlugByValueService} from "../../slug/slug.service";
-//VIEWS
-import { menuPublicHtml } from "../menu-html";
+import { getSlugByValueService } from "../../slug/slug.service";
 import { quoteHtml } from "../../quotes/quote-html";
+import { getProductsRepository, getActiveProductsRepository } from "../../quotes/products/products.repository";
+import { companyProfileRepository } from "../../profiles/company_profile_repository";
+import { renderPortalHtml } from "./portal.screen";
 
-//PRODUCTS FROM QUOTES
-import { getProductsRepository } from "../../quotes/products/products.repository";
 
 
 
@@ -60,39 +58,30 @@ export const publicPortalController = {
       if (!publicSlug || !publicSlug.trim()) {
         return res.status(400).send("Slug público obligatorio");
       }
-      
-      //GET SLUG TO CHEK IF SHOP EXIST
+
       const slug = await getSlugByValueService(publicSlug);
 
       if (!slug) {
         return res.status(404).send("Negocio no encontrado");
       }
 
+      const [products, profile] = await Promise.all([
+        getActiveProductsRepository(slug.user_id),
+        companyProfileRepository.getByUserId(slug.user_id),
+      ]);
 
-      //GET MODULES SERVICES ENABLED
-      const modules = await findEnabledModulesByUserId(slug.user_id);
-      const moduleRoutes: Record<string, string> = {
-        cotizador: `/shop/${slug.public_slug}/cotizador`,
-        reservas:  `/open/${slug.public_slug}/reservas`,
-      };
+      const html = renderPortalHtml({
+        businessName: slug.business_name ?? publicSlug,
+        publicSlug,
+        productCount: products.length,
+        phone:   profile?.phone   ?? null,
+        address: profile?.address ?? null,
+        city:    profile?.city    ?? null,
+      });
 
-      const modulesWithUrl = modules.map((m) => ({
-        ...m,
-        url: moduleRoutes[m.code] ?? `/shop/${slug.public_slug}/${m.code}`,
-      }));
-
-      //INSER PARAMS INTO VIEW
-      const mainMenuHtml = menuPublicHtml({
-          brand: slug.public_slug,   
-          title: slug.public_slug,
-          subTitle: "Selecciona un servicio para continuar.",
-          module: modulesWithUrl             
-          });
-
-      return res.status(200).send(mainMenuHtml);
+      return res.status(200).send(html);
 
     } catch (error) {
-
       return res.status(500).send("Error abriendo portal público");
     }
   },
