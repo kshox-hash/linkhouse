@@ -1,37 +1,13 @@
-import { MenuModuleItem } from "../user-modules.repository";
-
 type ProductData = { id: string | number; name: string; price: number; description?: string | null };
-type ModuleCard  = { emoji: string; title: string; desc: string; action: string };
-
-function buildModuleCards(modules: MenuModuleItem[]): ModuleCard[] {
-  const cards: ModuleCard[] = [];
-  if (modules.some(m => m.code === "reservas"))
-    cards.push({ emoji: "📅", title: "Reservar una hora",  desc: "Agenda tu cita disponible",      action: "reservas" });
-  if (modules.some(m => m.code === "cotizador"))
-    cards.push({ emoji: "🧾", title: "Pedir cotización",   desc: "Recibe un presupuesto por correo", action: "cotizar" });
-  cards.push({ emoji: "💰", title: "Ver precios",          desc: "Conoce nuestras tarifas",         action: "precios" });
-  cards.push({ emoji: "ℹ️", title: "Info del negocio",    desc: "Teléfono, dirección y más",        action: "info"    });
-  return cards;
-}
 
 export function portalScripts(
   slug: string,
-  bizName: string,
-  modules: MenuModuleItem[],
+  _bizName: string,
+  _modules: unknown[],
   products: ProductData[],
-  bizInfo: {
-    phone: string | null;
-    address: string | null;
-    city: string | null;
-    description: string | null;
-    welcomeMessage: string | null;
-    businessHours: string | null;
-    instagramUrl: string | null;
-    whatsappNumber: string | null;
-  },
-  initials: string
+  _bizInfo: unknown,
+  _initials: string
 ): string {
-  const moduleCards  = buildModuleCards(modules);
   const safeProducts = products.map(p => ({
     id:          String(p.id),
     name:        p.name,
@@ -41,14 +17,6 @@ export function portalScripts(
 
   return `
 const SLUG=${JSON.stringify(slug)};
-const BIZ=${JSON.stringify(bizName)};
-const BIZ_INITIALS=${JSON.stringify(initials)};
-const BIZ_INFO=${JSON.stringify(bizInfo)};
-const WELCOME_MSG=${JSON.stringify(bizInfo.welcomeMessage)};
-const BIZ_HOURS=${JSON.stringify(bizInfo.businessHours)};
-const BIZ_INSTAGRAM=${JSON.stringify(bizInfo.instagramUrl)};
-const BIZ_WHATSAPP=${JSON.stringify(bizInfo.whatsappNumber)};
-const MODULE_CARDS=${JSON.stringify(moduleCards)};
 const PRODUCTS=${JSON.stringify(safeProducts)};
 const TABS=['chat','reservas','cotizar','nosotros'];
 
@@ -93,119 +61,6 @@ function parseSlotsResponse(data){
   return result;
 }
 
-// ── Animación de escritura ────────────────────────────────────────────────────
-function typeWrite(el,rawText){
-  el.classList.add('typing'); var chars=Array.from(rawText); var i=0;
-  (function tick(){
-    if(i<chars.length){
-      var c=chars[i]; i++;
-      el.innerHTML=renderMd(chars.slice(0,i).join(''));
-      setTimeout(tick,c==='\\n'?80:11); scrollChat();
-    } else { el.innerHTML=renderMd(rawText); el.classList.remove('typing'); scrollChat(); }
-  })();
-}
-
-// ── Constructor base de mensajes AI ──────────────────────────────────────────
-function makeAiRow(){
-  var row=document.createElement('div'); row.className='ai-row';
-  var body=document.createElement('div'); body.className='ai-body';
-  row.appendChild(body);
-  return {row:row,body:body};
-}
-function appendAiRow(row){ document.getElementById('chatMsgs').appendChild(row); scrollChat(); }
-
-// ── Mensaje de usuario ────────────────────────────────────────────────────────
-function addUser(text){
-  var row=document.createElement('div'); row.className='user-row';
-  var pill=document.createElement('div'); pill.className='user-pill'; pill.textContent=text;
-  row.appendChild(pill); document.getElementById('chatMsgs').appendChild(row); scrollChat();
-}
-
-// ── Mensaje AI simple ─────────────────────────────────────────────────────────
-function addAi(text,animate){
-  var m=makeAiRow();
-  var el=document.createElement('div'); el.className='ai-text'; m.body.appendChild(el); appendAiRow(m.row);
-  if(animate!==false){ typeWrite(el,text); } else { el.innerHTML=renderMd(text); scrollChat(); }
-}
-
-// ── Mensaje AI con chips ──────────────────────────────────────────────────────
-function addAiWithChips(text,chips){
-  var m=makeAiRow();
-  var el=document.createElement('div'); el.className='ai-text'; el.innerHTML=renderMd(text);
-  m.body.appendChild(el);
-  if(chips&&chips.length){
-    var wrap=document.createElement('div'); wrap.className='ai-chips';
-    chips.forEach(function(c){
-      var btn=document.createElement('button'); btn.type='button'; btn.className='ai-chip'; btn.textContent=c.label;
-      btn.addEventListener('click',function(){
-        wrap.querySelectorAll('.ai-chip').forEach(function(x){ x.classList.add('used'); });
-        addUser(c.label); c.onClick();
-      });
-      wrap.appendChild(btn);
-    });
-    m.body.appendChild(wrap);
-  }
-  appendAiRow(m.row);
-}
-
-// ── Indicador de escritura ────────────────────────────────────────────────────
-function showTyping(){
-  var row=document.createElement('div'); row.className='typing-row'; row.id='typingRow';
-  var dots=document.createElement('div'); dots.className='typing-dots'; dots.innerHTML='<span></span><span></span><span></span>';
-  row.appendChild(dots); document.getElementById('chatMsgs').appendChild(row); scrollChat();
-}
-function hideTyping(){ var r=document.getElementById('typingRow'); if(r) r.remove(); }
-
-// ── Formulario inline ─────────────────────────────────────────────────────────
-function addAiWithForm(text,fields,btnLabel,onSubmit){
-  var m=makeAiRow();
-  var el=document.createElement('div'); el.className='ai-text'; el.innerHTML=renderMd(text);
-  m.body.appendChild(el);
-  var form=document.createElement('div'); form.className='chat-form';
-  var inputs={};
-  fields.forEach(function(f){
-    var inp=document.createElement('input');
-    inp.type=f.type||'text'; inp.placeholder=f.placeholder; inp.className='chat-form-input';
-    if(f.autocomplete) inp.setAttribute('autocomplete',f.autocomplete);
-    inputs[f.id]=inp; form.appendChild(inp);
-  });
-  var err=document.createElement('div'); err.className='chat-form-error';
-  var btn=document.createElement('button'); btn.type='button'; btn.className='chat-form-btn'; btn.textContent=btnLabel;
-  btn.addEventListener('click',function(){
-    var values={}; var ok=true;
-    fields.forEach(function(f){
-      var val=inputs[f.id].value.trim();
-      if(f.required!==false&&!val) ok=false;
-      values[f.id]=val;
-    });
-    if(!ok){ err.textContent='Completa todos los campos requeridos.'; err.style.display='block'; return; }
-    err.style.display='none';
-    Object.keys(inputs).forEach(function(k){ inputs[k].disabled=true; });
-    btn.disabled=true; btn.textContent='Enviando...';
-    onSubmit(values);
-  });
-  form.appendChild(err); form.appendChild(btn); m.body.appendChild(form);
-  appendAiRow(m.row);
-  setTimeout(function(){ inputs[fields[0].id].focus(); },150);
-}
-
-// ── Tarjeta de confirmación ───────────────────────────────────────────────────
-function addConfirmCard(icon,title,rows,note){
-  var m=makeAiRow();
-  var card=document.createElement('div'); card.className='confirm-card';
-  var titleEl=document.createElement('div'); titleEl.className='confirm-title'; titleEl.innerHTML=icon+' '+escH(title);
-  card.appendChild(titleEl);
-  rows.forEach(function(r){
-    var row=document.createElement('div'); row.className='confirm-row';
-    row.innerHTML='<span class="confirm-label">'+escH(r.label)+'</span><span class="confirm-value">'+escH(r.value)+'</span>';
-    card.appendChild(row);
-  });
-  if(note){
-    var noteEl=document.createElement('div'); noteEl.className='confirm-note'; noteEl.textContent=note;
-    card.appendChild(noteEl);
-  }
-  m.body.appendChild(card); appendAiRow(m.row);
-}
 
 // ── PANEL DE RESERVAS (slide-in) ──────────────────────────────────────────────
 function makeBPHeader(title,onBack){
@@ -221,12 +76,6 @@ function makeBPHeader(title,onBack){
 
 function closeBookingPanelWithRecovery(){
   closeBookingPanel();
-  setTimeout(function(){
-    addAiWithChips('¿Hay algo más en lo que te pueda ayudar?',[
-      {label:'🔄 Intentar de nuevo',onClick:function(){openBookingPanel();}},
-      {label:'🏠 Ver opciones',onClick:function(){addAiWithModules();}}
-    ]);
-  },420);
 }
 
 function fetchAndRenderDates(){
@@ -391,14 +240,7 @@ function renderBPPayment(bookingId,name){
   var panel=document.getElementById('bookingPanel');
   panel.innerHTML='';
   var _bpDate=S.date; var _bpTime=S.time;
-  panel.appendChild(makeBPHeader('Reserva lista',function(){
-    closeBookingPanel();
-    setTimeout(function(){
-      addAiWithChips('Tu reserva para el '+formatDate(_bpDate)+' a las '+_bpTime+' está pendiente de pago.',[
-        {label:'🏠 Ver opciones',onClick:function(){addAiWithModules();}}
-      ]);
-    },420);
-  },'Cerrar'));
+  panel.appendChild(makeBPHeader('Reserva lista',closeBookingPanel,'Cerrar'));
   // Body
   var body=document.createElement('div'); body.className='qp-body';
   // Indicador de éxito
@@ -406,7 +248,7 @@ function renderBPPayment(bookingId,name){
   var successIcon=document.createElement('div');
   successIcon.style.cssText='width:60px;height:60px;border-radius:18px;background:rgba(52,211,153,.12);display:flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:6px';
   successIcon.textContent='✅';
-  var successTitle=document.createElement('div'); successTitle.style.cssText='font-size:17px;font-weight:700;color:#fff;margin-bottom:4px'; successTitle.textContent='Reserva creada';
+  var successTitle=document.createElement('div'); successTitle.style.cssText='font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px'; successTitle.textContent='Reserva creada';
   var successMsg=document.createElement('div'); successMsg.style.cssText='font-size:14px;color:var(--muted2);text-align:center;line-height:1.55'; successMsg.textContent='Para confirmar tu hora, completa el pago con MercadoPago.';
   successWrap.appendChild(successIcon); successWrap.appendChild(successTitle); successWrap.appendChild(successMsg);
   body.appendChild(successWrap);
@@ -444,12 +286,7 @@ function renderBPPayment(bookingId,name){
   });
   var laterBtn=document.createElement('button'); laterBtn.type='button'; laterBtn.className='qp-empty-btn'; laterBtn.style.marginTop='8px';
   laterBtn.textContent='Pagar después';
-  laterBtn.addEventListener('click',function(){
-    closeBookingPanel();
-    setTimeout(function(){
-      addAi('Tu reserva para el '+formatDate(S.date)+' a las '+S.time+' fue creada y está pendiente de pago. Contáctanos cuando estés listo para completarlo.',false);
-    },420);
-  });
+  laterBtn.addEventListener('click',closeBookingPanel);
   footer.appendChild(errEl); footer.appendChild(payBtn); footer.appendChild(laterBtn);
   panel.appendChild(body); panel.appendChild(footer);
 }
@@ -474,15 +311,7 @@ function renderQPStep1(){
   var hdr=document.createElement('div'); hdr.className='qp-header';
   var back=document.createElement('button'); back.type='button'; back.className='qp-back';
   back.innerHTML='<svg viewBox="0 0 24 24" fill="none"><polyline points="15 18 9 12 15 6"/></svg>Volver';
-  back.addEventListener('click',function(){
-    closeQuotePanel();
-    setTimeout(function(){
-      addAiWithChips('¿Hay algo más en lo que te pueda ayudar?',[
-        {label:'🔄 Nueva cotización',onClick:function(){openQuotePanel();}},
-        {label:'🏠 Ver opciones',onClick:function(){addAiWithModules();}}
-      ]);
-    },420);
-  });
+  back.addEventListener('click',closeQuotePanel);
   var ttl=document.createElement('div'); ttl.className='qp-title'; ttl.textContent='Cotización';
   var spc=document.createElement('div'); spc.className='qp-spacer';
   hdr.appendChild(back); hdr.appendChild(ttl); hdr.appendChild(spc);
@@ -597,16 +426,7 @@ function renderQPStep2(){
     .then(function(r){ return r.json(); })
     .then(function(d){
       if(d.ok){
-        closeQuotePanel();
-        setTimeout(function(){
-          var rows=[{label:'Nombre',value:name},{label:'Teléfono',value:phone}];
-          if(email) rows.push({label:'Email',value:email});
-          addConfirmCard('✅','Cotización enviada!',rows,d.message||'Te contactaremos pronto con el presupuesto.');
-          addAiWithChips('¿Hay algo más en lo que te pueda ayudar?',[
-            {label:'🔄 Nueva cotización',onClick:function(){openQuotePanel();}},
-            {label:'🏠 Ver opciones',onClick:function(){addAiWithModules();}}
-          ]);
-        },420);
+        renderQPSuccess(name);
       } else {
         nameInp.disabled=false; phoneInp.disabled=false; emailInp.disabled=false;
         sendBtn.disabled=false; sendBtn.textContent='Enviar cotización';
@@ -624,75 +444,29 @@ function renderQPStep2(){
   setTimeout(function(){ nameInp.focus(); },200);
 }
 
-function startCotizarFlow(){
-  S.flow='cotizar';
-  openQuotePanel();
-}
-
-// ── Saludo inicial con módulos ────────────────────────────────────────────────
-function addAiWithModules(){
-  var m=makeAiRow(); m.row.classList.add('ai-row--intro');
-  var el=document.createElement('div'); el.className='ai-text ai-greeting';
-  var greetingText=WELCOME_MSG||('Hola! Soy el asistente de **'+BIZ+'**. ¿En qué te puedo ayudar hoy?');
-  el.innerHTML=renderMd(greetingText);
-  m.body.appendChild(el);
-  var mods=document.createElement('div'); mods.className='ai-modules';
-  MODULE_CARDS.forEach(function(card){
-    var btn=document.createElement('button'); btn.type='button'; btn.className='ai-mod-card';
-    btn.innerHTML=card.emoji+' '+escH(card.title);
-    btn.addEventListener('click',(function(action,modsEl){
-      return function(){
-        modsEl.querySelectorAll('.ai-mod-card').forEach(function(c){ c.classList.add('used'); });
-        quickAction(action);
-      };
-    })(card.action,mods));
-    mods.appendChild(btn);
-  });
-  m.body.appendChild(mods); appendAiRow(m.row);
-}
-
-// ── Acciones inline ──────────────────────────────────────────────────────────
-function showPricesInline(){
-  if(!PRODUCTS||!PRODUCTS.length){
-    addAiWithChips('Por el momento no tenemos una lista de precios publicada.',[
-      {label:'📅 Reservar hora',onClick:function(){openBookingPanel();}},
-      {label:'🏠 Ver opciones',onClick:function(){addAiWithModules();}}
-    ]);
-    return;
-  }
-  var lines=PRODUCTS.map(function(p){
-    return '**'+p.name+'** — '+formatPrice(p.price)+(p.description?'\\n'+p.description:'');
-  });
-  addAi('Nuestros servicios y precios:\\n\\n'+lines.join('\\n\\n'),false);
-  addAiWithChips('¿Quieres continuar?',[
-    {label:'🧾 Pedir cotización',onClick:function(){openQuotePanel();}},
-    {label:'📅 Reservar hora',onClick:function(){openBookingPanel();}},
-    {label:'🏠 Menú',onClick:function(){addAiWithModules();}}
-  ]);
-}
-
-function showBizInfoInline(){
-  var lines=[];
-  if(BIZ_INFO.phone)   lines.push('📞 **Teléfono:** '+BIZ_INFO.phone);
-  if(BIZ_INFO.address) lines.push('📍 **Dirección:** '+BIZ_INFO.address+(BIZ_INFO.city?', '+BIZ_INFO.city:''));
-  if(BIZ_HOURS)        lines.push('🕐 **Horario:** '+BIZ_HOURS);
-  if(BIZ_INSTAGRAM)    lines.push('📸 **Instagram:** '+BIZ_INSTAGRAM);
-  if(BIZ_WHATSAPP)     lines.push('💬 **WhatsApp:** +'+BIZ_WHATSAPP);
-  var text=lines.length?'**'+BIZ+'**\\n\\n'+lines.join('\\n'):'Puedes contactarnos directamente para más información sobre el negocio.';
-  addAi(text,false);
-  addAiWithChips('¿Hay algo más en lo que te pueda ayudar?',[
-    {label:'📅 Reservar hora',onClick:function(){openBookingPanel();}},
-    {label:'💰 Ver precios',onClick:function(){showPricesInline();}},
-    {label:'🏠 Ver opciones',onClick:function(){addAiWithModules();}}
-  ]);
-}
-
-// ── Acciones rápidas ──────────────────────────────────────────────────────────
-function quickAction(a){
-  if(a==='reservas'){      addUser('Quiero reservar una hora');    openBookingPanel(); }
-  else if(a==='cotizar'){  addUser('Quiero pedir una cotización'); startCotizarFlow();  }
-  else if(a==='precios'){  showPricesInline(); }
-  else if(a==='info'){     showBizInfoInline(); }
+// ── Pantalla de éxito cotización ──────────────────────────────────────────────
+function renderQPSuccess(name){
+  var panel=document.getElementById('quotePanel');
+  panel.innerHTML='';
+  var hdr=document.createElement('div'); hdr.className='qp-header';
+  var closeBtn=document.createElement('button'); closeBtn.type='button'; closeBtn.className='qp-back';
+  closeBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none"><polyline points="15 18 9 12 15 6"/></svg>Cerrar';
+  closeBtn.addEventListener('click',closeQuotePanel);
+  var ttl=document.createElement('div'); ttl.className='qp-title'; ttl.textContent='Cotización';
+  var spc=document.createElement('div'); spc.className='qp-spacer';
+  hdr.appendChild(closeBtn); hdr.appendChild(ttl); hdr.appendChild(spc);
+  var body=document.createElement('div'); body.className='qp-body';
+  var wrap=document.createElement('div'); wrap.className='qp-empty'; wrap.style.paddingTop='48px';
+  var icon=document.createElement('div');
+  icon.style.cssText='width:64px;height:64px;border-radius:18px;background:rgba(22,163,74,.1);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:16px';
+  icon.textContent='✅';
+  var title=document.createElement('div'); title.style.cssText='font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px'; title.textContent='Cotización enviada';
+  var msg=document.createElement('div'); msg.style.cssText='font-size:14px;color:var(--muted);text-align:center;line-height:1.6;max-width:240px'; msg.textContent='Te contactaremos pronto con el presupuesto, '+escH(name)+'.';
+  var homeBtn=document.createElement('button'); homeBtn.type='button'; homeBtn.className='qp-btn'; homeBtn.style.marginTop='28px'; homeBtn.textContent='Volver al inicio';
+  homeBtn.addEventListener('click',closeQuotePanel);
+  wrap.appendChild(icon); wrap.appendChild(title); wrap.appendChild(msg); wrap.appendChild(homeBtn);
+  body.appendChild(wrap);
+  panel.appendChild(hdr); panel.appendChild(body);
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
@@ -705,11 +479,17 @@ function quickAction(a){
       else{ showTab(tab); }
     });
   });
-  var gotoChatBtn=document.getElementById('btn-goto-chat');
-  if(gotoChatBtn) gotoChatBtn.addEventListener('click',function(){ showTab('chat'); });
+  document.querySelectorAll('.home-tile').forEach(function(tile){
+    tile.addEventListener('click',function(){
+      var action=tile.getAttribute('data-action');
+      if(action==='reservas')     openBookingPanel();
+      else if(action==='cotizar') openQuotePanel();
+      else if(action==='precios') showTab('cotizar');
+      else if(action==='info')    showTab('nosotros');
+    });
+  });
   var hdr=document.querySelector('.hdr');
   if(hdr) hdr.addEventListener('click',function(){ showTab('nosotros'); });
-  setTimeout(function(){ addAiWithModules(); },600);
 })();
 `;
 }
