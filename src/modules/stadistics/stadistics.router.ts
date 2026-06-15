@@ -13,6 +13,7 @@ router.get("/stats/:userId/home", statisticsController.getHomeStats);
 router.get("/stats/:userId/today", statisticsController.getTodayStats);
 
 // Reviews — summary must be before /:userId to avoid route conflict
+router.get("/stats/:userId/business", statisticsController.getBusinessStats);
 router.get("/stats/:userId/reviews/summary", statisticsController.getReviewsSummary);
 router.post("/stats/:userId/reviews", statisticsController.createReview);
 router.get("/stats/:userId/reviews", statisticsController.getAllReviews);

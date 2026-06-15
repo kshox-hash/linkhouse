@@ -8,7 +8,10 @@
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
       "Bash(dart analyze *)",
-      "Bash(flutter analyze *)"
+      "Bash(flutter analyze *)",
+      "Bash(find c:\\\\\\\\Users\\\\\\\\josep\\\\\\\\Desktop\\\\\\\\runtimeGenerateUi -type f -name \"*.sql\")",
+      "Bash(find c:\\\\\\\\Users\\\\\\\\josep\\\\\\\\Desktop\\\\\\\\runtimeGenerateUi -type f \\\\\\( -name \"*.md\" -o -name \"README*\" \\\\\\))",
+      "Bash(cd c:\\\\\\\\Users\\\\\\\\josep\\\\\\\\Desktop\\\\\\\\runtimeGenerateUi)"
     ]
   }
 }

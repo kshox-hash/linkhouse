@@ -8,6 +8,7 @@ import rateLimit from "express-rate-limit";
 import mpWebhookRouter from "./modules/webhook/mp-webhook.router";
 import mpConnectRouter from "./modules/mp-connect/mp-connect.router";
 import adminRouter from "./modules/admin/admin.router";
+import { startReminderCron } from "./modules/reminders/reminder.cron";
 import { PORT, CORS_ORIGINS } from "./config/env";
 import { GENERATED_PDFS_DIR } from "./modules/quotes/quote.service";
 
@@ -109,6 +110,7 @@ app.use(errorMiddleware);
 // ─── Arranque ─────────────────────────────────────────────────────────────────
 const server = app.listen(PORT, () => {
   console.log(`[server] Escuchando en puerto ${PORT}`);
+  startReminderCron();
 });
 
 // ─── Graceful shutdown ────────────────────────────────────────────────────────

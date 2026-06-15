@@ -1,6 +1,12 @@
 import { Request, Response } from "express";
 import { StatisticsService } from "./stadistics.service";
 import { ReviewsService } from "./reviews.service";
+import {
+  getRevenueStats,
+  getConversionStats,
+  getBusiestSlots,
+  getClientStats,
+} from "./booking-stats.repository";
 
 const statsService = new StatisticsService();
 const reviewsService = new ReviewsService();
@@ -96,6 +102,22 @@ export const statisticsController = {
       const reviewId = req.params["reviewId"] as string;
       await reviewsService.delete(reviewId, uid(req));
       return res.status(200).json({ ok: true });
+    } catch (error: any) {
+      return res.status(500).json({ ok: false, message: error?.message || "Error interno" });
+    }
+  },
+
+  async getBusinessStats(req: Request, res: Response): Promise<Response> {
+    try {
+      if (isForbidden(req)) return res.status(403).json({ ok: false, message: "Forbidden" });
+      const userId = uid(req);
+      const [revenue, conversion, busiestSlots, clients] = await Promise.all([
+        getRevenueStats(userId),
+        getConversionStats(userId),
+        getBusiestSlots(userId),
+        getClientStats(userId),
+      ]);
+      return res.json({ ok: true, revenue, conversion, busiestSlots, clients });
     } catch (error: any) {
       return res.status(500).json({ ok: false, message: error?.message || "Error interno" });
     }
