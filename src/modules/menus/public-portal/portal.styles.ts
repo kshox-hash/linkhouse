@@ -47,30 +47,28 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 .bn-item:active{opacity:.45}
 
 /* CHAT — messages */
-.chat-msgs{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 16px 28px;display:flex;flex-direction:column;gap:0;background:var(--bg)}
-.user-row{display:flex;justify-content:flex-end;margin:4px 0 16px;animation:msgIn .3s cubic-bezier(.22,1,.36,1) both}
+.chat-msgs{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 14px 28px;display:flex;flex-direction:column;gap:0;background:#f0f2f5}
+.user-row{display:flex;justify-content:flex-end;margin:4px 0 10px;animation:msgIn .3s cubic-bezier(.22,1,.36,1) both}
 .user-pill{max-width:80%;background:var(--primary);border-radius:20px 20px 4px 20px;padding:11px 16px;font-size:15px;line-height:1.55;color:#fff;word-break:break-word;letter-spacing:-.01em}
-.ai-row{display:flex;gap:10px;align-items:flex-start;margin:4px 0 20px;animation:msgIn .3s cubic-bezier(.22,1,.36,1) both}
-.ai-row--intro{margin-bottom:10px}
+.ai-row{display:flex;align-items:flex-start;margin:4px 0 10px;animation:msgIn .3s cubic-bezier(.22,1,.36,1) both}
+.ai-row--intro{margin-bottom:6px}
 @keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.ai-icon-sm{width:32px;height:32px;border-radius:50%;flex-shrink:0;margin-top:2px;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;letter-spacing:-.02em}
-.ai-body{flex:1;min-width:0}
-.ai-label{font-size:10px;font-weight:700;color:var(--muted2);margin-bottom:5px;letter-spacing:.08em;text-transform:uppercase}
+.ai-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
 .ai-greeting{font-size:15.5px;line-height:1.7;color:var(--text)}
-.ai-text{font-size:15px;line-height:1.76;color:var(--text);word-break:break-word}
+.ai-text{font-size:15px;line-height:1.76;color:var(--text);word-break:break-word;background:#fff;border-radius:4px 16px 16px 16px;padding:11px 14px;align-self:flex-start;max-width:88%}
 .ai-text b{color:var(--primary);font-weight:700}
 .ai-text.typing::after{content:'▋';color:var(--muted2);animation:blink .9s step-end infinite;font-size:12px;vertical-align:middle;margin-left:1px}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.typing-row{display:flex;gap:10px;align-items:flex-start;margin:4px 0 8px;animation:msgIn .2s ease-out both}
-.typing-dots{display:flex;align-items:center;gap:5px;padding:10px 2px}
+.typing-row{display:flex;align-items:flex-start;margin:4px 0 8px;animation:msgIn .2s ease-out both}
+.typing-dots{display:inline-flex;align-items:center;gap:5px;padding:12px 16px;background:#fff;border-radius:4px 16px 16px 16px}
 .typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--muted2);animation:tdot 1.4s ease-in-out infinite}
 .typing-dots span:nth-child(2){animation-delay:.17s}
 .typing-dots span:nth-child(3){animation-delay:.34s}
 @keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.35}28%{transform:translateY(-6px);opacity:1}}
 
 /* CHAT — módulos IA */
-.ai-modules{display:flex;flex-direction:column;gap:6px;margin-top:12px;margin-left:-42px;width:calc(100% + 42px)}
-.ai-mod-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:11px 14px;font-size:13.5px;font-weight:500;color:var(--text);cursor:pointer;transition:background .22s,border-color .22s;-webkit-tap-highlight-color:transparent;font-family:inherit;text-align:left;display:flex;align-items:center;justify-content:space-between;letter-spacing:-.01em;line-height:1.3;width:100%}
+.ai-modules{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.ai-mod-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:11px 14px;font-size:13.5px;font-weight:500;color:var(--text);cursor:pointer;transition:background .22s,border-color .22s;-webkit-tap-highlight-color:transparent;font-family:inherit;text-align:left;display:flex;align-items:center;justify-content:space-between;letter-spacing:-.01em;line-height:1.3;width:100%}
 .ai-mod-card::after{content:'→';font-size:13px;color:var(--muted2);flex-shrink:0;margin-left:8px;transition:transform .22s,color .22s}
 .ai-mod-card:hover{background:var(--s1);border-color:var(--border-strong)}
 .ai-mod-card:hover::after{transform:translateX(3px);color:var(--text)}

@@ -107,10 +107,8 @@ function typeWrite(el,rawText){
 // ── Constructor base de mensajes AI ──────────────────────────────────────────
 function makeAiRow(){
   var row=document.createElement('div'); row.className='ai-row';
-  var icon=document.createElement('div'); icon.className='ai-icon-sm'; icon.textContent=BIZ_INITIALS;
   var body=document.createElement('div'); body.className='ai-body';
-  var lbl=document.createElement('div'); lbl.className='ai-label'; lbl.textContent=BIZ;
-  body.appendChild(lbl); row.appendChild(icon); row.appendChild(body);
+  row.appendChild(body);
   return {row:row,body:body};
 }
 function appendAiRow(row){ document.getElementById('chatMsgs').appendChild(row); scrollChat(); }
@@ -152,9 +150,8 @@ function addAiWithChips(text,chips){
 // ── Indicador de escritura ────────────────────────────────────────────────────
 function showTyping(){
   var row=document.createElement('div'); row.className='typing-row'; row.id='typingRow';
-  var icon=document.createElement('div'); icon.className='ai-icon-sm'; icon.textContent=BIZ_INITIALS;
   var dots=document.createElement('div'); dots.className='typing-dots'; dots.innerHTML='<span></span><span></span><span></span>';
-  row.appendChild(icon); row.appendChild(dots); document.getElementById('chatMsgs').appendChild(row); scrollChat();
+  row.appendChild(dots); document.getElementById('chatMsgs').appendChild(row); scrollChat();
 }
 function hideTyping(){ var r=document.getElementById('typingRow'); if(r) r.remove(); }
 
