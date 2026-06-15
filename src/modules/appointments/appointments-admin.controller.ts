@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import {
   getCalendarBookingsByUserId,
   getCalendarSettingsByUserId,
+  rescheduleBooking,
   saveCalendarSettings,
   updateBookingStatus,
 } from "./appointments-admin.repository";
@@ -117,6 +118,28 @@ export const calendarAdminController = {
         ok: false,
         message: "No se pudieron obtener las reservas.",
       });
+    }
+  },
+
+  async rescheduleBooking(req: Request, res: Response) {
+    try {
+      const id = String(req.params["id"] || "").trim();
+      const body = req.body || {};
+      const bookingDate = String(body.bookingDate || "").trim();
+      const startTime   = String(body.startTime   || "").trim();
+      const endTime     = String(body.endTime     || "").trim();
+
+      if (!id || !bookingDate || !startTime || !endTime) {
+        return res.status(400).json({ ok: false, message: "Faltan campos requeridos." });
+      }
+
+      const updated = await rescheduleBooking(id, bookingDate, startTime, endTime);
+      if (!updated) return res.status(404).json({ ok: false, message: "Reserva no encontrada." });
+
+      return res.json({ ok: true, booking: updated });
+    } catch (error: any) {
+      console.error("Error reagendando reserva:", error);
+      return res.status(500).json({ ok: false, message: "No se pudo reagendar." });
     }
   },
 

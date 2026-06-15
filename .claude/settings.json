@@ -11,7 +11,12 @@
       "Bash(flutter analyze *)",
       "Bash(find c:\\\\\\\\Users\\\\\\\\josep\\\\\\\\Desktop\\\\\\\\runtimeGenerateUi -type f -name \"*.sql\")",
       "Bash(find c:\\\\\\\\Users\\\\\\\\josep\\\\\\\\Desktop\\\\\\\\runtimeGenerateUi -type f \\\\\\( -name \"*.md\" -o -name \"README*\" \\\\\\))",
-      "Bash(cd c:\\\\\\\\Users\\\\\\\\josep\\\\\\\\Desktop\\\\\\\\runtimeGenerateUi)"
+      "Bash(cd c:\\\\\\\\Users\\\\\\\\josep\\\\\\\\Desktop\\\\\\\\runtimeGenerateUi)",
+      "Bash(grep -v \"^$\")",
+      "Read(//c/Users/josef/Desktop/runtimeGenerateUi/automatiza_dashboard/lib/features/calendar/widgets/**)",
+      "Bash(cd /c/Users/josep/Desktop/runtimeGenerateUi/automatiza_dashboard && find lib -type f -name \"*.dart\" | head -100)",
+      "Read(//c/c/Users/josep/Desktop/runtimeGenerateUi/automatiza_dashboard/**)",
+      "Bash(del \"c:\\\\Users\\\\josep\\\\Desktop\\\\runtimeGenerateUi\\\\automatiza_dashboard\\\\lib\\\\shared\\\\widgets\\\\back_header_widget.dart\")"
     ]
   }
 }

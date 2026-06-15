@@ -20,4 +20,9 @@ router.patch(
   calendarAdminController.updateBookingStatus
 );
 
+router.patch(
+  "/api/calendar/bookings/:id/reschedule",
+  calendarAdminController.rescheduleBooking
+);
+
 export default router;

@@ -213,6 +213,22 @@ export async function getCalendarBookingsByUserId(userId: string) {
   return result.rows;
 }
 
+export async function rescheduleBooking(
+  bookingId: string,
+  bookingDate: string,
+  startTime: string,
+  endTime: string
+) {
+  const result = await pool.query(
+    `UPDATE calendar_bookings
+     SET booking_date = $2, start_time = $3, end_time = $4, updated_at = NOW()
+     WHERE id = $1
+     RETURNING id::text, booking_date, start_time, end_time`,
+    [bookingId, bookingDate, startTime, endTime]
+  );
+  return result.rows[0] ?? null;
+}
+
 export async function updateBookingStatus(bookingId: string, status: string) {
   const allowed = ["pending", "confirmed", "cancelled"];
   if (!allowed.includes(status)) {
