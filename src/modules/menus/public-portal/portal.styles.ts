@@ -68,8 +68,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 
 /* CHAT — módulos IA */
 .ai-modules{display:flex;flex-direction:column;gap:5px;margin-top:14px;margin-left:-42px;width:calc(100% + 42px)}
-.ai-mod-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;display:flex;align-items:center;gap:13px;cursor:pointer;transition:background .25s cubic-bezier(.22,1,.36,1),border-color .25s,box-shadow .3s;-webkit-tap-highlight-color:transparent;font-family:inherit;color:var(--text);text-align:left;width:100%}
-.ai-mod-card:hover{background:var(--s2);border-color:var(--border-strong);box-shadow:0 3px 14px rgba(0,0,0,.05)}
+.ai-mod-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;display:flex;align-items:center;gap:13px;cursor:pointer;transition:background .25s cubic-bezier(.22,1,.36,1),border-color .25s;-webkit-tap-highlight-color:transparent;font-family:inherit;color:var(--text);text-align:left;width:100%}
+.ai-mod-card:hover{background:var(--s2);border-color:var(--border-strong)}
 .ai-mod-card:active{opacity:.7}
 .ai-mod-card.used{opacity:.18;pointer-events:none}
 .ai-mod-emoji{font-size:16px;flex-shrink:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:var(--bg);border-radius:4px;border:1px solid var(--border)}
@@ -91,7 +91,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 /* CHAT — formulario inline */
 .chat-form{display:flex;flex-direction:column;gap:8px;margin-top:12px}
 .chat-form-input{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;color:var(--text);font-size:14.5px;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none}
-.chat-form-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(15,15,15,.06)}
+.chat-form-input:focus{border-color:var(--primary)}
 .chat-form-input:disabled{opacity:.4}
 .chat-form-input::placeholder{color:var(--muted2)}
 .chat-form-error{font-size:12.5px;color:#dc2626;display:none;padding:2px 2px 0}
