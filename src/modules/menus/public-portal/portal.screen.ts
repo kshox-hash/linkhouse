@@ -63,7 +63,10 @@ export function renderPortalHtml(data: PortalViewData): string {
 <body>
 
 <header class="hdr">
-  <div class="hdr-name">${safe.name}</div>
+  <div class="hdr-avatar">${initials}</div>
+  <div class="hdr-info">
+    <div class="hdr-name">${safe.name}</div>
+  </div>
   <div class="hdr-badge">En línea</div>
 </header>
 

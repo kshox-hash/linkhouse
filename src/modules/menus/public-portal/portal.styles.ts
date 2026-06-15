@@ -15,15 +15,17 @@ export function portalStyles(): string {
   --muted2:#bbbbbb;
   --green:#16a34a;
   --green-dim:rgba(22,163,74,.08);
-  --hdr:56px;
+  --hdr:62px;
   --nav:58px;
   --r:6px;
 }
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overscroll-behavior-y:auto}
 
 /* HEADER */
-.hdr{position:fixed;top:0;left:0;right:0;height:var(--hdr);background:rgba(255,255,255,.88);border-bottom:1px solid var(--border);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:flex;align-items:center;gap:10px;padding:0 18px;z-index:200}
-.hdr-name{font-size:15px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.03em;color:var(--text)}
+.hdr{position:fixed;top:0;left:0;right:0;height:var(--hdr);background:rgba(255,255,255,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);display:flex;align-items:center;gap:11px;padding:0 16px;z-index:200}
+.hdr-avatar{width:36px;height:36px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;color:#fff;flex-shrink:0;letter-spacing:-.01em;user-select:none}
+.hdr-info{flex:1;min-width:0}
+.hdr-name{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.04em;color:var(--text);line-height:1}
 .hdr-badge{font-size:9.5px;font-weight:700;background:var(--green-dim);color:var(--green);border:1px solid rgba(22,163,74,.18);border-radius:3px;padding:3px 10px;display:flex;align-items:center;gap:5px;flex-shrink:0;letter-spacing:.06em;text-transform:uppercase}
 .hdr-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);animation:bpulse 2.5s infinite;flex-shrink:0}
 @keyframes bpulse{0%,100%{opacity:1}50%{opacity:.25}}
