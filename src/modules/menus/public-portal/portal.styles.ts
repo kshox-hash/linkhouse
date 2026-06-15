@@ -67,17 +67,16 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 @keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.35}28%{transform:translateY(-6px);opacity:1}}
 
 /* CHAT — módulos IA */
-.ai-modules{display:flex;flex-direction:column;gap:5px;margin-top:14px;margin-left:-42px;width:calc(100% + 42px)}
-.ai-mod-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;display:flex;align-items:center;gap:13px;cursor:pointer;transition:background .25s cubic-bezier(.22,1,.36,1),border-color .25s;-webkit-tap-highlight-color:transparent;font-family:inherit;color:var(--text);text-align:left;width:100%}
-.ai-mod-card:hover{background:var(--s2);border-color:var(--border-strong)}
-.ai-mod-card:active{opacity:.7}
+.ai-modules{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;margin-left:-42px;width:calc(100% + 42px)}
+.ai-mod-card{background:var(--bg);border:1.5px solid var(--primary);border-radius:14px;padding:14px 13px 12px;display:flex;flex-direction:column;cursor:pointer;transition:opacity .18s;-webkit-tap-highlight-color:transparent;font-family:inherit;color:var(--text);text-align:left;width:100%}
+.ai-mod-card:hover{opacity:.75}
+.ai-mod-card:active{opacity:.5}
 .ai-mod-card.used{opacity:.18;pointer-events:none}
-.ai-mod-emoji{font-size:16px;flex-shrink:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:var(--bg);border-radius:4px;border:1px solid var(--border)}
-.ai-mod-texts{flex:1;min-width:0}
-.ai-mod-title{font-size:13.5px;font-weight:600;margin-bottom:1px;color:var(--text);letter-spacing:-.02em}
-.ai-mod-desc{font-size:11.5px;color:var(--muted);line-height:1.4}
-.ai-mod-arrow{width:13px;height:13px;flex-shrink:0;stroke:var(--muted2);opacity:.6;transition:transform .25s cubic-bezier(.22,1,.36,1)}
-.ai-mod-card:hover .ai-mod-arrow{transform:translateX(3px);opacity:1}
+.ai-mod-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.ai-mod-emoji{font-size:22px;line-height:1}
+.ai-mod-arrow{width:14px;height:14px;flex-shrink:0;stroke:var(--primary);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.ai-mod-title{font-size:12.5px;font-weight:700;color:var(--text);letter-spacing:-.02em;line-height:1.3;margin-bottom:3px}
+.ai-mod-desc{font-size:11px;color:var(--muted);line-height:1.4}
 
 /* CHAT — chips de sugerencia */
 .ai-chips{display:flex;flex-direction:column;gap:4px;margin-top:10px;margin-left:-42px;width:calc(100% + 42px)}

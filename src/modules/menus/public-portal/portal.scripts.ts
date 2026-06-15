@@ -641,7 +641,7 @@ function addAiWithModules(){
   var mods=document.createElement('div'); mods.className='ai-modules';
   MODULE_CARDS.forEach(function(card){
     var btn=document.createElement('button'); btn.type='button'; btn.className='ai-mod-card';
-    btn.innerHTML='<span class="ai-mod-emoji">'+card.emoji+'</span><div class="ai-mod-texts"><div class="ai-mod-title">'+escH(card.title)+'</div><div class="ai-mod-desc">'+escH(card.desc)+'</div></div><svg class="ai-mod-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>';
+    btn.innerHTML='<div class="ai-mod-card-top"><span class="ai-mod-emoji">'+card.emoji+'</span><svg class="ai-mod-arrow" viewBox="0 0 24 24" fill="none"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></div><div class="ai-mod-title">'+escH(card.title)+'</div><div class="ai-mod-desc">'+escH(card.desc)+'</div>';
     btn.addEventListener('click',(function(action,modsEl){
       return function(){
         modsEl.querySelectorAll('.ai-mod-card').forEach(function(c){ c.classList.add('used'); });
