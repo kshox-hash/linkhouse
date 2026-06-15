@@ -707,8 +707,8 @@ function quickAction(a){
   });
   var gotoChatBtn=document.getElementById('btn-goto-chat');
   if(gotoChatBtn) gotoChatBtn.addEventListener('click',function(){ showTab('chat'); });
-  var hdrDesc=document.querySelector('.hdr-desc');
-  if(hdrDesc) hdrDesc.addEventListener('click',function(){ showTab('nosotros'); });
+  var hdr=document.querySelector('.hdr');
+  if(hdr) hdr.addEventListener('click',function(){ showTab('nosotros'); });
   setTimeout(function(){ addAiWithModules(); },600);
 })();
 `;
