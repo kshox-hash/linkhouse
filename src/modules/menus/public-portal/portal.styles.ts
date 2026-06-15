@@ -68,13 +68,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter'
 @keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.35}28%{transform:translateY(-6px);opacity:1}}
 
 /* CHAT — módulos IA */
-.ai-modules{display:flex;flex-direction:column;gap:0;margin-top:6px;background:var(--s1);border-radius:14px;overflow:hidden;border:1px solid var(--border)}
-.ai-mod-card{background:var(--s1);border:none;border-bottom:1px solid var(--border);border-radius:0;padding:16px 18px;font-size:15px;font-weight:500;color:var(--text);cursor:pointer;transition:background .18s;-webkit-tap-highlight-color:transparent;font-family:inherit;text-align:left;display:flex;align-items:center;justify-content:space-between;letter-spacing:-.02em;line-height:1.3;width:100%}
-.ai-mod-card:last-child{border-bottom:none}
-.ai-mod-card::after{content:'→';font-size:14px;color:var(--muted2);flex-shrink:0;margin-left:10px;transition:transform .18s,color .18s}
-.ai-mod-card:hover{background:var(--s1)}
+.ai-modules{display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.ai-mod-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:11px 14px;font-size:13.5px;font-weight:500;color:var(--text);cursor:pointer;transition:background .22s cubic-bezier(.22,1,.36,1),border-color .22s;-webkit-tap-highlight-color:transparent;font-family:inherit;text-align:left;display:flex;align-items:center;justify-content:space-between;letter-spacing:-.01em;line-height:1.3;width:100%}
+.ai-mod-card::after{content:'→';font-size:13px;color:var(--muted2);flex-shrink:0;margin-left:8px;transition:transform .22s cubic-bezier(.22,1,.36,1),color .22s}
+.ai-mod-card:hover{background:var(--s1);border-color:var(--border-strong)}
 .ai-mod-card:hover::after{transform:translateX(3px);color:var(--text)}
-.ai-mod-card:active{background:var(--s1);opacity:.7}
+.ai-mod-card:active{opacity:.6}
 .ai-mod-card.used{opacity:.15;pointer-events:none}
 
 /* CHAT — chips de sugerencia */
