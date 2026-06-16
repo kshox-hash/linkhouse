@@ -9,7 +9,7 @@ export const mpConnectController = {
   // GET /api/payments/mp-connect-url  (autenticado — devuelve la URL para abrir en browser)
   async getConnectUrl(req: Request, res: Response): Promise<Response> {
     try {
-      const userId = String((req as unknown as Record<string,unknown>)["userId"] ?? "").trim();
+      const userId = String(req.user?.userId ?? "").trim();
       if (!userId) return res.status(401).json({ ok: false, message: "No autorizado" });
 
       const url = generateMpAuthUrl(userId);
@@ -43,7 +43,7 @@ export const mpConnectController = {
   async disconnect(req: Request, res: Response): Promise<Response> {
     try {
       const userId = String(req.params["userId"] ?? "").trim();
-      const authUserId = String((req as unknown as Record<string,unknown>)["userId"] ?? "").trim();
+      const authUserId = String(req.user?.userId ?? "").trim();
       if (userId !== authUserId) return res.status(403).json({ ok: false, message: "Prohibido" });
 
       await deleteMpConnection(userId);

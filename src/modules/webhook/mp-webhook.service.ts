@@ -8,6 +8,9 @@ import {
 } from "./mp-webhook.repository";
 import { sendBookingPaidEmail } from "../calendar/booking/services/bookingPaidEmailService";
 import { sendBusinessBookingPaidEmail } from "../calendar/booking/services/businessBookingPaidEmailService";
+import { StatisticsService } from "../stadistics/stadistics.service";
+
+const statsService = new StatisticsService();
 
 const WEBHOOK_SECRET = process.env.MP_WEBHOOK_SECRET ?? "";
 const ACCESS_TOKEN_MP = process.env.ACCESS_TOKEN_MP ?? "";
@@ -110,6 +113,8 @@ export async function processApprovedPayment(
 
   const bookingDateStr = new Date(booking.booking_date).toLocaleDateString("es-CL");
   const bookingTimeStr = String(booking.start_time).slice(0, 5);
+
+  statsService.increment(booking.user_id, "booking_paid").catch(() => {});
 
   if (booking.client_email) {
     sendBookingPaidEmail({

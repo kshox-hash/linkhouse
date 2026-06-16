@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 
+import { StatisticsService } from "../stadistics/stadistics.service";
 import { buildCalendarSlots, reserveCalendarSlot } from "../appointments/appointments.service";
+
+const statsService = new StatisticsService();
 import { renderBookingHtml } from "../appointments/appointments.screen";
 import { getSlugByValueService } from "../slug/slug.service";
 import { getActiveProvidersByUserId } from "../appointments/calendar-providers.repository";
@@ -176,6 +179,8 @@ export const calendarPublicController = {
       } catch (err) {
         console.error("[calendar] Error creando preferencia de pago:", err);
       }
+
+      statsService.increment(profile.user_id, "booking_created").catch(() => {});
 
       return res.json({
         ok: true,

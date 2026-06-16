@@ -5,6 +5,10 @@ import { getProductsRepository, getActiveProductsRepository } from "../../quotes
 import { companyProfileRepository } from "../../profiles/company_profile_repository";
 import { findEnabledModulesByUserId } from "../user-modules.repository";
 import { renderPortalHtml } from "./portal.screen";
+import { StatisticsService } from "../../stadistics/stadistics.service";
+import { isBot, shouldCountVisit } from "../../stadistics/visit-tracker";
+
+const statsService = new StatisticsService();
 
 
 
@@ -93,6 +97,12 @@ export const publicPortalController = {
           description: p.description ?? null,
         })),
       });
+
+      const ip = req.ip ?? req.socket?.remoteAddress ?? "";
+      const ua = req.headers["user-agent"];
+      if (!isBot(ua) && shouldCountVisit(ip, slug.user_id)) {
+        statsService.increment(slug.user_id, "link_opens").catch(() => {});
+      }
 
       return res.status(200).send(html);
 
