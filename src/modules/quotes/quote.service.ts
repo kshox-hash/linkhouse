@@ -145,14 +145,18 @@ export function generateQuotePdf(input: QuotePdfInput) {
 
         // Template badge (top-right)
         const badgeLabel = TEMPLATE_LABELS[templateType];
-        doc.fillColor("rgba(255,255,255,0.25)").roundedRect(pageWidth - 160, 14, 138, 18, 9).fill();
+        doc.fillOpacity(0.25).fillColor(colors.white)
+           .roundedRect(pageWidth - 160, 14, 138, 18, 9).fill()
+           .fillOpacity(1);
         doc.fillColor(colors.white).font("Helvetica").fontSize(8)
            .text(badgeLabel, pageWidth - 158, 18, { width: 134, align: "center" });
 
         doc.fillColor(colors.white).font("Helvetica-Bold").fontSize(20)
            .text(docTitle, pageWidth - 160, 38, { width: 138, align: "right" });
-        doc.font("Helvetica").fontSize(9).fillColor("rgba(255,255,255,0.8)")
-           .text(brandName, pageWidth - 160, 64, { width: 138, align: "right" });
+        doc.fillOpacity(0.8).fillColor(colors.white)
+           .font("Helvetica").fontSize(9)
+           .text(brandName, pageWidth - 160, 64, { width: 138, align: "right" })
+           .fillOpacity(1);
         doc.restore();
       }
 

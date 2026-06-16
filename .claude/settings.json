@@ -18,7 +18,17 @@
       "Read(//c/c/Users/josep/Desktop/runtimeGenerateUi/automatiza_dashboard/**)",
       "Bash(del \"c:\\\\Users\\\\josep\\\\Desktop\\\\runtimeGenerateUi\\\\automatiza_dashboard\\\\lib\\\\shared\\\\widgets\\\\back_header_widget.dart\")",
       "Read(//c/Users/josef/Desktop/runtimeGenerateUi/automatiza_dashboard/lib/features/calendar/presentation/screens/**)",
-      "Bash(npm i *)"
+      "Bash(npm i *)",
+      "Bash(node -e \"const p = require\\('./node_modules/pdfkit/package.json'\\); console.log\\('pdfkit:', p.version\\)\")",
+      "PowerShell($content = Get-Content \"c:\\\\Users\\\\josep\\\\Desktop\\\\runtimeGenerateUi\\\\node_modules\\\\pdfkit\\\\js\\\\pdfkit.js\" -Raw; [regex]::Matches\\($content, 'rgba|parseColor|fillColor'\\) | Select-Object -First 5 -ExpandProperty Value)",
+      "PowerShell($content = Get-Content \"c:\\\\Users\\\\josep\\\\Desktop\\\\runtimeGenerateUi\\\\node_modules\\\\pdfkit\\\\js\\\\pdfkit.js\" -Raw; $idx = $content.IndexOf\\(\"parseColor\"\\); if\\($idx -ge 0\\) { $content.Substring\\([Math]::Max\\(0,$idx-100\\), 300\\) } else { \"parseColor NOT FOUND\" })",
+      "PowerShell($content = Get-Content \"c:\\\\Users\\\\josep\\\\Desktop\\\\runtimeGenerateUi\\\\node_modules\\\\pdfkit\\\\js\\\\pdfkit.js\" -Raw; $idx = $content.IndexOf\\(\"fillColor\"\\); if\\($idx -ge 0\\) { $content.Substring\\($idx, 500\\) } else { \"NOT FOUND\" })",
+      "PowerShell($content = Get-Content \"c:\\\\Users\\\\josep\\\\Desktop\\\\runtimeGenerateUi\\\\node_modules\\\\pdfkit\\\\js\\\\pdfkit.js\" -Raw; $idx = $content.IndexOf\\(\"_setColor\"\\); if\\($idx -ge 0\\) { $content.Substring\\($idx, 1000\\) } else { \"NOT FOUND\" })",
+      "PowerShell($content = Get-Content \"c:\\\\Users\\\\josep\\\\Desktop\\\\runtimeGenerateUi\\\\node_modules\\\\pdfkit\\\\js\\\\pdfkit.js\" -Raw; $idx = $content.IndexOf\\(\"_setColor\\(\"\\); if\\($idx -ge 0\\) { $content.Substring\\($idx, 1500\\) } else { \"NOT FOUND\" })",
+      "PowerShell($content = Get-Content \"c:\\\\Users\\\\josep\\\\Desktop\\\\runtimeGenerateUi\\\\node_modules\\\\pdfkit\\\\js\\\\pdfkit.js\" -Raw; $idx = $content.IndexOf\\(\"_normalizeColor\"\\); if\\($idx -ge 0\\) { $content.Substring\\($idx, 1500\\) } else { \"NOT FOUND\" })",
+      "PowerShell($content = Get-Content \"c:\\\\Users\\\\josep\\\\Desktop\\\\runtimeGenerateUi\\\\node_modules\\\\pdfkit\\\\js\\\\pdfkit.js\" -Raw; $content.Substring\\(52224, 800\\))",
+      "PowerShell($content = Get-Content \"c:\\\\Users\\\\josep\\\\Desktop\\\\runtimeGenerateUi\\\\node_modules\\\\pdfkit\\\\js\\\\pdfkit.js\" -Raw; $idx = $content.IndexOf\\(\"_fillColor\"\\); $content.Substring\\($idx, 2000\\))",
+      "PowerShell($content = Get-Content \"c:\\\\Users\\\\josep\\\\Desktop\\\\runtimeGenerateUi\\\\node_modules\\\\pdfkit\\\\js\\\\pdfkit.js\" -Raw; $matches = [regex]::Matches\\($content, \"_fillColor\"\\); foreach\\($m in $matches\\) { $content.Substring\\([Math]::Max\\(0,$m.Index-50\\), 150\\) + \"`n---\" })"
     ]
   }
 }
