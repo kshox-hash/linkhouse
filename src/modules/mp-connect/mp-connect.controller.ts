@@ -85,8 +85,9 @@ export const mpConnectController = {
 
       res.send(_htmlPage(
         "¡Cuenta conectada!",
-        "Tu cuenta de MercadoPago quedó vinculada. Los pagos de tus clientes llegarán directamente a tu cuenta.",
-        true
+        "Tu cuenta de MercadoPago quedó vinculada. Volviendo a la app...",
+        true,
+        `${APP_DEEPLINK}?mp=connected`,
       ));
     } catch (err) {
       console.error("[mp-connect] Error en callback:", err);
@@ -95,18 +96,27 @@ export const mpConnectController = {
   },
 };
 
-function _htmlPage(title: string, message: string, success: boolean): string {
+function _htmlPage(title: string, message: string, success: boolean, deeplink?: string): string {
   const iconBg    = success ? "#dcfce7" : "#fee2e2";
   const iconColor = success ? "#16a34a" : "#dc2626";
   const icon      = success ? "✓" : "!";
+  const redirectScript = deeplink
+    ? `<script>setTimeout(function(){ window.location.href = "${deeplink}"; }, 1800);</script>`
+    : "";
+  const redirectMeta = deeplink
+    ? `<meta http-equiv="refresh" content="2;url=${deeplink}">`
+    : "";
   return `<!doctype html><html lang="es">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+${redirectMeta}
 <title>${title}</title></head>
 <body style="margin:0;min-height:100vh;background:#f0f4f9;font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;padding:24px">
 <div style="background:#fff;border-radius:20px;padding:36px 28px;max-width:420px;width:100%;border:1px solid #cdd6e4;text-align:center">
   <div style="width:64px;height:64px;border-radius:18px;background:${iconBg};color:${iconColor};display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;margin:0 auto 20px">${icon}</div>
   <h1 style="margin:0 0 10px;font-size:22px;font-weight:800;color:#0a1628">${title}</h1>
   <p style="margin:0 0 24px;font-size:14px;color:#4a6580;line-height:1.6">${message}</p>
-  <p style="font-size:13px;color:#8fa8c0">Puedes cerrar esta ventana y volver a la app.</p>
-</div></body></html>`;
+  <p style="font-size:13px;color:#8fa8c0">${deeplink ? "Redirigiendo a la app..." : "Puedes cerrar esta ventana y volver a la app."}</p>
+</div>
+${redirectScript}
+</body></html>`;
 }
