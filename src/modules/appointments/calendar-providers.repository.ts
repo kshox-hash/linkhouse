@@ -47,12 +47,13 @@ export async function updateProvider(input: {
   name: string;
   color?: string;
   isActive?: boolean;
+  userId: string;
 }) {
   const result = await pool.query(
     `UPDATE calendar_providers
      SET name = $2, color = $3, avatar_initials = $4,
          is_active = $5, updated_at = NOW()
-     WHERE id = $1
+     WHERE id = $1 AND user_id = $6
      RETURNING id::text, user_id::text, name, color, avatar_initials, is_active`,
     [
       input.id,
@@ -60,13 +61,14 @@ export async function updateProvider(input: {
       input.color || "#63ACF1",
       toInitials(input.name),
       input.isActive !== false,
+      input.userId,
     ]
   );
   return result.rows[0] ?? null;
 }
 
-export async function deleteProvider(id: string) {
-  await pool.query(`DELETE FROM calendar_providers WHERE id = $1`, [id]);
+export async function deleteProvider(id: string, userId: string) {
+  await pool.query(`DELETE FROM calendar_providers WHERE id = $1 AND user_id = $2`, [id, userId]);
 }
 
 export async function getActiveProvidersByUserId(userId: string) {

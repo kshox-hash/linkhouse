@@ -4,77 +4,76 @@
 - **Backend:** Node.js + TypeScript + Express 5 + PostgreSQL (Render)
 - **Frontend:** Flutter (app móvil)
 - **Auth:** JWT + Google OAuth (Passport)
-- **Pagos:** MercadoPago
+- **Pagos:** MercadoPago (marketplace OAuth + webhooks HMAC-SHA256)
 - **Otros:** Nodemailer, PDFKit, Zod, Helmet, express-rate-limit
 
-## Estado del backend (junio 2025)
+## Módulos del backend
 
-### Módulos existentes
-- `src/modules/stadistics/` — estadísticas, reseñas (NUEVO, construido en sesión anterior)
-- `src/modules/appointments/` — citas/calendario con MercadoPago (⚠️ tiene bugs, no tocar hasta arreglar webhook)
-- `src/modules/quotes/` — cotizaciones con PDF y email
-- `src/modules/notifications/` — notificaciones push
-- `src/modules/profiles/` — perfil de empresa
-- `src/modules/slug/` — slugs públicos
-- `src/modules/menus/` — portal público
-- `src/modules/payments/` — MercadoPago
-- `src/login/` — login email/password + Google OAuth
-- `src/runtime/` — runtime links, booking público
+| Módulo | Carpeta | Estado |
+|--------|---------|--------|
+| Estadísticas y reseñas | `src/modules/stadistics/` | ✅ |
+| Calendario + reservas + pagos MP | `src/modules/appointments/` + `src/modules/calendar/` | ✅ |
+| Webhook MercadoPago (HMAC-SHA256) | `src/modules/webhook/` | ✅ |
+| MP OAuth connect | `src/modules/mp-connect/` | ✅ |
+| Cotizaciones (PDF + email) | `src/modules/quotes/` | ✅ |
+| Notificaciones push | `src/modules/notifications/` | ✅ |
+| Perfil de empresa | `src/modules/profiles/` | ✅ |
+| Portal público (chat, servicios, reservas) | `src/modules/menus/public-portal/` | ✅ |
+| Chat con IA | `src/modules/chat/` | ✅ |
+| Clientes (CRM básico) | `src/modules/clients/` | ✅ |
+| Servicios | `src/modules/services/` | ✅ |
+| Bloques | `src/modules/blocks/` | ✅ |
+| Slugs públicos | `src/modules/slug/` | ✅ |
+| Recordatorios (cron) | `src/modules/reminders/` | ✅ |
+| Admin | `src/modules/admin/` | ✅ |
+| WhatsApp | `src/whatsapp/` | ✅ |
+| Login email/password + Google OAuth | `src/login/` | ✅ |
 
-### Rutas del backend (base: `/api`)
-```
-POST   /api/stats/:userId/increment
-GET    /api/stats/:userId/dashboard
-GET    /api/stats/:userId/home
-GET    /api/stats/:userId/link-opens
-GET    /api/stats/:userId/module-ranking
-GET    /api/stats/:userId/reviews/summary
-POST   /api/stats/:userId/reviews
-GET    /api/stats/:userId/reviews
-DELETE /api/stats/:userId/reviews/:reviewId
-GET    /api/notifications/:userId
-PATCH  /api/notifications/:userId/read-all
-PATCH  /api/notifications/:userId/:notificationId/read
-GET    /health
-POST   /auth/login          (rate limited: 20 req/15min)
-GET    /auth/google
-GET    /auth/google/callback
-```
-
-## Seguridad — ya resuelta
-- Auth JWT en todos los módulos privados
-- Ownership check (JWT userId vs params userId) en estadísticas y notificaciones
-- CORS con allowlist via env var `CORS_ORIGIN`
-- Helmet aplicado
-- Rate limiting en /auth
-- Credenciales DB solo desde env vars (no hardcodeadas)
+## Seguridad implementada
+- Auth JWT en todos los endpoints privados (`authMiddleware`)
+- IDOR check (JWT userId vs params userId) en todos los módulos
+- Ownership check en mutations de DB (user_id en WHERE de UPDATE/DELETE)
+- CORS con allowlist via `CORS_ORIGIN`
+- Helmet + rate limiting en `/auth` (20 req/15min)
+- Verificación HMAC-SHA256 en webhook MercadoPago
+- Credenciales DB solo desde env vars
 - Graceful shutdown (SIGTERM/SIGINT)
-- Health check en GET /health
-
-## Módulo webhook MercadoPago — `src/modules/webhook/`
-Módulo separado y limpio con verificación HMAC-SHA256 implementada.
-- `mp-webhook.router.ts` — rutas: POST /api/payments/webhook + páginas success/failure/pending
-- `mp-webhook.controller.ts` — handler HTTP
-- `mp-webhook.service.ts` — verificación de firma + lógica de negocio
-- `mp-webhook.repository.ts` — queries a DB (payments, calendar_bookings, company_profiles)
-Requiere `MP_WEBHOOK_SECRET` (secret del panel de MercadoPago) y `ACCESS_TOKEN_MP` en .env.
+- Health check en `GET /health`
 
 ## Variables de entorno requeridas
 ```
+# Auth
 JWT_SECRET=
-CORS_ORIGIN=https://tudominio.com
+
+# Base de datos (Render PostgreSQL)
 PGHOST=
 PGUSER=
 PGPASSWORD=
 PGDATABASE=
 PGPORT=5432
-PUBLIC_BASE_URL=
-WHATSAPP_ACCESS_TOKEN=
-WHATSAPP_PHONE_NUMBER_ID=
-APP_DEEPLINK_URL=automatiza://auth
+
+# CORS (separar múltiples orígenes con coma)
+CORS_ORIGIN=https://tudominio.com
+
+# URLs
+PUBLIC_BASE_URL=https://tudominio.com
+
+# MercadoPago — cuenta global de la plataforma
 ACCESS_TOKEN_MP=
 MP_WEBHOOK_SECRET=
+
+# MercadoPago — OAuth marketplace (para conectar cuentas de negocios)
+MP_APP_ID=
+MP_APP_SECRET=
+MP_REDIRECT_URI=https://tudominio.com/auth/mp/callback
+
+# Notificaciones
 BUSINESS_NOTIFICATION_EMAIL=
+WHATSAPP_ACCESS_TOKEN=
+WHATSAPP_PHONE_NUMBER_ID=
+
+# App móvil
+APP_DEEPLINK_URL=automatiza://auth
 ```
 
 ## Nota técnica importante

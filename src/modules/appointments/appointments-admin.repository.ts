@@ -229,27 +229,28 @@ export async function rescheduleBooking(
   bookingId: string,
   bookingDate: string,
   startTime: string,
-  endTime: string
+  endTime: string,
+  userId: string
 ) {
   const result = await pool.query(
     `UPDATE calendar_bookings
      SET booking_date = $2, start_time = $3, end_time = $4, updated_at = NOW()
-     WHERE id = $1
+     WHERE id = $1 AND user_id = $5
      RETURNING id::text, booking_date, start_time, end_time`,
-    [bookingId, bookingDate, startTime, endTime]
+    [bookingId, bookingDate, startTime, endTime, userId]
   );
   return result.rows[0] ?? null;
 }
 
-export async function updateBookingStatus(bookingId: string, status: string) {
+export async function updateBookingStatus(bookingId: string, status: string, userId: string) {
   const allowed = ["pending", "confirmed", "cancelled"];
   if (!allowed.includes(status)) {
     throw new Error(`Estado inválido: ${status}`);
   }
   const result = await pool.query(
-    `UPDATE calendar_bookings SET status = $2 WHERE id = $1
+    `UPDATE calendar_bookings SET status = $2 WHERE id = $1 AND user_id = $3
      RETURNING id::text, status`,
-    [bookingId, status]
+    [bookingId, status, userId]
   );
   return result.rows[0] ?? null;
 }
