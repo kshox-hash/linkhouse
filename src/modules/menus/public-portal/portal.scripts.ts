@@ -134,6 +134,7 @@ function renderBPProviders(){
 
 function closeBookingPanel(){
   document.getElementById('bookingPanel').classList.remove('open');
+  document.querySelectorAll('.svc-item').forEach(function(el){ el.classList.remove('active'); });
   setTimeout(function(){ var p=document.getElementById('bookingPanel'); if(p) p.innerHTML=''; },360);
 }
 
@@ -336,6 +337,7 @@ function openQuotePanel(){
 }
 function closeQuotePanel(){
   document.getElementById('quotePanel').classList.remove('open');
+  document.querySelectorAll('.svc-item').forEach(function(el){ el.classList.remove('active'); });
   setTimeout(function(){ var p=document.getElementById('quotePanel'); if(p) p.innerHTML=''; },360);
 }
 
@@ -506,12 +508,19 @@ function renderQPSuccess(name){
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 (function init(){
-  document.querySelectorAll('.mod-card').forEach(function(card){
-    card.addEventListener('click',function(){
-      var action=card.getAttribute('data-action');
-      if(action==='reservas')       openBookingPanel();
-      else if(action==='cotizador') openQuotePanel();
-    });
+  function scrollThenOpen(openFn){
+    var anchor=document.getElementById('svc-anchor');
+    if(anchor){ anchor.scrollIntoView({behavior:'smooth',block:'end'}); }
+    setTimeout(openFn,380);
+  }
+  function handleAction(action,el){
+    document.querySelectorAll('.svc-item').forEach(function(s){ s.classList.remove('active'); });
+    if(el&&el.classList.contains('svc-item')){ el.classList.add('active'); }
+    if(action==='reservas')       scrollThenOpen(openBookingPanel);
+    else if(action==='cotizador') scrollThenOpen(openQuotePanel);
+  }
+  document.querySelectorAll('[data-action]').forEach(function(el){
+    el.addEventListener('click',function(){ handleAction(el.getAttribute('data-action'),el); });
   });
 })();
 `;
