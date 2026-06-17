@@ -143,8 +143,8 @@ export const calendarPublicController = {
       let checkoutUrl: string | null = null;
       try {
         const accessToken = await getMpAccessToken(profile.user_id);
-        if (accessToken) {
-          const amount = Number((booking as Record<string,unknown>)["payment_amount"] ?? 3000);
+        const amount = Number(booking.payment_amount || 0);
+        if (accessToken && amount > 0) {
           const feePct = await getPlatformFeePct(profile.user_id);
           const marketplaceFee = Math.round(amount * feePct / 100);
           const payment = await createPaymentRecord(profile.user_id, booking.id, amount);

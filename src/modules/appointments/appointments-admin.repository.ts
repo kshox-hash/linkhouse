@@ -2,6 +2,13 @@ import DB from "../../db/db_configuration";
 
 const pool = DB.getPool();
 
+export async function initCalendarBookingPriceColumn(): Promise<void> {
+  await pool.query(`
+    ALTER TABLE calendar_settings
+    ADD COLUMN IF NOT EXISTS booking_price INTEGER DEFAULT 0
+  `);
+}
+
 export type SaveCalendarSettingsInput = {
   userId: string;
   openingTime: string;
@@ -9,6 +16,7 @@ export type SaveCalendarSettingsInput = {
   slotDurationMinutes: number;
   maxDaysAhead: number;
   timezone?: string;
+  bookingPrice?: number;
   activeWeekdays: number[];
   blockedDates?: Array<{
     blockedDate: string;
@@ -69,6 +77,7 @@ export async function getCalendarSettingsByUserId(userId: string) {
       Number(settings?.default_slot_minutes || firstAvailability?.slot_minutes || 30),
     max_days_ahead: Number(settings?.max_advance_days || 30),
     timezone: settings?.timezone || "America/Santiago",
+    booking_price: Number(settings?.booking_price || 0),
     active_weekdays: availability.length
       ? availability.map((row) => Number(row.weekday))
       : [1, 2, 3, 4, 5],
@@ -91,14 +100,16 @@ export async function saveCalendarSettings(input: SaveCalendarSettingsInput) {
         timezone,
         default_slot_minutes,
         max_advance_days,
+        booking_price,
         updated_at
       )
-      VALUES ($1, $2, $3, $4, NOW())
+      VALUES ($1, $2, $3, $4, $5, NOW())
       ON CONFLICT (user_id)
       DO UPDATE SET
         timezone = EXCLUDED.timezone,
         default_slot_minutes = EXCLUDED.default_slot_minutes,
         max_advance_days = EXCLUDED.max_advance_days,
+        booking_price = EXCLUDED.booking_price,
         updated_at = NOW()
       RETURNING *
       `,
@@ -107,6 +118,7 @@ export async function saveCalendarSettings(input: SaveCalendarSettingsInput) {
         input.timezone || "America/Santiago",
         input.slotDurationMinutes,
         input.maxDaysAhead,
+        input.bookingPrice ?? 0,
       ]
     );
 

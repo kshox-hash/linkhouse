@@ -25,9 +25,7 @@ export function generateMpAuthUrl(userId: string): string {
     state,
   });
 
-  const url = `${MP_AUTH_URL}?${params.toString()}`;
-  console.log("[mp-connect] OAuth URL generada:", url);
-  return url;
+  return `${MP_AUTH_URL}?${params.toString()}`;
 }
 
 export function consumeState(state: string): string | null {

@@ -34,6 +34,7 @@ import statisticsRouter from "./modules/stadistics/stadistics.router";
 import quotesExtendedRouter from "./modules/quotes/quotes-extended.routes";
 import { initQuoteServicesTable } from "./modules/quotes/quote-services/quote-services.repository";
 import { initQuoteHistoryTable } from "./modules/quotes/quote-history/quote-history.repository";
+import { initCalendarBookingPriceColumn } from "./modules/appointments/appointments-admin.repository";
 import DB from "./db/db_configuration";
 
 // ─── Proceso ────────────────────────────────────────────────────────────────
@@ -122,6 +123,7 @@ const server = app.listen(PORT, async () => {
   await Promise.all([
     initQuoteServicesTable().catch((e) => console.error("[init] quote_services:", e)),
     initQuoteHistoryTable().catch((e) => console.error("[init] quote_history:", e)),
+    initCalendarBookingPriceColumn().catch((e) => console.error("[init] calendar_booking_price:", e)),
   ]);
 });
 

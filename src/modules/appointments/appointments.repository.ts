@@ -11,6 +11,7 @@ export type CalendarSettingsRow = {
   max_advance_days: number;
   auto_confirm_booking: boolean;
   is_active: boolean;
+  booking_price?: number | null;
 };
 
 export type CalendarAvailabilityRow = {
@@ -153,6 +154,7 @@ export async function createCalendarBooking(input: {
   confirmationToken: string;
   confirmationExpiresAt: Date;
   providerId?: string | null;
+  paymentAmount?: number | null;
 }) {
   const result = await pool.query<CalendarBookingRow>(
     `
@@ -166,6 +168,7 @@ export async function createCalendarBooking(input: {
       client_phone,
       status,
       payment_status,
+      payment_amount,
       notes,
       confirmation_token,
       confirmation_expires_at,
@@ -179,9 +182,10 @@ export async function createCalendarBooking(input: {
       $1, $2, $3, $4, $5, $6, $7,
       'pending_payment',
       'unpaid',
-      $8, $9, $10, NOW(),
+      $8,
+      $9, $10, $11, NOW(),
       NOW() + INTERVAL '45 minutes',
-      $11,
+      $12,
       NOW(),
       NOW()
     )
@@ -195,6 +199,7 @@ export async function createCalendarBooking(input: {
       input.customerName,
       input.customerEmail,
       input.customerPhone,
+      input.paymentAmount ?? null,
       input.notes || null,
       input.confirmationToken,
       input.confirmationExpiresAt,

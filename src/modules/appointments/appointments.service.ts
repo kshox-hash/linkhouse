@@ -198,5 +198,6 @@ export async function reserveCalendarSlot(input: {
     confirmationToken: input.confirmationToken,
     confirmationExpiresAt: input.confirmationExpiresAt,
     providerId: input.providerId,
+    paymentAmount: Number(settings.booking_price) || null,
   });
 }
