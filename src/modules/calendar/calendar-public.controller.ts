@@ -149,7 +149,18 @@ export const calendarPublicController = {
       try {
         const accessToken = await getMpAccessToken(profile.user_id);
         const amount = Number(booking.payment_amount || 0);
-        if (accessToken && amount > 0) {
+        if (amount === 0) {
+          // Reserva gratuita — confirmar inmediatamente y notificar al cliente
+          await confirmFreeBooking(booking.id);
+          sendBookingPaidEmail({
+            to: customerEmail,
+            customerName,
+            businessName: profile.business_name,
+            bookingDate: bookingDateLabel,
+            bookingTime: startTime,
+          }).catch((err) => console.error("[calendar] Error enviando email de confirmación:", err));
+        } else if (accessToken) {
+          // Reserva con precio — iniciar flujo de pago MP
           const feePct = await getPlatformFeePct(profile.user_id);
           const marketplaceFee = Math.round(amount * feePct / 100);
           const payment = await createPaymentRecord(profile.user_id, booking.id, amount);
@@ -177,17 +188,8 @@ export const calendarPublicController = {
               checkoutUrl,
             }).catch((err) => console.error("[calendar] Error enviando email de pago:", err));
           }
-        } else {
-          // Reserva gratuita — confirmar inmediatamente y notificar al cliente
-          await confirmFreeBooking(booking.id);
-          sendBookingPaidEmail({
-            to: customerEmail,
-            customerName,
-            businessName: profile.business_name,
-            bookingDate: bookingDateLabel,
-            bookingTime: startTime,
-          }).catch((err) => console.error("[calendar] Error enviando email de confirmación:", err));
         }
+        // Si amount > 0 pero no hay accessToken: reserva queda pending_payment sin confirmar
       } catch (err) {
         console.error("[calendar] Error en flujo post-reserva:", err);
       }
