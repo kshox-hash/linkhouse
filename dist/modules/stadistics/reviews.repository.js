@@ -4,27 +4,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReviewsRepository = void 0;
+exports.initReviewsGoogleColumns = initReviewsGoogleColumns;
 const db_configuration_1 = __importDefault(require("../../db/db_configuration"));
+async function initReviewsGoogleColumns() {
+    const pool = db_configuration_1.default.getPool();
+    await pool.query(`
+    ALTER TABLE reviews
+      ADD COLUMN IF NOT EXISTS google_name       TEXT,
+      ADD COLUMN IF NOT EXISTS google_email      TEXT,
+      ADD COLUMN IF NOT EXISTS google_avatar_url TEXT
+  `);
+}
 class ReviewsRepository {
     constructor() {
         this.pool = db_configuration_1.default.getPool();
     }
-    /**
-     * Crea una nueva reseña.
-     *
-     * @param userId      dueño del negocio (a quién le dejan la reseña)
-     * @param rating      número del 1 al 5
-     * @param comment     comentario opcional
-     * @param clientName  nombre opcional de quien deja la reseña
-     * @param moduleId    opcional: si la reseña es sobre un módulo
-     *                    específico (ej. 'cotizador', 'agenda')
-     */
-    async create(userId, rating, comment, clientName, moduleId) {
-        const result = await this.pool.query(`
-      INSERT INTO reviews (user_id, rating, comment, client_name, module_id)
-      VALUES ($1, $2, $3, $4, $5)
-      RETURNING id, user_id, rating, comment, client_name, module_id, created_at
-      `, [userId, rating, comment ?? null, clientName ?? null, moduleId ?? null]);
+    async create(userId, rating, comment, clientName, moduleId, googleName, googleEmail, googleAvatarUrl) {
+        const result = await this.pool.query(`INSERT INTO reviews
+         (user_id, rating, comment, client_name, module_id,
+          google_name, google_email, google_avatar_url)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+       RETURNING id, user_id, rating, comment, client_name,
+                 google_name, google_email, google_avatar_url, created_at`, [userId, rating, comment ?? null, clientName ?? null, moduleId ?? null,
+            googleName ?? null, googleEmail ?? null, googleAvatarUrl ?? null]);
         return result.rows[0];
     }
     /**
@@ -75,13 +77,10 @@ class ReviewsRepository {
      * normalmente N=1 o N=3).
      */
     async getRecent(userId, limit = 5) {
-        const result = await this.pool.query(`
-      SELECT id, rating, comment, client_name, module_id, created_at
-      FROM reviews
-      WHERE user_id = $1
-      ORDER BY created_at DESC
-      LIMIT $2
-      `, [userId, limit]);
+        const result = await this.pool.query(`SELECT id, rating, comment, client_name,
+              google_name, google_email, google_avatar_url, created_at
+       FROM reviews WHERE user_id = $1
+       ORDER BY created_at DESC LIMIT $2`, [userId, limit]);
         return result.rows;
     }
     /**
@@ -97,13 +96,10 @@ class ReviewsRepository {
      */
     async getAllPaginated(userId, limit = 20, offset = 0) {
         const [dataResult, countResult] = await Promise.all([
-            this.pool.query(`
-        SELECT id, rating, comment, client_name, module_id, created_at
-        FROM reviews
-        WHERE user_id = $1
-        ORDER BY created_at DESC
-        LIMIT $2 OFFSET $3
-        `, [userId, limit, offset]),
+            this.pool.query(`SELECT id, rating, comment, client_name,
+                google_name, google_email, google_avatar_url, created_at
+         FROM reviews WHERE user_id = $1
+         ORDER BY created_at DESC LIMIT $2 OFFSET $3`, [userId, limit, offset]),
             this.pool.query(`SELECT COUNT(*) AS total FROM reviews WHERE user_id = $1`, [userId]),
         ]);
         return {

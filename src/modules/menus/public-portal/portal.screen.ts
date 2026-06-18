@@ -24,6 +24,7 @@ export type PortalViewData = {
   businessHours?: string | null;
   enabledModules: MenuModuleItem[];
   products: { id: string|number; name: string; price: number; description?: string|null; code?: string|null }[];
+  googleClientId?: string | null;
 };
 
 function sanitizeBrandColor(c: string|null|undefined): string|null {
@@ -60,6 +61,7 @@ export function renderPortalHtml(data: PortalViewData): string {
     description, welcomeMessage,
     instagramUrl, whatsappNumber, businessHours,
     enabledModules, products,
+    googleClientId,
   } = data;
 
   const safeColor = sanitizeBrandColor(brandColor);
@@ -98,6 +100,7 @@ export function renderPortalHtml(data: PortalViewData): string {
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 ${portalStyles()}
 ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--primary-glow:${safeColor}38}` : ""}
@@ -215,7 +218,17 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
   <div class="sp-body" id="quotePanelBody"></div>
 </div>
 
-<script>${portalScripts(publicSlug, businessName, userId, enabledModules, products, { phone: s.phone, address: s.address, city: s.city, description: s.desc, welcomeMessage: welcomeMessage ?? null, businessHours: s.hours, instagramUrl: s.ig, whatsappNumber: s.wa }, initials)}</script>
+<div class="slide-panel" id="reviewPanel">
+  <div class="sp-hdr">
+    <span class="sp-title">Dejar reseña</span>
+    <button class="sp-close" id="closeReview" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="sp-body" id="reviewPanelBody"></div>
+</div>
+
+<script>${portalScripts(publicSlug, businessName, userId, enabledModules, products, { phone: s.phone, address: s.address, city: s.city, description: s.desc, welcomeMessage: welcomeMessage ?? null, businessHours: s.hours, instagramUrl: s.ig, whatsappNumber: s.wa }, initials, googleClientId ?? null)}</script>
 </body>
 </html>`;
 }

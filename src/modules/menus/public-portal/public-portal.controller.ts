@@ -7,8 +7,12 @@ import { findEnabledModulesByUserId } from "../user-modules.repository";
 import { renderPortalHtml } from "./portal.screen";
 import { StatisticsService } from "../../stadistics/stadistics.service";
 import { isBot, shouldCountVisit } from "../../stadistics/visit-tracker";
+import { ReviewsRepository } from "../../stadistics/reviews.repository";
+import { OAuth2Client } from "google-auth-library";
 
-const statsService = new StatisticsService();
+const statsService  = new StatisticsService();
+const reviewsRepo   = new ReviewsRepository();
+const googleClient  = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 
 
@@ -97,6 +101,7 @@ export const publicPortalController = {
           price:       Number(p.price || 0),
           description: p.description ?? null,
         })),
+        googleClientId: process.env.GOOGLE_CLIENT_ID ?? null,
       });
 
       const ip = req.ip ?? req.socket?.remoteAddress ?? "";
@@ -109,6 +114,52 @@ export const publicPortalController = {
 
     } catch (error) {
       return res.status(500).send("Error abriendo portal público");
+    }
+  },
+
+  async submitReview(req: Request, res: Response): Promise<Response> {
+    try {
+      const slug = await getSlugByValueService(String(req.params["publicSlug"]));
+      if (!slug) return res.status(404).json({ ok: false, message: "Negocio no encontrado." });
+
+      const { rating, clientName, comment, googleCredential } = req.body || {};
+      const r = Number(rating);
+      if (!r || r < 1 || r > 5) {
+        return res.status(400).json({ ok: false, message: "Calificación inválida (1-5)." });
+      }
+
+      let googleName: string | null = null;
+      let googleEmail: string | null = null;
+      let googleAvatarUrl: string | null = null;
+
+      if (googleCredential) {
+        try {
+          const ticket = await googleClient.verifyIdToken({
+            idToken: googleCredential,
+            audience: process.env.GOOGLE_CLIENT_ID,
+          });
+          const payload = ticket.getPayload();
+          if (payload) {
+            googleName      = payload.name       ?? null;
+            googleEmail     = payload.email      ?? null;
+            googleAvatarUrl = payload.picture    ?? null;
+          }
+        } catch {
+          // token inválido — ignorar y guardar como anónimo
+        }
+      }
+
+      await reviewsRepo.create(
+        slug.user_id, r,
+        comment?.trim() || null,
+        (googleName ?? clientName?.trim()) || null,
+        null,
+        googleName, googleEmail, googleAvatarUrl,
+      );
+
+      return res.json({ ok: true });
+    } catch (e: any) {
+      return res.status(500).json({ ok: false, message: e.message });
     }
   },
 };

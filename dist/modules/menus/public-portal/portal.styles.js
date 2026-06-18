@@ -144,7 +144,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
     background:var(--panel);
     border-right:1px solid var(--border);
     z-index:200;overflow-y:auto;overflow-x:hidden;
-    scrollbar-width:none
+    scrollbar-width:none;
+    box-shadow:none
   }
   .profile-rail::-webkit-scrollbar{display:none}
 
@@ -159,15 +160,15 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
     background:linear-gradient(135deg,var(--primary),#93C5FD);
     display:flex;align-items:center;justify-content:center;
     font-size:22px;font-weight:800;color:#fff;user-select:none;letter-spacing:-.03em;
-    box-shadow:0 8px 24px var(--primary-glow)
+    box-shadow:none
   }
   .pr-name{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.04em;margin-bottom:2px}
   .pr-role{font-size:12px;color:var(--soft);margin-bottom:12px;line-height:1.4}
   .pr-rating{
-    display:flex;align-items:center;gap:5px;margin-bottom:10px;
-    font-size:12px;color:var(--amber);font-weight:600
+    display:flex;align-items:center;gap:5px;margin-top:4px;margin-bottom:10px;
+    font-size:12.5px;color:var(--amber);font-weight:600
   }
-  .pr-rating-count{font-size:11px;color:var(--soft);font-weight:400}
+  .pr-rating-count{font-size:11.5px;color:var(--soft);font-weight:400}
   .pr-online-row{display:flex;align-items:center;gap:8px;margin-bottom:16px}
   .pr-online-chip{
     display:inline-flex;align-items:center;gap:5px;
@@ -508,12 +509,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .sec-sub{font-size:11.5px;color:var(--dim);margin-top:1px;font-weight:400}
 .sec-hdr>div{display:flex;flex-direction:column;gap:1px}
 
-/* ── RATING STARS ────────────────────────────────────────────────────── */
-.pr-rating{
-  display:flex;align-items:center;gap:5px;margin-top:4px;margin-bottom:10px;
-  font-size:12.5px;color:var(--amber);font-weight:600
-}
-.pr-rating-count{font-size:11.5px;color:var(--soft);font-weight:400}
+/* ── RATING STARS (global — overrides desktop-only rule above) ───────── */
 
 /* ── REVIEWS TAB ─────────────────────────────────────────────────────── */
 .rv-layout{

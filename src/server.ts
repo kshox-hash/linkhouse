@@ -36,6 +36,7 @@ import { initQuoteServicesTable } from "./modules/quotes/quote-services/quote-se
 import { initQuoteHistoryTable } from "./modules/quotes/quote-history/quote-history.repository";
 import { initCalendarBookingPriceColumn } from "./modules/appointments/appointments-admin.repository";
 import { initCalendarServicesTable } from "./modules/appointments/calendar-services.repository";
+import { initReviewsGoogleColumns } from "./modules/stadistics/reviews.repository";
 import calendarServicesRoutes from "./modules/appointments/calendar-services.routes";
 import DB from "./db/db_configuration";
 
@@ -132,6 +133,7 @@ const server = app.listen(PORT, async () => {
     initQuoteHistoryTable().catch((e) => console.error("[init] quote_history:", e)),
     initCalendarBookingPriceColumn().catch((e) => console.error("[init] calendar_booking_price:", e)),
     initCalendarServicesTable().catch((e) => console.error("[init] calendar_services:", e)),
+    initReviewsGoogleColumns().catch((e) => console.error("[init] reviews_google:", e)),
   ]);
 });
 

@@ -6,6 +6,7 @@ const router = Router();
 
 router.get("/shop/:publicSlug", publicPortalController.open);
 router.get("/shop/:publicSlug/cotizador", publicPortalController.openQuotes);
-router.post("/shop/:publicSlug/quotes/submit", quotesSubmitController.submit); 
+router.post("/shop/:publicSlug/quotes/submit", quotesSubmitController.submit);
+router.post("/api/public/:publicSlug/reviews", publicPortalController.submitReview);
 
 export default router;

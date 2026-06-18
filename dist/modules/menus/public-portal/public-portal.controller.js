@@ -9,7 +9,11 @@ const user_modules_repository_1 = require("../user-modules.repository");
 const portal_screen_1 = require("./portal.screen");
 const stadistics_service_1 = require("../../stadistics/stadistics.service");
 const visit_tracker_1 = require("../../stadistics/visit-tracker");
+const reviews_repository_1 = require("../../stadistics/reviews.repository");
+const google_auth_library_1 = require("google-auth-library");
 const statsService = new stadistics_service_1.StatisticsService();
+const reviewsRepo = new reviews_repository_1.ReviewsRepository();
+const googleClient = new google_auth_library_1.OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 exports.publicPortalController = {
     async openQuotes(req, res) {
         try {
@@ -72,6 +76,7 @@ exports.publicPortalController = {
                     price: Number(p.price || 0),
                     description: p.description ?? null,
                 })),
+                googleClientId: process.env.GOOGLE_CLIENT_ID ?? null,
             });
             const ip = req.ip ?? req.socket?.remoteAddress ?? "";
             const ua = req.headers["user-agent"];
@@ -82,6 +87,43 @@ exports.publicPortalController = {
         }
         catch (error) {
             return res.status(500).send("Error abriendo portal público");
+        }
+    },
+    async submitReview(req, res) {
+        try {
+            const slug = await (0, slug_service_1.getSlugByValueService)(String(req.params["publicSlug"]));
+            if (!slug)
+                return res.status(404).json({ ok: false, message: "Negocio no encontrado." });
+            const { rating, clientName, comment, googleCredential } = req.body || {};
+            const r = Number(rating);
+            if (!r || r < 1 || r > 5) {
+                return res.status(400).json({ ok: false, message: "Calificación inválida (1-5)." });
+            }
+            let googleName = null;
+            let googleEmail = null;
+            let googleAvatarUrl = null;
+            if (googleCredential) {
+                try {
+                    const ticket = await googleClient.verifyIdToken({
+                        idToken: googleCredential,
+                        audience: process.env.GOOGLE_CLIENT_ID,
+                    });
+                    const payload = ticket.getPayload();
+                    if (payload) {
+                        googleName = payload.name ?? null;
+                        googleEmail = payload.email ?? null;
+                        googleAvatarUrl = payload.picture ?? null;
+                    }
+                }
+                catch {
+                    // token inválido — ignorar y guardar como anónimo
+                }
+            }
+            await reviewsRepo.create(slug.user_id, r, comment?.trim() || null, (googleName ?? clientName?.trim()) || null, null, googleName, googleEmail, googleAvatarUrl);
+            return res.json({ ok: true });
+        }
+        catch (e) {
+            return res.status(500).json({ ok: false, message: e.message });
         }
     },
 };

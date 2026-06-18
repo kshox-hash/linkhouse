@@ -1,32 +1,37 @@
 import DB from "../../db/db_configuration";
 
+export async function initReviewsGoogleColumns(): Promise<void> {
+  const pool = DB.getPool();
+  await pool.query(`
+    ALTER TABLE reviews
+      ADD COLUMN IF NOT EXISTS google_name       TEXT,
+      ADD COLUMN IF NOT EXISTS google_email      TEXT,
+      ADD COLUMN IF NOT EXISTS google_avatar_url TEXT
+  `);
+}
+
 export class ReviewsRepository {
   private pool = DB.getPool();
 
-  /**
-   * Crea una nueva reseña.
-   *
-   * @param userId      dueño del negocio (a quién le dejan la reseña)
-   * @param rating      número del 1 al 5
-   * @param comment     comentario opcional
-   * @param clientName  nombre opcional de quien deja la reseña
-   * @param moduleId    opcional: si la reseña es sobre un módulo
-   *                    específico (ej. 'cotizador', 'agenda')
-   */
   async create(
     userId: string,
     rating: number,
     comment?: string | null,
     clientName?: string | null,
-    moduleId?: string | null
+    moduleId?: string | null,
+    googleName?: string | null,
+    googleEmail?: string | null,
+    googleAvatarUrl?: string | null,
   ) {
     const result = await this.pool.query(
-      `
-      INSERT INTO reviews (user_id, rating, comment, client_name, module_id)
-      VALUES ($1, $2, $3, $4, $5)
-      RETURNING id, user_id, rating, comment, client_name, module_id, created_at
-      `,
-      [userId, rating, comment ?? null, clientName ?? null, moduleId ?? null]
+      `INSERT INTO reviews
+         (user_id, rating, comment, client_name, module_id,
+          google_name, google_email, google_avatar_url)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+       RETURNING id, user_id, rating, comment, client_name,
+                 google_name, google_email, google_avatar_url, created_at`,
+      [userId, rating, comment ?? null, clientName ?? null, moduleId ?? null,
+       googleName ?? null, googleEmail ?? null, googleAvatarUrl ?? null]
     );
     return result.rows[0];
   }
@@ -91,13 +96,10 @@ export class ReviewsRepository {
    */
   async getRecent(userId: string, limit: number = 5) {
     const result = await this.pool.query(
-      `
-      SELECT id, rating, comment, client_name, module_id, created_at
-      FROM reviews
-      WHERE user_id = $1
-      ORDER BY created_at DESC
-      LIMIT $2
-      `,
+      `SELECT id, rating, comment, client_name,
+              google_name, google_email, google_avatar_url, created_at
+       FROM reviews WHERE user_id = $1
+       ORDER BY created_at DESC LIMIT $2`,
       [userId, limit]
     );
     return result.rows;
@@ -117,13 +119,10 @@ export class ReviewsRepository {
   async getAllPaginated(userId: string, limit: number = 20, offset: number = 0) {
     const [dataResult, countResult] = await Promise.all([
       this.pool.query(
-        `
-        SELECT id, rating, comment, client_name, module_id, created_at
-        FROM reviews
-        WHERE user_id = $1
-        ORDER BY created_at DESC
-        LIMIT $2 OFFSET $3
-        `,
+        `SELECT id, rating, comment, client_name,
+                google_name, google_email, google_avatar_url, created_at
+         FROM reviews WHERE user_id = $1
+         ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
         [userId, limit, offset]
       ),
       this.pool.query(

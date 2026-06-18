@@ -38,6 +38,7 @@ const quote_services_repository_1 = require("./modules/quotes/quote-services/quo
 const quote_history_repository_1 = require("./modules/quotes/quote-history/quote-history.repository");
 const appointments_admin_repository_1 = require("./modules/appointments/appointments-admin.repository");
 const calendar_services_repository_1 = require("./modules/appointments/calendar-services.repository");
+const reviews_repository_1 = require("./modules/stadistics/reviews.repository");
 const calendar_services_routes_1 = __importDefault(require("./modules/appointments/calendar-services.routes"));
 const db_configuration_1 = __importDefault(require("./db/db_configuration"));
 // ─── Proceso ────────────────────────────────────────────────────────────────
@@ -121,6 +122,7 @@ const server = app.listen(env_1.PORT, async () => {
         (0, quote_history_repository_1.initQuoteHistoryTable)().catch((e) => console.error("[init] quote_history:", e)),
         (0, appointments_admin_repository_1.initCalendarBookingPriceColumn)().catch((e) => console.error("[init] calendar_booking_price:", e)),
         (0, calendar_services_repository_1.initCalendarServicesTable)().catch((e) => console.error("[init] calendar_services:", e)),
+        (0, reviews_repository_1.initReviewsGoogleColumns)().catch((e) => console.error("[init] reviews_google:", e)),
     ]);
 });
 // ─── Graceful shutdown ────────────────────────────────────────────────────────

@@ -7,7 +7,8 @@ export function portalScripts(
   _modules: unknown[],
   products: ProductData[],
   _bizInfo: unknown,
-  _initials: string
+  _initials: string,
+  googleClientId: string | null,
 ): string {
   const safeProducts = products.map(p => ({
     id:          String(p.id),
@@ -20,11 +21,13 @@ export function portalScripts(
 var SLUG=${JSON.stringify(slug)};
 var USER_ID=${JSON.stringify(userId)};
 var PRODUCTS=${JSON.stringify(safeProducts)};
+var GOOGLE_CLIENT_ID=${JSON.stringify(googleClientId || '')};
 var TABS=['chat','reservas','nosotros','cotizar','resenas'];
 var svcsLoaded=false;
 var svcsCache=[];
 var QCart={};
 var reviewsLoaded=false;
+var portalGoogleUser=null; // {name,email,picture,credential}
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -89,9 +92,16 @@ function setBkHeader(title,showBack){
 
 // Entry: click on a calendar day
 function openBookingFromDay(dateStr){
-  bk.date=dateStr; bk.svc=null; bk.time=null; bk.provider=null; bk.step='svc';
+  bk.date=dateStr; bk.time=null; bk.provider=null;
   openPanel('bookingPanel');
-  renderBkSvcStep();
+  if(bk.svc){
+    // service pre-selected from home card — skip straight to provider/time
+    if(providersCache.length>0) renderBkProviderStep();
+    else renderBkTimeStep();
+  } else {
+    bk.step='svc';
+    renderBkSvcStep();
+  }
 }
 
 function renderBkProviderStep(){
@@ -348,7 +358,9 @@ document.addEventListener('click',function(e){
   }
 
   if(t.closest('#closeQuote')){   closePanel('quotePanel');   return; }
-  if(t.closest('#slideOverlay')){ closePanel('bookingPanel'); closePanel('quotePanel'); return; }
+  if(t.closest('#closeReview')){  closePanel('reviewPanel');  return; }
+  if(t.closest('#openReviewBtn')){ openReviewPanel(); return; }
+  if(t.closest('#slideOverlay')){ closePanel('bookingPanel'); closePanel('quotePanel'); closePanel('reviewPanel'); return; }
 });
 
 // ── services ──────────────────────────────────────────────────────────────────
@@ -720,12 +732,13 @@ function renderQPSuccess(name){
 }
 
 // ── Reviews ───────────────────────────────────────────────────────────────────
-function renderStars(avg,size){
-  var full=Math.floor(avg);
-  var empty=5-Math.round(avg);
-  if(empty<0) empty=0;
+function renderStars(avg){
+  var full=Math.round(avg||0);
+  if(full>5) full=5;
+  if(full<0) full=0;
+  var empty=5-full;
   var html='';
-  for(var i=0;i<Math.round(avg);i++) html+='<span style="color:#F59E0B">★</span>';
+  for(var i=0;i<full;i++) html+='<span style="color:#F59E0B">★</span>';
   for(var i=0;i<empty;i++) html+='<span style="color:var(--dim)">★</span>';
   return html;
 }
@@ -778,14 +791,17 @@ function renderInboxCard(id,data){
     +'</div>'
     +'</div>':'';
   var items=reviews.slice(0,4).map(function(r,i){
-    var name=r.client_name||'Cliente';
-    var initLetter=name.trim().charAt(0).toUpperCase()||'?';
+    var name=r.google_name||r.client_name||'Cliente';
+    var initLetter=(name.trim().charAt(0)||'?').toUpperCase();
     var color=INBOX_COLORS[i%INBOX_COLORS.length];
     var stars='';for(var s=1;s<=5;s++) stars+='<span style="color:'+(s<=(r.rating||0)?'#F59E0B':'var(--dim)')+'">★</span>';
     var date='';
     if(r.created_at){try{date=new Date(r.created_at).toLocaleDateString('es-CL',{day:'numeric',month:'short'});}catch(e){}}
+    var avHtml=r.google_avatar_url
+      ?'<img src="'+escH(r.google_avatar_url)+'" class="inbox-av" style="object-fit:cover" referrerpolicy="no-referrer">'
+      :'<div class="inbox-av" style="background:'+color+'">'+escH(initLetter)+'</div>';
     return '<div class="inbox-item">'
-      +'<div class="inbox-av" style="background:'+color+'">'+escH(initLetter)+'</div>'
+      +avHtml
       +'<div class="inbox-body">'
       +'<div class="inbox-name-row">'
       +'<span class="inbox-name">'+escH(name)+'</span>'
@@ -849,17 +865,21 @@ function renderReviewsTab(data){
     for(var i=1;i<=5;i++) stars+='<span style="color:'+(i<=(r.rating||0)?'#F59E0B':'var(--dim)')+'">★</span>';
     var date='';
     if(r.created_at){
-      try{
-        date=new Date(r.created_at).toLocaleDateString('es-CL',{day:'numeric',month:'short',year:'numeric'});
-      }catch(e){}
+      try{ date=new Date(r.created_at).toLocaleDateString('es-CL',{day:'numeric',month:'short',year:'numeric'}); }catch(e){}
     }
+    var displayName=r.google_name||r.client_name||'Cliente';
+    var avatarHtml=r.google_avatar_url
+      ?'<img src="'+escH(r.google_avatar_url)+'" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0" referrerpolicy="no-referrer">'
+      :'';
     return '<div class="rv-card">'
       +'<div class="rv-card-top">'
-      +'<div class="rv-card-stars">'+stars+'</div>'
-      +'<div class="rv-card-meta">'
-      +(r.client_name?'<span class="rv-name">'+escH(r.client_name)+'</span>':'<span class="rv-name">Cliente</span>')
-      +(date?'<span class="rv-date"> · '+escH(date)+'</span>':'')
-      +'</div>'
+      +(avatarHtml?'<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'+avatarHtml
+        +'<div><div class="rv-card-stars" style="margin-bottom:1px">'+stars+'</div>'
+        +'<div class="rv-card-meta"><span class="rv-name">'+escH(displayName)+'</span>'
+        +(date?'<span class="rv-date"> · '+escH(date)+'</span>':'')+'</div></div></div>'
+        :'<div class="rv-card-stars">'+stars+'</div>'
+        +'<div class="rv-card-meta"><span class="rv-name">'+escH(displayName)+'</span>'
+        +(date?'<span class="rv-date"> · '+escH(date)+'</span>':'')+'</div>')
       +'</div>'
       +(r.comment?'<div class="rv-comment">'+escH(r.comment)+'</div>':'')
       +'</div>';
@@ -869,13 +889,161 @@ function renderReviewsTab(data){
     +(cards?'<div class="sec-hdr" style="margin-top:20px"><span class="sec-title">Últimas reseñas</span><span class="sec-sub" style="margin-top:2px">Opiniones de nuestros clientes</span></div>'+cards:'');
 }
 
+// ── Review panel ─────────────────────────────────────────────────────────────
+var rvRating=0;
+
+function handleGoogleSignIn(response){
+  if(!response||!response.credential) return;
+  // decode payload (no verify needed — backend verifies on submit)
+  try{
+    var parts=response.credential.split('.');
+    var payload=JSON.parse(atob(parts[1].replace(/-/g,'+').replace(/_/g,'/')));
+    portalGoogleUser={
+      name:       payload.name||'',
+      email:      payload.email||'',
+      picture:    payload.picture||'',
+      credential: response.credential
+    };
+  }catch(e){ portalGoogleUser=null; }
+  renderReviewForm();
+}
+
+function openReviewPanel(){
+  rvRating=0;
+  renderReviewForm();
+  openPanel('reviewPanel');
+}
+
+function renderReviewForm(err){
+  var body=document.getElementById('reviewPanelBody'); if(!body) return;
+  var starsHtml=[1,2,3,4,5].map(function(n){
+    return '<button class="rv-star-btn" type="button" data-rv-star="'+n
+      +'" style="font-size:34px;background:none;border:none;cursor:pointer;padding:0 2px;color:'
+      +(n<=rvRating?'#F59E0B':'#D1D5DB')+'">★</button>';
+  }).join('');
+
+  var authHtml='';
+  if(GOOGLE_CLIENT_ID){
+    if(portalGoogleUser){
+      authHtml='<div style="display:flex;align-items:center;gap:10px;'
+        +'background:var(--bg);border:1px solid var(--border);border-radius:12px;'
+        +'padding:10px 14px;margin-bottom:20px">'
+        +(portalGoogleUser.picture
+          ?'<img src="'+escH(portalGoogleUser.picture)+'" style="width:34px;height:34px;border-radius:50%;object-fit:cover" referrerpolicy="no-referrer">'
+          :'<div style="width:34px;height:34px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff">'+escH((portalGoogleUser.name||'?').charAt(0).toUpperCase())+'</div>')
+        +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:13px;font-weight:600;color:var(--text)">'+escH(portalGoogleUser.name)+'</div>'
+        +'<div style="font-size:11.5px;color:var(--soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escH(portalGoogleUser.email)+'</div>'
+        +'</div>'
+        +'<button type="button" id="rvGoogleOut" style="font-size:11px;color:var(--soft);background:none;border:none;cursor:pointer">Salir</button>'
+        +'</div>';
+    } else {
+      authHtml='<div style="margin-bottom:20px">'
+        +'<div id="rvGoogleBtn"></div>'
+        +'<div style="text-align:center;font-size:11.5px;color:var(--dim);margin-top:8px">o dejá tu nombre abajo</div>'
+        +'</div>';
+    }
+  }
+
+  var nameField=portalGoogleUser?''
+    :'<div class="bk-inp-wrap"><div class="bk-inp-lbl">Tu nombre (opcional)</div>'
+    +'<input class="bk-inp" id="rvName" type="text" placeholder="¿Cómo te llamás?" autocomplete="name"></div>';
+
+  body.innerHTML='<div style="padding:24px 20px">'
+    +authHtml
+    +'<div style="font-size:13px;font-weight:600;color:var(--soft);margin-bottom:14px">¿Cómo calificarías tu experiencia?</div>'
+    +'<div style="display:flex;gap:2px;margin-bottom:22px">'+starsHtml+'</div>'
+    +nameField
+    +'<div class="bk-inp-wrap"><div class="bk-inp-lbl">Comentario (opcional)</div>'
+    +'<textarea class="bk-inp" id="rvComment" rows="3" placeholder="Contanos tu experiencia…" style="resize:none;font-family:inherit"></textarea></div>'
+    +(err?'<div class="bk-inp-err" style="margin-bottom:10px">'+escH(err)+'</div>':'')
+    +'<button class="btn-primary" type="button" id="rvSubmit" style="width:100%;font-size:14px;margin-top:4px">Enviar reseña</button>'
+    +'</div>';
+
+  // render Google button if needed
+  if(GOOGLE_CLIENT_ID && !portalGoogleUser){
+    var gbEl=document.getElementById('rvGoogleBtn');
+    if(gbEl && window.google && window.google.accounts){
+      window.google.accounts.id.renderButton(gbEl,{
+        type:'standard',theme:'outline',size:'large',
+        text:'signin_with',shape:'rectangular',width:280
+      });
+    }
+  }
+
+  body.querySelectorAll('[data-rv-star]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      rvRating=parseInt(btn.getAttribute('data-rv-star')||'0',10);
+      renderReviewForm();
+    });
+  });
+  var out=document.getElementById('rvGoogleOut');
+  if(out) out.addEventListener('click',function(){portalGoogleUser=null;renderReviewForm();});
+  var sub=document.getElementById('rvSubmit');
+  if(sub) sub.addEventListener('click',submitReview);
+}
+
+function submitReview(){
+  if(!rvRating){ renderReviewForm('Elegí una calificación.'); return; }
+  var nameEl=document.getElementById('rvName');
+  var name=nameEl?(nameEl.value||'').trim():'';
+  var commentEl=document.getElementById('rvComment');
+  var comment=commentEl?(commentEl.value||'').trim():'';
+  var btn=document.getElementById('rvSubmit');
+  if(btn){btn.textContent='Enviando…';btn.disabled=true;}
+  fetch('/api/public/'+SLUG+'/reviews',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      rating:rvRating,
+      clientName:name||null,
+      comment:comment||null,
+      googleCredential:portalGoogleUser?portalGoogleUser.credential:null
+    })
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.ok){
+      var body=document.getElementById('reviewPanelBody'); if(!body) return;
+      body.innerHTML='<div class="bk-success">'
+        +'<div class="bk-success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>'
+        +'<div class="bk-success-title">¡Gracias por tu reseña!</div>'
+        +'<div class="bk-success-sub">Tu opinión ayuda a otros clientes.</div>'
+        +'<button class="btn-primary" type="button" id="rvDone" style="width:100%;margin-top:28px">Listo</button>'
+        +'</div>';
+      var done=document.getElementById('rvDone');
+      if(done) done.addEventListener('click',function(){
+        closePanel('reviewPanel');
+        reviewsLoaded=false;
+        ensureReviews();
+      });
+    } else {
+      renderReviewForm(d.message||'Error al enviar. Intentá de nuevo.');
+    }
+  })
+  .catch(function(){ renderReviewForm('Error de conexión. Intentá de nuevo.'); });
+}
+
 // ── init ─────────────────────────────────────────────────────────────────────
 (function init(){
   loadServices();
   loadProviders();
-  renderHomeProducts();
   loadCalendar();
   ensureReviews();
+  if(GOOGLE_CLIENT_ID){
+    function tryInitGoogle(){
+      if(window.google && window.google.accounts){
+        window.google.accounts.id.initialize({
+          client_id:GOOGLE_CLIENT_ID,
+          callback:handleGoogleSignIn,
+          auto_select:false
+        });
+      } else {
+        setTimeout(tryInitGoogle,300);
+      }
+    }
+    tryInitGoogle();
+  }
 })();
 `;
 }
