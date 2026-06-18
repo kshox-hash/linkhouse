@@ -286,8 +286,6 @@ document.addEventListener('click',function(e){
 
 // ── services ──────────────────────────────────────────────────────────────────
 var CARD_PALETTES=['#FBBDC7','#93C5FD','#FDE68A','#6EE7B7','#C4B5FD','#FCA5A5'];
-var CARD_GRADIENTS=['linear-gradient(145deg,#FBBDC7,#F9D4DC)','linear-gradient(145deg,#93C5FD,#C3DBFD)','linear-gradient(145deg,#FDE68A,#FEF3C2)','linear-gradient(145deg,#6EE7B7,#A7F3D0)','linear-gradient(145deg,#C4B5FD,#DDD6FE)','linear-gradient(145deg,#FCA5A5,#FED7AA)'];
-var CARD_SOLID=['#F472B6','#3B82F6','#D97706','#059669','#7C3AED','#DC2626'];
 
 function ensureServices(){
   if(svcsLoaded){applyServices(svcsCache);return;}
@@ -309,67 +307,14 @@ function loadServices(){
 }
 
 function applyServices(svcs){
-  renderHomeGrid(svcs);
+  renderSvcRows('desktopServiceList', svcs);
   renderSvcRows('svcList', svcs);
   renderSvcRows('mobileServiceList', svcs);
   var statEl=document.getElementById('prStatSvcs');
   if(statEl) statEl.textContent=String(svcs.length);
 }
 
-// Desktop home — proj-grid cards (clon imagen)
-var PROG_VALS=[60,30,80,55,72,45];
-var STATUS_LABELS=['En curso','Disponible','Popular','Nuevo','Activo','Reservado'];
-function renderHomeGrid(svcs){
-  var el=document.getElementById('homeServiceGrid');
-  if(!el) return;
-  if(!svcs.length){
-    el.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:28px 0;color:var(--dim);font-size:13.5px">No hay servicios configurados aún.</div>';
-    return;
-  }
-  var html='';
-  svcs.slice(0,4).forEach(function(s,i){
-    var userColor=s.color&&/^#[0-9a-fA-F]{6}$/.test(s.color);
-    var bgGrad=userColor?('linear-gradient(145deg,'+s.color+','+s.color+'88)'):CARD_GRADIENTS[i%CARD_GRADIENTS.length];
-    var solidFill=userColor?s.color:CARD_SOLID[i%CARD_SOLID.length];
-    var pastelFill=userColor?s.color:CARD_PALETTES[i%CARD_PALETTES.length];
-    var price=s.price!=null?fmtPrice(Number(s.price)):'Consultar';
-    var dur=s.duration_minutes?s.duration_minutes+' min':'Servicio';
-    var pct=PROG_VALS[i%PROG_VALS.length];
-    var status=STATUS_LABELS[i%STATUS_LABELS.length];
-    var letter=s.name.charAt(0).toUpperCase()||'S';
-    var av2=CARD_PALETTES[(i+2)%CARD_PALETTES.length];
-    var av3=CARD_PALETTES[(i+4)%CARD_PALETTES.length];
-    // Fecha simulada
-    var now=new Date();var mes=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-    var dateStr=mes[now.getMonth()]+' '+now.getFullYear();
-    html+='<div class="proj-card" data-action="reservas">'
-      // ── TOP: área de color con fecha arriba + avatares abajo
-      +'<div class="proj-card-top" style="background:'+escH(bgGrad)+'">'
-      +'<span class="proj-card-top-date">'+dateStr+'</span>'
-      +'<div class="card-avatars">'
-      +'<div class="card-av" style="background:'+escH(pastelFill)+';color:rgba(0,0,0,.65)">'+escH(letter)+'</div>'
-      +'<div class="card-av" style="background:'+escH(av2)+';color:rgba(0,0,0,.5)"></div>'
-      +'<div class="card-av" style="background:'+escH(av3)+';color:rgba(0,0,0,.5)"></div>'
-      +'</div>'
-      +'</div>'
-      // ── BODY: nombre + badge + barra + footer
-      +'<div class="proj-card-body">'
-      +'<div class="proj-card-name">'+escH(s.name)+'</div>'
-      +'<div class="proj-card-badge-row">'
-      +'<span class="proj-card-status">'+escH(status)+'</span>'
-      +'<span class="proj-card-prog-val">'+pct+'%</span>'
-      +'</div>'
-      +'<div class="proj-card-prog-bar"><div class="proj-card-prog-fill" style="width:'+pct+'%;background:'+escH(solidFill)+'"></div></div>'
-      +'<div class="proj-card-footer">'
-      +'<span class="proj-card-price">'+escH(dur)+'</span>'
-      +'<button class="proj-btn" type="button" tabindex="-1">Reservar</button>'
-      +'</div>'
-      +'</div></div>';
-  });
-  el.innerHTML=html;
-}
-
-// Row list (reservas tab + mobile home)
+// Row list (reservas tab + mobile home + desktop home)
 function renderSvcRows(id,svcs){
   var el=document.getElementById(id);if(!el) return;
   if(!svcs.length){
