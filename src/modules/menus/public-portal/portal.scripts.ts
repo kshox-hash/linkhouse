@@ -285,7 +285,7 @@ document.addEventListener('click',function(e){
 });
 
 // ── services ──────────────────────────────────────────────────────────────────
-var CARD_PALETTES=['#5A67F2','#F97316','#22C55E','#EC4899','#14B8A6','#8B5CF6'];
+var CARD_PALETTES=['#FBBDC7','#93C5FD','#FDE68A','#6EE7B7','#C4B5FD','#FCA5A5'];
 
 function ensureServices(){
   if(svcsLoaded){applyServices(svcsCache);return;}
@@ -310,9 +310,12 @@ function applyServices(svcs){
   renderHomeGrid(svcs);
   renderSvcRows('svcList', svcs);
   renderSvcRows('mobileServiceList', svcs);
+  var statEl=document.getElementById('prStatSvcs');
+  if(statEl) statEl.textContent=String(svcs.length);
 }
 
 // Desktop home — proj-grid cards
+var PROG_VALS=[72,45,88,60,78,52];
 function renderHomeGrid(svcs){
   var el=document.getElementById('homeServiceGrid');
   if(!el) return;
@@ -325,6 +328,10 @@ function renderHomeGrid(svcs){
     var bg=s.color&&/^#[0-9a-fA-F]{6}$/.test(s.color)?s.color:CARD_PALETTES[i%CARD_PALETTES.length];
     var price=s.price!=null?fmtPrice(Number(s.price)):'Consultar';
     var dur=s.duration_minutes?s.duration_minutes+' min':'';
+    var pct=PROG_VALS[i%PROG_VALS.length];
+    var letter=s.name.charAt(0).toUpperCase()||'S';
+    var av2=CARD_PALETTES[(i+2)%CARD_PALETTES.length];
+    var av3=CARD_PALETTES[(i+4)%CARD_PALETTES.length];
     html+='<div class="proj-card" data-action="reservas">'
       +'<div class="proj-card-top" style="background:'+escH(bg)+'">'
       +(dur?'<span class="proj-card-top-badge">'+escH(dur)+'</span>':'<span></span>')
@@ -332,11 +339,18 @@ function renderHomeGrid(svcs){
       +'</div>'
       +'<div class="proj-card-body">'
       +'<div class="proj-card-name">'+escH(s.name)+'</div>'
-      +'<div class="proj-card-meta">'
-      +(dur?'<span class="proj-tag" style="background:var(--primary-dim);color:var(--primary)">'+escH(dur)+'</span>':'')
-      +(Number(s.price)===0?'<span class="proj-tag" style="background:var(--green-dim);color:var(--green)">Gratis</span>':'')
+      +'<div class="proj-card-prog">'
+      +'<div class="proj-card-prog-bar"><div class="proj-card-prog-fill" style="width:'+pct+'%;background:'+escH(bg)+'"></div></div>'
+      +'<span class="proj-card-prog-val">'+pct+'%</span>'
       +'</div>'
-      +'<div class="proj-card-footer"><button class="proj-btn" type="button" tabindex="-1">Ver disponibilidad</button></div>'
+      +'<div class="proj-card-footer">'
+      +'<div class="card-avatars">'
+      +'<div class="card-av" style="background:'+escH(bg)+';color:rgba(0,0,0,.6)">'+escH(letter)+'</div>'
+      +'<div class="card-av" style="background:'+escH(av2)+';color:rgba(0,0,0,.6)"></div>'
+      +'<div class="card-av" style="background:'+escH(av3)+';color:rgba(0,0,0,.6)"></div>'
+      +'</div>'
+      +'<button class="proj-btn" type="button" tabindex="-1">Reservar</button>'
+      +'</div>'
       +'</div></div>';
   });
   el.innerHTML=html;
@@ -350,8 +364,8 @@ function renderSvcRows(id,svcs){
     return;
   }
   var html='';
-  svcs.forEach(function(s){
-    var color=s.color&&/^#[0-9a-fA-F]{6}$/.test(s.color)?s.color:'#5A67F2';
+  svcs.forEach(function(s,i){
+    var color=s.color&&/^#[0-9a-fA-F]{6}$/.test(s.color)?s.color:CARD_PALETTES[i%CARD_PALETTES.length];
     var price=s.price!=null?fmtPrice(Number(s.price)):'Consultar';
     var dur=s.duration_minutes?s.duration_minutes+' min':'';
     html+='<div class="svc-row">'

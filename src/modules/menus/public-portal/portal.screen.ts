@@ -127,6 +127,17 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
     <div class="pr-online-row">
       <span class="pr-online-chip">En línea</span>
     </div>
+    <div class="pr-stats-row">
+      <div class="pr-stat-item">
+        <div class="pr-stat-val" id="prStatSvcs">—</div>
+        <div class="pr-stat-lbl">Servicios</div>
+      </div>
+      <div class="pr-stat-div"></div>
+      <div class="pr-stat-item">
+        <div class="pr-stat-val">${productCount > 0 ? productCount : "—"}</div>
+        <div class="pr-stat-lbl">Productos</div>
+      </div>
+    </div>
     <div class="pr-actions">
       ${waHref ? `<a class="pr-action-btn" href="${waHref}" target="_blank" rel="noopener" title="WhatsApp">${S_WA}</a>` : ""}
       ${s.phone ? `<a class="pr-action-btn" href="tel:${s.phone}" title="Llamar">${S_PHONE}</a>` : ""}
