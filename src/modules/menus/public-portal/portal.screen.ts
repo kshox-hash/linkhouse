@@ -108,11 +108,11 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
 <!-- ICON RAIL -->
 <nav class="icon-rail">
   <div class="ir-av">${initials}</div>
-  <button class="ir-btn active" data-tab="chat" type="button">${S_HOME}</button>
-  <button class="ir-btn" data-tab="reservas" type="button">${S_CAL}</button>
-  <button class="ir-btn" data-tab="nosotros" type="button">${S_PROD}</button>
-  <button class="ir-btn" data-tab="cotizar" type="button">${S_COT}</button>
-  <button class="ir-btn" data-tab="resenas" type="button">${S_STAR}</button>
+  <button class="ir-btn active" data-tab="chat" type="button">${S_HOME}<span class="ir-lbl">Inicio</span></button>
+  <button class="ir-btn" data-tab="reservas" type="button">${S_CAL}<span class="ir-lbl">Reservas</span></button>
+  <button class="ir-btn" data-tab="nosotros" type="button">${S_PROD}<span class="ir-lbl">Productos</span></button>
+  <button class="ir-btn" data-tab="cotizar" type="button">${S_COT}<span class="ir-lbl">Cotizar</span></button>
+  <button class="ir-btn" data-tab="resenas" type="button">${S_STAR}<span class="ir-lbl">Reseñas</span></button>
 </nav>
 
 <div class="portal-main">

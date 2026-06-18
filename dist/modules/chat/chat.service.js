@@ -1,0 +1,178 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.detectIntent = detectIntent;
+exports.buildGreetingAnswer = buildGreetingAnswer;
+exports.findBestMatch = findBestMatch;
+exports.buildPriceAnswer = buildPriceAnswer;
+exports.buildAvailabilityAnswer = buildAvailabilityAnswer;
+exports.extractChunksFromPdf = extractChunksFromPdf;
+const format_1 = require("../../utils/format");
+const STOPWORDS = new Set([
+    "el", "la", "los", "las", "un", "una", "de", "en", "con", "por", "para",
+    "que", "se", "es", "y", "o", "a", "del", "al", "le", "lo", "su", "sus",
+    "me", "te", "nos", "como", "mas", "pero", "si", "no", "hay", "tiene",
+    "tienen", "quiero", "necesito", "puedo", "puede", "cual", "cuanto", "cuando",
+    "donde", "son", "esta", "este", "mi", "tu", "ya", "tan", "muy", "bien",
+    "gracias", "quisiera", "saber", "tener", "ser", "estar",
+    "hacer", "dar", "ver", "soy", "estoy", "tengo", "favor", "info", "informacion"
+]);
+const GREETING_WORDS = new Set([
+    "hola", "buenas", "buenos", "buen", "dias", "tardes", "noches",
+    "saludos", "hey", "hi", "hello", "ola", "holaa"
+]);
+const PRICE_KEYWORDS = new Set([
+    "precio", "precios", "costo", "costos", "vale", "cobran", "tarifa", "tarifas",
+    "valor", "valores", "pagar", "pago", "cobro", "cuesta", "sale", "cuanto"
+]);
+const AVAIL_KEYWORDS = new Set([
+    "hora", "horas", "disponible", "disponibles", "agendar", "reserva", "reservar",
+    "turno", "turnos", "cita", "citas", "atencion", "atienden", "agenda", "cuando"
+]);
+function normalize(text) {
+    return text
+        .toLowerCase()
+        .normalize("NFD").replace(/[̀-ͯ]/g, "")
+        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+function extractKeywords(text) {
+    return normalize(text)
+        .split(" ")
+        .filter(w => w.length > 2 && !STOPWORDS.has(w));
+}
+function detectIntent(question) {
+    const normalized = normalize(question);
+    const rawWords = normalized.split(" ");
+    // Saludo simple (máx 5 palabras y contiene palabra de saludo)
+    if (rawWords.length <= 5 && rawWords.some(w => GREETING_WORDS.has(w))) {
+        return "greeting";
+    }
+    const words = extractKeywords(question);
+    if (words.some(w => AVAIL_KEYWORDS.has(w)))
+        return "availability";
+    if (words.some(w => PRICE_KEYWORDS.has(w)))
+        return "price";
+    return "general";
+}
+function buildGreetingAnswer(businessName) {
+    return `¡Hola! 👋 Soy el asistente de **${businessName}**.\n\nEstoy aquí para ayudarte con preguntas sobre nuestros servicios, precios y disponibilidad. ¿En qué te puedo ayudar hoy?`;
+}
+function scoreChunk(keywords, chunkText) {
+    const chunkSet = new Set(normalize(chunkText).split(" "));
+    return keywords.filter(w => chunkSet.has(w)).length;
+}
+function searchInConfig(words, config) {
+    if (!words.length)
+        return null;
+    // 1. FAQ: máxima prioridad — Q&A estructurada por el negocio
+    if (config.faq?.length) {
+        const best = config.faq
+            .map(f => ({ answer: f.answer, score: scoreChunk(words, f.question + " " + f.answer) }))
+            .filter(x => x.score > 0)
+            .sort((a, b) => b.score - a.score)[0];
+        if (best)
+            return best.answer;
+    }
+    // 2. Descripción + info extra: busca en texto libre configurado
+    const texts = [];
+    if (config.description)
+        texts.push({ text: config.description, score: scoreChunk(words, config.description) });
+    if (config.extraInfo)
+        texts.push({ text: config.extraInfo, score: scoreChunk(words, config.extraInfo) });
+    const bestText = texts.filter(t => t.score > 0).sort((a, b) => b.score - a.score)[0];
+    if (bestText)
+        return bestText.text;
+    return null;
+}
+function findBestMatch(question, chunks, config) {
+    const words = extractKeywords(question);
+    if (words.length === 0) {
+        return "Hola, ¿en qué puedo ayudarte? Puedo responder preguntas sobre nuestros servicios, precios y disponibilidad.";
+    }
+    // Primero: config estructurada (más confiable que PDF)
+    if (config) {
+        const configAnswer = searchInConfig(words, config);
+        if (configAnswer)
+            return configAnswer;
+    }
+    // Fallback: chunks de PDF
+    if (!chunks.length) {
+        return "No tengo información disponible en este momento. Contáctanos directamente para más detalles.";
+    }
+    const scored = chunks
+        .map(c => ({ text: c.chunk_text, score: scoreChunk(words, c.chunk_text) }))
+        .filter(c => c.score > 0)
+        .sort((a, b) => b.score - a.score);
+    if (!scored.length) {
+        return "No encontré información específica sobre eso. ¿Puedes reformular tu pregunta o contactarnos directamente?";
+    }
+    const top = scored[0];
+    const second = scored[1];
+    if (second && second.score >= top.score * 0.8 && (top.text + " " + second.text).length < 700) {
+        return `${top.text}\n\n${second.text}`;
+    }
+    return top.text;
+}
+function buildPriceAnswer(products) {
+    if (products.length === 0) {
+        return "Por el momento no tenemos una lista de precios publicada. Contáctanos para más información.";
+    }
+    const list = products
+        .map(p => `• ${p.name}: ${(0, format_1.formatCurrencyCLP)(p.price)}${p.description ? `\n  ${p.description}` : ""}`)
+        .join("\n");
+    return `Aquí están nuestros servicios y precios:\n\n${list}`;
+}
+function buildAvailabilityAnswer(slotsData) {
+    const data = slotsData;
+    const available = (data?.available ?? data?.slots ?? data);
+    if (!available || typeof available !== "object") {
+        return "Por el momento estamos revisando nuestra disponibilidad. Te invitamos a reservar directamente desde el menú.";
+    }
+    const days = Object.entries(available)
+        .filter(([, times]) => Array.isArray(times) && times.length > 0)
+        .slice(0, 3);
+    if (days.length === 0) {
+        return "No tenemos horas disponibles en los próximos días. Por favor intenta más adelante.";
+    }
+    const formatted = days
+        .map(([date, times]) => `• ${date}: ${times.slice(0, 5).join(", ")}`)
+        .join("\n");
+    return `Tenemos disponibilidad en:\n\n${formatted}\n\nPuedes reservar tu hora directamente desde el menú.`;
+}
+async function extractChunksFromPdf(buffer) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { PDFParse } = require("pdf-parse");
+    const parser = new PDFParse(new Uint8Array(buffer));
+    await parser.load();
+    const result = await parser.getText();
+    const text = result.pages.map(p => p.text).join("\n\n");
+    const rawChunks = text
+        .split(/\n{2,}/)
+        .map((s) => s.replace(/\n/g, " ").replace(/\s+/g, " ").trim())
+        .filter((s) => s.length >= 30);
+    // Split overly long chunks by sentence
+    const finalChunks = [];
+    for (const chunk of rawChunks) {
+        if (chunk.length <= 600) {
+            finalChunks.push(chunk);
+        }
+        else {
+            const sentences = chunk.split(/(?<=[.!?])\s+/);
+            let current = "";
+            for (const sentence of sentences) {
+                if ((current + " " + sentence).length > 600 && current) {
+                    if (current.trim().length >= 30)
+                        finalChunks.push(current.trim());
+                    current = sentence;
+                }
+                else {
+                    current += (current ? " " : "") + sentence;
+                }
+            }
+            if (current.trim().length >= 30)
+                finalChunks.push(current.trim());
+        }
+    }
+    return finalChunks;
+}

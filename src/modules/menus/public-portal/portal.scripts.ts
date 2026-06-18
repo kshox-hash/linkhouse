@@ -63,7 +63,22 @@ function closePanel(id){
 function openQuotePanel(){renderQPStep1();openPanel('quotePanel');}
 
 // ── Booking flow state ────────────────────────────────────────────────────────
-var bk={date:null,svc:null,time:null,step:null};
+var bk={date:null,svc:null,time:null,step:null,provider:null};
+
+// ── Providers (team members) ──────────────────────────────────────────────────
+var providersCache=[];
+var providersLoaded=false;
+
+function loadProviders(){
+  if(providersLoaded) return;
+  fetch('/api/public/'+SLUG+'/providers')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      providersLoaded=true;
+      providersCache=Array.isArray(d.providers)?d.providers:[];
+    })
+    .catch(function(){providersLoaded=true;providersCache=[];});
+}
 
 function setBkHeader(title,showBack){
   var t=document.getElementById('bkTitle');
@@ -74,9 +89,36 @@ function setBkHeader(title,showBack){
 
 // Entry: click on a calendar day
 function openBookingFromDay(dateStr){
-  bk.date=dateStr; bk.svc=null; bk.time=null; bk.step='svc';
+  bk.date=dateStr; bk.svc=null; bk.time=null; bk.provider=null; bk.step='svc';
   openPanel('bookingPanel');
   renderBkSvcStep();
+}
+
+function renderBkProviderStep(){
+  bk.step='provider';
+  setBkHeader('Elegí un profesional',true);
+  var body=document.getElementById('bkBody'); if(!body) return;
+  var label=fmtDateLabel(bk.date);
+  var calIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+  var dateBadge='<div class="bk-date-badge">'+calIco+escH(label)+'</div>';
+  var svcBadge=bk.svc?'<div class="bk-date-badge" style="background:var(--bg);border:1px solid var(--border);color:var(--soft)">'+escH(bk.svc.name)+'</div>':'';
+  var rows=providersCache.map(function(p,i){
+    var initials=p.avatar_initials||(p.name.trim().charAt(0)||'?').toUpperCase();
+    var color=p.color&&/^#[0-9a-fA-F]{6}$/.test(p.color)?p.color:CARD_PALETTES[i%CARD_PALETTES.length];
+    return '<div class="bk-svc-item" data-bk-prov-i="'+i+'">'
+      +'<div style="width:36px;height:36px;border-radius:50%;background:'+color+';display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0">'+escH(initials)+'</div>'
+      +'<div class="bk-svc-info"><div class="bk-svc-name">'+escH(p.name)+'</div></div>'
+      +'<div class="bk-svc-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>'
+      +'</div>';
+  }).join('');
+  var anyRow='<div class="bk-svc-item" data-bk-prov-any="1">'
+    +'<div style="width:36px;height:36px;border-radius:50%;background:var(--bg);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">👤</div>'
+    +'<div class="bk-svc-info"><div class="bk-svc-name">Sin preferencia</div><div class="bk-svc-meta">Cualquier profesional disponible</div></div>'
+    +'<div class="bk-svc-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>'
+    +'</div>';
+  body.innerHTML='<div class="bk-scroll">'+dateBadge+svcBadge
+    +'<div class="bk-sec-title">Seleccioná el profesional</div>'
+    +rows+anyRow+'</div>';
 }
 
 // Generic "Reservar" → go to Reservas tab (calendar is the entry)
@@ -182,6 +224,7 @@ function submitBooking(){
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
       serviceId:bk.svc?bk.svc.id:null,
+      providerId:bk.provider?bk.provider.id:null,
       slot:{date:bk.date,time:bk.time},
       customer:{name:name,phone:phone,email:email}
     })
@@ -259,9 +302,19 @@ document.addEventListener('click',function(e){
   // close / back booking panel
   if(t.closest('#closeBooking')){ closePanel('bookingPanel'); return; }
   if(t.closest('#bkBack')){
-    if(bk.step==='time') renderBkSvcStep();
+    if(bk.step==='provider') renderBkSvcStep();
+    else if(bk.step==='time'){ if(providersCache.length>0) renderBkProviderStep(); else renderBkSvcStep(); }
     else if(bk.step==='form') renderBkTimeStep();
     else closePanel('bookingPanel');
+    return;
+  }
+
+  // home service card → booking
+  var homeSvcCard=t.closest('[data-bk-svc-home]');
+  if(homeSvcCard){
+    var hidx=parseInt(homeSvcCard.getAttribute('data-bk-svc-home')||'0',10);
+    bk.date=null;bk.svc=svcsCache[hidx]||null;bk.time=null;bk.provider=null;
+    showTab('reservas');
     return;
   }
 
@@ -270,6 +323,20 @@ document.addEventListener('click',function(e){
   if(svcItem){
     var idx=parseInt(svcItem.getAttribute('data-bk-svc-i')||'0',10);
     bk.svc=svcsCache[idx]||null;
+    if(providersCache.length>0) renderBkProviderStep();
+    else renderBkTimeStep();
+    return;
+  }
+  var provItem=t.closest('[data-bk-prov-i]');
+  if(provItem){
+    var pidx=parseInt(provItem.getAttribute('data-bk-prov-i')||'0',10);
+    bk.provider=providersCache[pidx]||null;
+    renderBkTimeStep();
+    return;
+  }
+  var provAny=t.closest('[data-bk-prov-any]');
+  if(provAny){
+    bk.provider=null;
     renderBkTimeStep();
     return;
   }
@@ -286,6 +353,14 @@ document.addEventListener('click',function(e){
 
 // ── services ──────────────────────────────────────────────────────────────────
 var CARD_PALETTES=['#FBBDC7','#93C5FD','#FDE68A','#6EE7B7','#C4B5FD','#FCA5A5'];
+var CARD_GRADIENTS=[
+  'linear-gradient(135deg,#6366F1,#818CF8)',
+  'linear-gradient(135deg,#EC4899,#F472B6)',
+  'linear-gradient(135deg,#0EA5E9,#38BDF8)',
+  'linear-gradient(135deg,#10B981,#34D399)',
+  'linear-gradient(135deg,#F59E0B,#FCD34D)',
+  'linear-gradient(135deg,#EF4444,#F87171)'
+];
 
 function ensureServices(){
   if(svcsLoaded){applyServices(svcsCache);return;}
@@ -307,11 +382,54 @@ function loadServices(){
 }
 
 function applyServices(svcs){
-  renderSvcRows('desktopServiceList', svcs);
+  renderHomeGrid('homeServiceGrid', svcs);
   renderSvcRows('svcList', svcs);
   renderSvcRows('mobileServiceList', svcs);
   var statEl=document.getElementById('prStatSvcs');
   if(statEl) statEl.textContent=String(svcs.length);
+}
+
+function renderHomeGrid(id,svcs){
+  var el=document.getElementById(id);if(!el) return;
+  if(!svcs.length){
+    el.innerHTML='<div class="svc-empty" style="grid-column:1/-1">No hay servicios configurados aún.</div>';
+    return;
+  }
+  var html='';
+  svcs.forEach(function(s,i){
+    var grad=CARD_GRADIENTS[i%CARD_GRADIENTS.length];
+    var price=s.price!=null?fmtPrice(Number(s.price)):'Consultar';
+    var priceColor=s.price!=null&&Number(s.price)>0?'#fff':'rgba(255,255,255,.7)';
+    var dur=s.duration_minutes?s.duration_minutes+' min':'';
+    var ltr=(s.name||'?').trim().charAt(0).toUpperCase();
+    // provider avatars (up to 3)
+    var provHtml='';
+    if(providersCache.length>0){
+      var shown=providersCache.slice(0,3);
+      provHtml='<div class="svc-card-provs">';
+      shown.forEach(function(p,pi){
+        var pc=p.color&&/^#[0-9a-fA-F]{6}$/.test(p.color)?p.color:CARD_PALETTES[pi%CARD_PALETTES.length];
+        var ini=(p.avatar_initials||(p.name||'?').trim().charAt(0)).toUpperCase();
+        provHtml+='<div class="svc-card-prov" style="background:'+pc+'">'+escH(ini)+'</div>';
+      });
+      provHtml+='</div>';
+    }
+    html+='<div class="svc-card" data-bk-svc-home="'+i+'">'
+      +'<div class="svc-card-top" style="background:'+grad+'">'
+      +'<div class="svc-card-ltr">'+escH(ltr)+'</div>'
+      +provHtml
+      +'</div>'
+      +'<div class="svc-card-body">'
+      +'<div class="svc-card-name">'+escH(s.name)+'</div>'
+      +'<div class="svc-card-meta">'+escH(dur||'Servicio profesional')+'</div>'
+      +'<div class="svc-card-foot">'
+      +'<span class="svc-card-price" style="color:var(--primary)">'+escH(price)+'</span>'
+      +'<button class="svc-card-btn" type="button" style="background:'+grad+'" data-bk-svc-home="'+i+'">Reservar</button>'
+      +'</div>'
+      +'</div>'
+      +'</div>';
+  });
+  el.innerHTML=html;
 }
 
 // Row list (reservas tab + mobile home + desktop home)
@@ -738,6 +856,7 @@ function renderReviewsTab(data){
 // ── init ─────────────────────────────────────────────────────────────────────
 (function init(){
   loadServices();
+  loadProviders();
   renderHomeProducts();
   loadCalendar();
   ensureReviews();

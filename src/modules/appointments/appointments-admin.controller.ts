@@ -34,7 +34,6 @@ export const calendarAdminController = {
       const closingTime          = String(body.closingTime || "").trim();
       const slotDurationMinutes  = Number(body.slotDurationMinutes || 30);
       const maxDaysAhead         = Number(body.maxDaysAhead || 30);
-      const bookingPrice         = Number(body.bookingPrice || 0);
 
       const activeWeekdays = Array.isArray(body.activeWeekdays)
         ? body.activeWeekdays.map(Number).filter((n: number) => n >= 1 && n <= 7)
@@ -56,7 +55,6 @@ export const calendarAdminController = {
         slotDurationMinutes,
         maxDaysAhead,
         timezone: body.timezone || "America/Santiago",
-        bookingPrice,
         activeWeekdays,
         blockedDates,
       });

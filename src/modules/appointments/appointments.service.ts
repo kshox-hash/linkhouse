@@ -190,10 +190,7 @@ export async function reserveCalendarSlot(input: {
 
   const endTime = addMinutes(input.startTime, duration);
 
-  // If a service was selected, its price takes priority over the calendar default price
-  const paymentAmount = input.servicePrice != null
-    ? input.servicePrice
-    : Number(settings.booking_price ?? 0);
+  const paymentAmount = input.servicePrice != null ? input.servicePrice : 0;
 
   return createCalendarBooking({
     userId: input.userId,

@@ -16,7 +16,6 @@ export type SaveCalendarSettingsInput = {
   slotDurationMinutes: number;
   maxDaysAhead: number;
   timezone?: string;
-  bookingPrice?: number;
   activeWeekdays: number[];
   blockedDates?: Array<{
     blockedDate: string;
@@ -100,16 +99,14 @@ export async function saveCalendarSettings(input: SaveCalendarSettingsInput) {
         timezone,
         default_slot_minutes,
         max_advance_days,
-        booking_price,
         updated_at
       )
-      VALUES ($1, $2, $3, $4, $5, NOW())
+      VALUES ($1, $2, $3, $4, NOW())
       ON CONFLICT (user_id)
       DO UPDATE SET
         timezone = EXCLUDED.timezone,
         default_slot_minutes = EXCLUDED.default_slot_minutes,
         max_advance_days = EXCLUDED.max_advance_days,
-        booking_price = EXCLUDED.booking_price,
         updated_at = NOW()
       RETURNING *
       `,
@@ -118,7 +115,6 @@ export async function saveCalendarSettings(input: SaveCalendarSettingsInput) {
         input.timezone || "America/Santiago",
         input.slotDurationMinutes,
         input.maxDaysAhead,
-        input.bookingPrice ?? 0,
       ]
     );
 

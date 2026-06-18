@@ -60,29 +60,39 @@ export function chatTabHtml(d: ChatData): string {
     ${d.waHref ? `<a class="btn-wa" href="${d.waHref}" target="_blank" rel="noopener">${S_WA} WhatsApp</a>` : ""}
   </div>
 
-  <div class="sec-hdr">
-    <div><div class="sec-title">Servicios</div><div class="sec-sub">Elegí el que necesitás</div></div>
-    ${hasBooking ? `<button class="sec-link" type="button" data-action="reservas">Ver todos</button>` : ""}
-  </div>
-  <div class="svc-list-full" id="desktopServiceList" style="margin-bottom:28px">
-    <div class="svc-empty"><div class="spinner" style="margin:0 auto 8px"></div>Cargando servicios…</div>
-  </div>
+  <div class="home-grid">
+    <div>
+      <div class="sec-hdr">
+        <div><div class="sec-title">Servicios</div><div class="sec-sub">Elegí el que necesitás</div></div>
+        ${hasBooking ? `<button class="sec-link" type="button" data-action="reservas">Ver todos</button>` : ""}
+      </div>
+      <div class="svc-cards-grid" id="homeServiceGrid">
+        <div class="svc-empty"><div class="spinner" style="margin:0 auto 8px"></div>Cargando servicios…</div>
+      </div>
+    </div>
 
-  ${hasBooking ? `
-  <div class="sec-hdr">
-    <div><div class="sec-title">Disponibilidad</div><div class="sec-sub">Turnos próximos</div></div>
-    <button class="sec-link" type="button" data-action="reservas">Reservar</button>
-  </div>
-  <div class="cal-widget" id="calHome" style="margin-bottom:28px">
-    <div class="cal-loading"><div class="spinner"></div>Cargando…</div>
-  </div>` : `<div id="calHome" style="display:none"></div>`}
+    <div class="home-right">
+      ${hasBooking ? `
+      <div>
+        <div class="sec-hdr" style="margin-bottom:10px">
+          <div class="sec-title">Disponibilidad</div>
+          <button class="sec-link" type="button" data-action="reservas">Reservar</button>
+        </div>
+        <div class="cal-widget" id="calHome">
+          <div class="cal-loading"><div class="spinner"></div>Cargando…</div>
+        </div>
+      </div>` : `<div id="calHome" style="display:none"></div>`}
 
-  <div class="sec-hdr">
-    <div><div class="sec-title">Opiniones</div><div class="sec-sub">Lo que dicen nuestros clientes</div></div>
-    <button class="sec-link" type="button" data-action="resenas">Ver todas</button>
-  </div>
-  <div class="inbox-card" id="homeInbox">
-    <div class="inbox-empty"><div class="spinner" style="margin:0 auto 8px"></div>Cargando…</div>
+      <div>
+        <div class="sec-hdr" style="margin-bottom:10px">
+          <div class="sec-title">Opiniones</div>
+          <button class="sec-link" type="button" data-action="resenas">Ver todas</button>
+        </div>
+        <div class="inbox-card" id="homeInbox">
+          <div class="inbox-empty"><div class="spinner" style="margin:0 auto 8px"></div>Cargando…</div>
+        </div>
+      </div>
+    </div>
   </div>`;
 
   return `
