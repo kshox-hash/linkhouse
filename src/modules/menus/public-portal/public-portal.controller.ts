@@ -79,6 +79,7 @@ export const publicPortalController = {
       const html = renderPortalHtml({
         businessName:   slug.business_name ?? publicSlug,
         publicSlug,
+        userId:         slug.user_id,
         productCount:   products.length,
         phone:          profile?.phone           ?? null,
         address:        profile?.address         ?? null,

@@ -23,7 +23,12 @@ export function serviciosTabHtml(d: SafeData): string {
   return `
   <div id="panel-cotizar" class="panel">
     <div class="pscroll">
-      <div class="sec-hdr"><span class="sec-title">Cotizaciones</span></div>
+      <div class="sec-hdr">
+        <div>
+          <div class="sec-title">Cotizaciones</div>
+          <div class="sec-sub">Recibí tu presupuesto por email al instante</div>
+        </div>
+      </div>
       <div class="cot-card" style="margin-bottom:20px">
         <div class="cot-icon-wrap">${S_COT}</div>
         <div>

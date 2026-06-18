@@ -25,6 +25,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   --red:#EF4444;
   --red-dim:rgba(239,68,68,.10);
   --amber:#F59E0B;
+  --amber-dim:rgba(245,158,11,.12);
   --shadow-s:0 1px 4px rgba(0,0,0,.06);
   --shadow:0 4px 18px rgba(0,0,0,.07),0 1px 4px rgba(0,0,0,.04);
   --shadow-l:0 8px 32px rgba(0,0,0,.1),0 2px 8px rgba(0,0,0,.05);
@@ -445,6 +446,44 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 }
 .qp-qty-btn:hover{background:var(--primary-dim);border-color:var(--primary-glow)}
 .qp-qty-num{font-size:13px;font-weight:600;color:var(--text);min-width:16px;text-align:center;font-variant-numeric:tabular-nums}
+
+/* ── SECTION SUBTITLE ────────────────────────────────────────────────── */
+.sec-sub{font-size:11.5px;color:var(--dim);margin-top:1px;font-weight:400}
+.sec-hdr>div{display:flex;flex-direction:column;gap:1px}
+
+/* ── RATING STARS ────────────────────────────────────────────────────── */
+.pr-rating{
+  display:flex;align-items:center;gap:5px;margin-top:4px;margin-bottom:10px;
+  font-size:12.5px;color:var(--amber);font-weight:600
+}
+.pr-rating-count{font-size:11.5px;color:var(--soft);font-weight:400}
+
+/* ── REVIEWS TAB ─────────────────────────────────────────────────────── */
+.rv-layout{
+  display:flex;align-items:center;gap:20px;
+  background:var(--panel);border-radius:var(--r);border:1px solid var(--border);
+  box-shadow:var(--shadow-s);padding:20px;margin-bottom:4px
+}
+.rv-summary{text-align:center;flex-shrink:0}
+.rv-avg-big{font-size:42px;font-weight:800;color:var(--text);line-height:1}
+.rv-stars-big{font-size:18px;color:var(--amber);margin:4px 0 2px;letter-spacing:1px}
+.rv-total{font-size:11.5px;color:var(--dim)}
+.rv-bars{flex:1;display:flex;flex-direction:column;gap:5px}
+.rv-bar-row{display:flex;align-items:center;gap:6px}
+.rv-bar-lbl{font-size:11px;color:var(--soft);width:26px;text-align:right;flex-shrink:0}
+.rv-bar-track{flex:1;height:6px;background:var(--border);border-radius:99px;overflow:hidden}
+.rv-bar-fill{height:100%;background:var(--amber);border-radius:99px;transition:width .4s}
+.rv-bar-count{font-size:11px;color:var(--dim);width:18px;flex-shrink:0}
+.rv-card{
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;
+  padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow-s)
+}
+.rv-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.rv-card-stars{font-size:13px;letter-spacing:1px}
+.rv-card-meta{font-size:11.5px}
+.rv-name{font-weight:600;color:var(--text)}
+.rv-date{color:var(--dim)}
+.rv-comment{font-size:13.5px;color:var(--soft);line-height:1.5}
 
 /* ── CALENDAR WIDGET ─────────────────────────────────────────────────── */
 .cal-widget{

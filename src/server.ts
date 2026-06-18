@@ -53,6 +53,10 @@ process.on("unhandledRejection", (reason) => {
 // ─── App ─────────────────────────────────────────────────────────────────────
 const app = express();
 
+// Render (y cualquier proxy reverso) pone la IP real del cliente en X-Forwarded-For.
+// Sin trust proxy, req.ip devuelve la IP del proxy → todos parecen el mismo visitante.
+app.set("trust proxy", 1);
+
 app.use(
   helmet({
     contentSecurityPolicy: {

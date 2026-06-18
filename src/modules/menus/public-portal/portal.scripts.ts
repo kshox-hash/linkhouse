@@ -3,6 +3,7 @@ type ProductData = { id: string|number; name: string; price: number; description
 export function portalScripts(
   slug: string,
   _bizName: string,
+  userId: number,
   _modules: unknown[],
   products: ProductData[],
   _bizInfo: unknown,
@@ -17,11 +18,13 @@ export function portalScripts(
 
   return `
 var SLUG=${JSON.stringify(slug)};
+var USER_ID=${JSON.stringify(userId)};
 var PRODUCTS=${JSON.stringify(safeProducts)};
-var TABS=['chat','reservas','nosotros','cotizar'];
+var TABS=['chat','reservas','nosotros','cotizar','resenas'];
 var svcsLoaded=false;
 var svcsCache=[];
 var QCart={};
+var reviewsLoaded=false;
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -41,6 +44,7 @@ function showTab(t){
   });
   setActive(t);
   if(t==='reservas'){ensureServices();loadCalendar();}
+  if(t==='resenas') ensureReviews();
 }
 
 // ── slide panels ──────────────────────────────────────────────────────────────
@@ -602,11 +606,108 @@ function renderQPSuccess(name){
   if(doneBtn) doneBtn.addEventListener('click',function(){closePanel('quotePanel');showTab('chat');});
 }
 
+// ── Reviews ───────────────────────────────────────────────────────────────────
+function renderStars(avg,size){
+  var full=Math.floor(avg);
+  var empty=5-Math.round(avg);
+  if(empty<0) empty=0;
+  var html='';
+  for(var i=0;i<Math.round(avg);i++) html+='<span style="color:#F59E0B">★</span>';
+  for(var i=0;i<empty;i++) html+='<span style="color:var(--dim)">★</span>';
+  return html;
+}
+
+function ensureReviews(){
+  if(reviewsLoaded) return;
+  reviewsLoaded=true;
+  fetch('/public/reviews/'+USER_ID)
+    .then(function(r){return r.json();})
+    .then(function(data){
+      renderReviewsTab(data);
+      updateProfileRating(data);
+    })
+    .catch(function(){
+      var el=document.getElementById('reviewsContent');
+      if(el) el.innerHTML='<div class="bk-empty">No se pudieron cargar las reseñas.</div>';
+    });
+}
+
+function updateProfileRating(data){
+  var el=document.getElementById('prRating');
+  if(!el) return;
+  var summary=data&&data.summary?data.summary:{};
+  var avg=parseFloat(summary.average||'0');
+  var total=parseInt(summary.total||'0',10);
+  if(!total||!avg) return;
+  el.style.display='flex';
+  el.innerHTML=renderStars(avg)
+    +'<span style="font-weight:700;color:var(--text)">'+avg.toFixed(1)+'</span>'
+    +'<span class="pr-rating-count">('+total+' reseña'+(total!==1?'s':'')+')</span>';
+}
+
+function renderReviewsTab(data){
+  var el=document.getElementById('reviewsContent'); if(!el) return;
+  var summary=(data&&data.summary)||{};
+  var reviews=(data&&data.reviews)||[];
+  var avg=parseFloat(summary.average||'0');
+  var total=parseInt(summary.total||'0',10);
+
+  if(!total){
+    el.innerHTML='<div class="bk-empty" style="margin-top:8px">Aún no hay reseñas.<br>¡Los clientes podrán dejarte su opinión pronto!</div>';
+    return;
+  }
+
+  var dist=summary.distribution||{};
+  var bars=[5,4,3,2,1].map(function(star){
+    var count=parseInt(dist[star]||'0',10);
+    var pct=total>0?Math.round((count/total)*100):0;
+    return '<div class="rv-bar-row">'
+      +'<span class="rv-bar-lbl">'+star+'★</span>'
+      +'<div class="rv-bar-track"><div class="rv-bar-fill" style="width:'+pct+'%"></div></div>'
+      +'<span class="rv-bar-count">'+count+'</span>'
+      +'</div>';
+  }).join('');
+
+  var summaryHtml='<div class="rv-layout">'
+    +'<div class="rv-summary">'
+    +'<div class="rv-avg-big">'+avg.toFixed(1)+'</div>'
+    +'<div class="rv-stars-big">'+renderStars(avg)+'</div>'
+    +'<div class="rv-total">'+total+' reseña'+(total!==1?'s':'')+'</div>'
+    +'</div>'
+    +'<div class="rv-bars">'+bars+'</div>'
+    +'</div>';
+
+  var cards=reviews.map(function(r){
+    var stars='';
+    for(var i=1;i<=5;i++) stars+='<span style="color:'+(i<=(r.rating||0)?'#F59E0B':'var(--dim)')+'">★</span>';
+    var date='';
+    if(r.created_at){
+      try{
+        date=new Date(r.created_at).toLocaleDateString('es-CL',{day:'numeric',month:'short',year:'numeric'});
+      }catch(e){}
+    }
+    return '<div class="rv-card">'
+      +'<div class="rv-card-top">'
+      +'<div class="rv-card-stars">'+stars+'</div>'
+      +'<div class="rv-card-meta">'
+      +(r.client_name?'<span class="rv-name">'+escH(r.client_name)+'</span>':'<span class="rv-name">Cliente</span>')
+      +(date?'<span class="rv-date"> · '+escH(date)+'</span>':'')
+      +'</div>'
+      +'</div>'
+      +(r.comment?'<div class="rv-comment">'+escH(r.comment)+'</div>':'')
+      +'</div>';
+  }).join('');
+
+  el.innerHTML=summaryHtml
+    +(cards?'<div class="sec-hdr" style="margin-top:20px"><span class="sec-title">Últimas reseñas</span><span class="sec-sub" style="margin-top:2px">Opiniones de nuestros clientes</span></div>'+cards:'');
+}
+
 // ── init ─────────────────────────────────────────────────────────────────────
 (function init(){
   loadServices();
   renderHomeProducts();
   loadCalendar();
+  ensureReviews();
 })();
 `;
 }

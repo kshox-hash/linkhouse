@@ -5,11 +5,13 @@ import { chatTabHtml }      from "./portal-tab-chat";
 import { reservasTabHtml }  from "./portal-tab-reservas";
 import { serviciosTabHtml } from "./portal-tab-servicios";
 import { nosotrosTabHtml }  from "./portal-tab-nosotros";
+import { resenasTabHtml }   from "./portal-tab-resenas";
 import { MenuModuleItem }   from "../user-modules.repository";
 
 export type PortalViewData = {
   businessName: string;
   publicSlug: string;
+  userId: number;
   productCount: number;
   phone?: string | null;
   address?: string | null;
@@ -39,6 +41,7 @@ const S_CLOCK= `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 const S_MAP  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`;
 const S_IG   = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/></svg>`;
 const S_BACK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>`;
+const S_STAR = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
 
 function prRow(icon: string, label: string, val: string, badge?: string): string {
   return `<div class="pr-row">
@@ -52,7 +55,7 @@ function prRow(icon: string, label: string, val: string, badge?: string): string
 
 export function renderPortalHtml(data: PortalViewData): string {
   const {
-    businessName, publicSlug, productCount,
+    businessName, publicSlug, userId, productCount,
     phone, address, city, brandColor,
     description, welcomeMessage,
     instagramUrl, whatsappNumber, businessHours,
@@ -109,6 +112,7 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
   <button class="ir-btn" data-tab="reservas" type="button">${S_CAL}</button>
   <button class="ir-btn" data-tab="nosotros" type="button">${S_PROD}</button>
   <button class="ir-btn" data-tab="cotizar" type="button">${S_COT}</button>
+  <button class="ir-btn" data-tab="resenas" type="button">${S_STAR}</button>
 </nav>
 
 <!-- PROFILE RAIL -->
@@ -118,16 +122,17 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
     <div class="pr-avatar">${initials}</div>
     <div class="pr-name">${s.name}</div>
     ${s.desc ? `<div class="pr-role">${s.desc}</div>` : ""}
-    <div class="pr-meta" style="gap:7px;margin-bottom:${waHref ? "12px" : "0"}">
+    <div id="prRating" class="pr-rating" style="display:none"></div>
+    <div class="pr-meta" style="gap:7px;margin-bottom:10px">
       <span class="pr-online-chip">En línea</span>
     </div>
-    ${waHref ? `<div class="pr-actions">
-      <a class="pr-action-btn" href="${waHref}" target="_blank" rel="noopener" title="WhatsApp">${S_WA}</a>
+    <div class="pr-actions">
+      ${waHref ? `<a class="pr-action-btn" href="${waHref}" target="_blank" rel="noopener" title="WhatsApp">${S_WA}</a>` : ""}
       ${s.phone ? `<a class="pr-action-btn" href="tel:${s.phone}" title="Llamar">${S_PHONE}</a>` : ""}
       ${s.ig ? `<a class="pr-action-btn" href="${s.ig}" target="_blank" rel="noopener" title="Instagram">${S_IG}</a>` : ""}
-    </div>` : ""}
+    </div>
   </div>
-  ${infoRows ? `<div class="pr-section"><div class="pr-section-title">Información</div>${infoRows}</div>` : ""}
+  ${infoRows ? `<div class="pr-section"><div class="pr-section-title">Información detallada</div>${infoRows}</div>` : ""}
   ${waHref ? `<div class="pr-footer"><a class="btn-wa" href="${waHref}" target="_blank" rel="noopener">${S_WA} Escribir por WhatsApp</a></div>` : ""}
 </aside>
 
@@ -145,6 +150,7 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
     <button class="cn-tab" data-tab="reservas" type="button">${S_CAL} Reservas</button>
     <button class="cn-tab" data-tab="nosotros" type="button">${S_PROD} Productos</button>
     <button class="cn-tab" data-tab="cotizar" type="button">${S_COT} Cotizar</button>
+    <button class="cn-tab" data-tab="resenas" type="button">${S_STAR} Reseñas</button>
     <span class="cn-spacer"></span>
     <span class="cn-status">En línea</span>
   </nav>
@@ -153,6 +159,7 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
   ${reservasTabHtml()}
   ${nosotrosTabHtml(products)}
   ${serviciosTabHtml({ slug: s.slug, productCount })}
+  ${resenasTabHtml()}
 </main>
 
 <!-- MOBILE BOTTOM NAV -->
@@ -161,6 +168,7 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
   <button class="bn-item" data-tab="reservas" type="button">${S_CAL}<span>Reservas</span></button>
   <button class="bn-item" data-tab="nosotros" type="button">${S_PROD}<span>Productos</span></button>
   <button class="bn-item" data-tab="cotizar" type="button">${S_COT}<span>Cotizar</span></button>
+  <button class="bn-item" data-tab="resenas" type="button">${S_STAR}<span>Reseñas</span></button>
 </nav>
 
 <div class="slide-overlay" id="slideOverlay"></div>
@@ -190,7 +198,7 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
   <div class="sp-body" id="quotePanelBody"></div>
 </div>
 
-<script>${portalScripts(publicSlug, businessName, enabledModules, products, { phone: s.phone, address: s.address, city: s.city, description: s.desc, welcomeMessage: welcomeMessage ?? null, businessHours: s.hours, instagramUrl: s.ig, whatsappNumber: s.wa }, initials)}</script>
+<script>${portalScripts(publicSlug, businessName, userId, enabledModules, products, { phone: s.phone, address: s.address, city: s.city, description: s.desc, welcomeMessage: welcomeMessage ?? null, businessHours: s.hours, instagramUrl: s.ig, whatsappNumber: s.wa }, initials)}</script>
 </body>
 </html>`;
 }

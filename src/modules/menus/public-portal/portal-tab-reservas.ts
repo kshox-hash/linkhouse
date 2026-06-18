@@ -14,18 +14,31 @@ export function reservasTabHtml(): string {
     <div class="pscroll">
 
       <div class="sec-hdr">
-        <span class="sec-title">Disponibilidad</span>
+        <div>
+          <div class="sec-title">Disponibilidad</div>
+          <div class="sec-sub">Días con turnos disponibles</div>
+        </div>
       </div>
       <div class="cal-widget" id="calReservas" style="margin-bottom:24px">
         <div class="cal-loading"><div class="spinner"></div>Cargando calendario…</div>
       </div>
 
-      <div class="sec-hdr"><span class="sec-title">Servicios disponibles</span></div>
+      <div class="sec-hdr">
+        <div>
+          <div class="sec-title">Servicios</div>
+          <div class="sec-sub">Elegí el servicio que necesitás</div>
+        </div>
+      </div>
       <div class="svc-list-full" id="svcList">
         <div class="svc-empty"><div class="spinner" style="margin:0 auto 10px"></div>Cargando servicios…</div>
       </div>
 
-      <div class="sec-hdr" style="margin-top:24px"><span class="sec-title">¿Cómo funciona?</span></div>
+      <div class="sec-hdr" style="margin-top:24px">
+        <div>
+          <div class="sec-title">¿Cómo funciona?</div>
+          <div class="sec-sub">3 pasos simples para reservar</div>
+        </div>
+      </div>
       <div class="how-card">${steps}</div>
 
     </div>

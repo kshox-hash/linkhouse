@@ -29,8 +29,10 @@ export function nosotrosTabHtml(products: Product[]): string {
   <div id="panel-nosotros" class="panel">
     <div class="pscroll">
       <div class="sec-hdr">
-        <span class="sec-title">Catálogo de productos</span>
-        <span style="font-size:12px;color:var(--dim);font-weight:600">${products.length} producto${products.length !== 1 ? "s" : ""}</span>
+        <div>
+          <div class="sec-title">Catálogo de productos</div>
+          <div class="sec-sub">${products.length} producto${products.length !== 1 ? "s" : ""} disponible${products.length !== 1 ? "s" : ""}</div>
+        </div>
       </div>
       <div class="prod-card-wrap">${items}</div>
     </div>
