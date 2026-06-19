@@ -1,45 +1,68 @@
 export function reservasTabHtml(): string {
-  const steps = [
-    { bg: 'rgba(90,103,242,.12)', col: '#5A67F2', txt: 'Elige el servicio que necesitás' },
-    { bg: 'rgba(59,130,246,.12)', col: '#3b82f6', txt: 'Selecciona el día y horario disponible' },
-    { bg: 'rgba(34,197,94,.12)',  col: '#22c55e', txt: 'Ingresá tus datos y confirmá la reserva' },
-  ].map((s, i) => `
-    <div class="how-item">
-      <div class="how-num" style="background:${s.bg};color:${s.col}">${i + 1}</div>
-      <div class="how-txt">${s.txt}</div>
-    </div>`).join('');
-
   return `
   <div id="panel-reservas" class="panel">
     <div class="pscroll">
 
-      <div class="sec-hdr">
+      <!-- Dashboard header -->
+      <div class="rdash-hdr">
         <div>
-          <div class="sec-title">Disponibilidad</div>
-          <div class="sec-sub">Días con turnos disponibles</div>
+          <div class="rdash-title">Reservas</div>
+          <div class="rdash-sub" id="rdashMonthLbl"></div>
         </div>
-      </div>
-      <div class="cal-widget" id="calReservas" style="margin-bottom:24px">
-        <div class="cal-loading"><div class="spinner"></div>Cargando calendario…</div>
+        <div class="rdash-nav">
+          <button class="rdash-nav-btn" id="rdashPrev" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="rdash-nav-btn" id="rdashNext" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
       </div>
 
-      <div class="sec-hdr">
-        <div>
-          <div class="sec-title">Servicios</div>
-          <div class="sec-sub">Elegí el servicio que necesitás</div>
+      <!-- Stat cards -->
+      <div class="rdash-stats" id="rdashStats">
+        <div class="rstat-card">
+          <div class="rstat-icon" style="background:rgba(79,127,232,.12);color:#4F7FE8">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div class="rstat-val" id="rstatDays">—</div>
+          <div class="rstat-lbl">Días disponibles</div>
         </div>
-      </div>
-      <div class="svc-list-full" id="svcList">
-        <div class="svc-empty"><div class="spinner" style="margin:0 auto 10px"></div>Cargando servicios…</div>
+        <div class="rstat-card">
+          <div class="rstat-icon" style="background:rgba(34,197,94,.12);color:#22c55e">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="rstat-val" id="rstatSlots">—</div>
+          <div class="rstat-lbl">Turnos este mes</div>
+        </div>
+        <div class="rstat-card">
+          <div class="rstat-icon" style="background:rgba(251,146,60,.12);color:#fb923c">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <div class="rstat-val" id="rstatNext">—</div>
+          <div class="rstat-lbl">Próximo turno</div>
+        </div>
       </div>
 
-      <div class="sec-hdr" style="margin-top:24px">
-        <div>
-          <div class="sec-title">¿Cómo funciona?</div>
-          <div class="sec-sub">3 pasos simples para reservar</div>
-        </div>
+      <!-- Day strip -->
+      <div class="rdash-strip-wrap">
+        <div class="day-strip" id="dayStrip"></div>
       </div>
-      <div class="how-card">${steps}</div>
+
+      <!-- Slots area (hidden until day selected) -->
+      <div class="slots-area" id="slotsArea" style="display:none">
+        <div class="slots-date-lbl" id="slotsDateLbl"></div>
+        <div class="slots-grid" id="slotsGrid"></div>
+        <button class="slots-close" type="button" id="slotsClose">✕ Cerrar</button>
+      </div>
+
+      <!-- Services -->
+      <div class="rdash-sec-hdr">
+        <div class="rdash-sec-title">Servicios</div>
+      </div>
+      <div class="svc-grid" id="svcGrid">
+        <div class="svc-empty" style="grid-column:1/-1"><div class="spinner" style="margin:0 auto 10px"></div>Cargando servicios…</div>
+      </div>
 
     </div>
   </div>`;

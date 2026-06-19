@@ -92,14 +92,26 @@ function setBkHeader(title,showBack){
   if(b) b.style.display=showBack?'flex':'none';
 }
 
-// Entry: click on a calendar day
+// Entry: click on a calendar day (time unknown)
 function openBookingFromDay(dateStr){
   bk.date=dateStr; bk.time=null; bk.provider=null;
   openPanel('bookingPanel');
   if(bk.svc){
-    // service pre-selected from home card — skip straight to provider/time
     if(providersCache.length>0) renderBkProviderStep();
     else renderBkTimeStep();
+  } else {
+    bk.step='svc';
+    renderBkSvcStep();
+  }
+}
+
+// Entry: click on a time slot chip (day + time known)
+function openBookingFromSlot(dateStr,time){
+  bk.date=dateStr; bk.time=time; bk.provider=null;
+  openPanel('bookingPanel');
+  if(bk.svc){
+    if(providersCache.length>0) renderBkProviderStep();
+    else renderBkFormStep();
   } else {
     bk.step='svc';
     renderBkSvcStep();
@@ -397,10 +409,48 @@ function loadServices(){
 
 function applyServices(svcs){
   renderHomeGrid('homeServiceGrid', svcs);
-  renderSvcRows('svcList', svcs);
+  renderSvcGrid('svcGrid', svcs);
   renderSvcRows('mobileServiceList', svcs);
   var statEl=document.getElementById('prStatSvcs');
   if(statEl) statEl.textContent=String(svcs.length);
+}
+
+function renderSvcGrid(id,svcs){
+  var el=document.getElementById(id);if(!el) return;
+  if(!svcs.length){
+    el.innerHTML='<div class="svc-empty" style="grid-column:1/-1">No hay servicios configurados aún.</div>';
+    return;
+  }
+  var html='';
+  svcs.forEach(function(s,i){
+    var color=s.color&&/^#[0-9a-fA-F]{6}$/.test(s.color)?s.color:CARD_PALETTES[i%CARD_PALETTES.length];
+    var price=s.price!=null?fmtPrice(Number(s.price)):'Consultar';
+    var dur=s.duration_minutes?s.duration_minutes+' min':'';
+    html+='<div class="svc-grid-item" data-bk-svc="'+i+'">'
+      +'<div class="svc-grid-dot" style="background:'+escH(color)+'"></div>'
+      +'<div class="svc-grid-name">'+escH(s.name)+'</div>'
+      +(dur?'<div class="svc-grid-dur">'+escH(dur)+'</div>':'')
+      +'<div class="svc-grid-price">'+escH(price)+'</div>'
+      +'</div>';
+  });
+  el.innerHTML=html;
+  el.querySelectorAll('.svc-grid-item').forEach(function(item){
+    item.addEventListener('click',function(){
+      var idx=parseInt(item.getAttribute('data-bk-svc')||'0',10);
+      var svc=svcsCache[idx];
+      if(!svc) return;
+      bk.svc=svc; bk.date=null; bk.time=null; bk.provider=null;
+      // highlight selected service
+      el.querySelectorAll('.svc-grid-item').forEach(function(c){c.style.outline='';});
+      item.style.outline='2px solid var(--primary)';
+      // scroll to day strip with a nudge
+      var strip=document.getElementById('dayStrip');
+      if(strip) strip.scrollIntoView({behavior:'smooth',block:'nearest'});
+      // show prompt
+      var lbl=document.getElementById('rdashMonthLbl');
+      if(lbl){lbl.textContent='Elegí un día disponible ↑';lbl.style.color='var(--primary)';}
+    });
+  });
 }
 
 function renderHomeGrid(id,svcs){
@@ -516,8 +566,131 @@ function loadCalendar(){
 
 function renderAllCals(){
   renderCalWidget('calHome');
-  renderCalWidget('calReservas');
+  renderReservasDash();
   updateProfileNextSlot();
+}
+
+// ── Reservas Dashboard ────────────────────────────────────────────────────────
+var dashStripOffset=0; // week offset (0 = starts today)
+var dashSelectedDate=null;
+
+function renderReservasDash(){
+  var today=new Date();
+  var todayStr=today.getFullYear()+'-'+pad2(today.getMonth()+1)+'-'+pad2(today.getDate());
+
+  // Stats
+  var availDates=Object.keys(calSlots).filter(function(d){return d>=todayStr&&calSlots[d]&&calSlots[d].length>0;}).sort();
+  var totalSlots=availDates.reduce(function(acc,d){return acc+(calSlots[d]?calSlots[d].length:0);},0);
+  var nextDate=availDates[0]||null;
+
+  var el=document.getElementById('rstatDays');
+  if(el) el.textContent=String(availDates.length);
+  el=document.getElementById('rstatSlots');
+  if(el) el.textContent=String(totalSlots);
+  el=document.getElementById('rstatNext');
+  if(el) el.textContent=nextDate?fmtDateShort(nextDate):'—';
+
+  // Month label
+  var labelEl=document.getElementById('rdashMonthLbl');
+  if(labelEl){
+    // Show month range of the strip
+    var stripStart=new Date(today);
+    stripStart.setDate(stripStart.getDate()+dashStripOffset*14);
+    labelEl.textContent=MONTHS[stripStart.getMonth()]+' '+stripStart.getFullYear();
+  }
+
+  // Day strip (14 days starting from offset)
+  renderDayStrip(today,todayStr);
+
+  // Prev/next strip nav
+  var prev=document.getElementById('rdashPrev');
+  var next=document.getElementById('rdashNext');
+  if(prev){
+    prev.disabled=(dashStripOffset<=0);
+    prev.onclick=function(){if(dashStripOffset>0){dashStripOffset--;dashSelectedDate=null;renderReservasDash();}};
+  }
+  if(next){
+    next.onclick=function(){dashStripOffset++;dashSelectedDate=null;renderReservasDash();};
+  }
+
+  // Restore slot view if a date was selected
+  if(dashSelectedDate) showDaySlots(dashSelectedDate,todayStr);
+  else hideSlots();
+}
+
+function renderDayStrip(today,todayStr){
+  var strip=document.getElementById('dayStrip');
+  if(!strip) return;
+  var DAYS_LABEL=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  var html='';
+  for(var i=0;i<14;i++){
+    var d=new Date(today);
+    d.setDate(d.getDate()+dashStripOffset*14+i);
+    var dStr=d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());
+    var isPast=dStr<todayStr;
+    var isToday=dStr===todayStr;
+    var hasSlots=!!(calSlots[dStr]&&calSlots[dStr].length);
+    var isSelected=dStr===dashSelectedDate;
+    var cls='day-card';
+    if(isPast) cls+=' past';
+    else if(isSelected) cls+=' selected';
+    else if(isToday&&hasSlots) cls+=' avail today';
+    else if(isToday) cls+=' today';
+    else if(hasSlots) cls+=' avail';
+    html+='<div class="'+cls+'" data-day-date="'+dStr+'">'
+      +'<div class="day-wd">'+DAYS_LABEL[d.getDay()]+'</div>'
+      +'<div class="day-num">'+d.getDate()+'</div>'
+      +'<div class="day-dot"></div>'
+      +'</div>';
+  }
+  strip.innerHTML=html;
+  strip.querySelectorAll('.day-card.avail,.day-card.today.avail').forEach(function(card){
+    card.addEventListener('click',function(){
+      var dateStr=card.getAttribute('data-day-date');
+      if(!dateStr) return;
+      dashSelectedDate=dateStr;
+      renderDayStrip(today,todayStr);
+      showDaySlots(dateStr,todayStr);
+    });
+  });
+}
+
+function showDaySlots(dateStr,todayStr){
+  var area=document.getElementById('slotsArea');
+  var lbl=document.getElementById('slotsDateLbl');
+  var grid=document.getElementById('slotsGrid');
+  if(!area||!lbl||!grid) return;
+  var times=calSlots[dateStr]||[];
+  lbl.textContent=fmtDateLabel(dateStr);
+  if(times.length===0){
+    grid.innerHTML='<div style="color:var(--dim);font-size:13px">Sin horarios disponibles</div>';
+  } else {
+    grid.innerHTML=times.map(function(t){
+      return '<button class="slot-chip" type="button" data-slot-time="'+escH(t)+'">'+escH(t)+'</button>';
+    }).join('');
+    grid.querySelectorAll('.slot-chip').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var time=btn.getAttribute('data-slot-time');
+        if(time) openBookingFromSlot(dateStr,time);
+      });
+    });
+  }
+  area.style.display='block';
+  var closeBtn=document.getElementById('slotsClose');
+  if(closeBtn) closeBtn.onclick=function(){dashSelectedDate=null;hideSlots();renderDayStrip(new Date(),todayStr);};
+}
+
+function hideSlots(){
+  var area=document.getElementById('slotsArea');
+  if(area) area.style.display='none';
+}
+
+function fmtDateShort(dateStr){
+  if(!dateStr) return '';
+  var parts=dateStr.split('-');
+  if(parts.length<3) return dateStr;
+  var months_short=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return parseInt(parts[2],10)+' '+months_short[parseInt(parts[1],10)-1];
 }
 
 function updateProfileNextSlot(){
