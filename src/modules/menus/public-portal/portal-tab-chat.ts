@@ -32,19 +32,7 @@ export function chatTabHtml(d: ChatData): string {
   return `
   <div id="panel-chat" class="panel active hm-panel">
 
-    <!-- ROW 1 — Greeting -->
-    <div class="hm-row-greeting">
-      <div>
-        <div class="hm-greet-hi">¡Hola, ${firstName}! 👋</div>
-        <div class="hm-greet-sub">${d.name}</div>
-      </div>
-      <div class="hm-greet-actions">
-        ${hasBooking ? `<button class="hm-action-btn hm-action-primary" type="button" data-action="reservas">${S_CAL} Reservar</button>` : ""}
-        ${d.waHref   ? `<a class="hm-action-btn hm-action-wa" href="${d.waHref}" target="_blank" rel="noopener">${S_WA} WhatsApp</a>` : ""}
-      </div>
-    </div>
-
-    <!-- ROW 2 — Stats -->
+    <!-- ROW 1 — Stats -->
     <div class="hm-stats">
       <div class="hm-stat">
         <div class="hm-stat-icon" style="background:rgba(79,127,232,.12);color:#4F7FE8">${S_SVC}</div>

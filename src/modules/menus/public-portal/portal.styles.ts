@@ -891,7 +891,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 
 /* 5 — Tarjeta genérica */
 .hm-card{background:#fff;border:1px solid var(--border);border-radius:18px;display:flex;flex-direction:column;overflow:hidden}
-.hm-card-hdr{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;flex-shrink:0;border-bottom:1px solid var(--border)}
+.hm-card-hdr{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;flex-shrink:0}
 .hm-card-title{font-size:13.5px;font-weight:700;color:var(--text)}
 
 /* Listas dentro de cards */
@@ -936,9 +936,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 
 /* ── DESKTOP ── */
 @media(min-width:800px){
-  .hm-panel{display:grid!important;overflow:hidden!important;grid-template-rows:auto auto auto;padding:0;gap:0}
-  .hm-row-greeting{padding:20px 20px 0}
-  .hm-stats{grid-template-columns:repeat(4,1fr);padding:12px 20px;gap:10px}
+  .hm-panel{display:grid!important;overflow:hidden!important;grid-template-rows:auto auto;padding:0;gap:0}
+  .hm-stats{grid-template-columns:repeat(4,1fr);padding:14px 20px 10px;gap:10px}
   .hm-main{flex-direction:row;padding:0 20px 20px;gap:14px;overflow:hidden;height:460px}
 
   /* 6 — Calendario: columna izquierda */
