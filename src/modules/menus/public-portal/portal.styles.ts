@@ -144,18 +144,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 
   .portal-main{display:contents}
 
-  /* PROFILE PANEL — full height, flush */
-  .profile-rail{
-    display:flex;flex-direction:column;
-    position:fixed;top:0;left:var(--rail-w);bottom:0;
-    width:var(--prof-w);
-    background:var(--panel);
-    border-right:1px solid var(--border);
-    z-index:200;overflow-y:auto;overflow-x:hidden;
-    scrollbar-width:none;
-    box-shadow:none
-  }
-  .profile-rail::-webkit-scrollbar{display:none}
+  /* PROFILE PANEL — hidden, content goes right after sidebar */
+  .profile-rail{display:none}
 
   /* Profile top section */
   .pr-top{
@@ -257,7 +247,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   /* CONTENT AREA */
   .content-wrap{
     position:fixed;
-    top:0;left:calc(var(--rail-w) + var(--prof-w));right:0;bottom:0;
+    top:0;left:var(--rail-w);right:0;bottom:0;
     overflow:hidden;background:var(--bg)
   }
   /* content-nav hidden on desktop — icon-rail handles navigation */
