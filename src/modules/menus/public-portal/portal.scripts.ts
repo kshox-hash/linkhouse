@@ -408,7 +408,7 @@ function loadServices(){
 }
 
 function applyServices(svcs){
-  renderHomeGrid('homeServiceGrid', svcs);
+  renderSvcRows('homeServiceGrid', svcs);
   renderSvcGrid('svcGrid', svcs);
   renderSvcRows('mobileServiceList', svcs);
   var statEl=document.getElementById('prStatSvcs');

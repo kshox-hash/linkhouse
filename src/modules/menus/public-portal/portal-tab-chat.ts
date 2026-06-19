@@ -98,8 +98,8 @@ export function chatTabHtml(d: ChatData): string {
             <div class="hm-card-title">Servicios</div>
             ${hasBooking ? `<button class="sec-link" type="button" data-action="reservas">Ver todos →</button>` : ""}
           </div>
-          <div class="svc-cards-grid hm-card-scroll" id="homeServiceGrid">
-            <div class="svc-empty" style="grid-column:1/-1"><div class="spinner" style="margin:0 auto 8px"></div>Cargando…</div>
+          <div class="hm-svc-list hm-card-scroll" id="homeServiceGrid">
+            <div class="svc-empty"><div class="spinner" style="margin:0 auto 8px"></div>Cargando…</div>
           </div>
           ${hasCotizar ? `<button class="hm-cot-btn" type="button" data-action="cotizar">${S_COT} Pedir cotización</button>` : ""}
         </div>
