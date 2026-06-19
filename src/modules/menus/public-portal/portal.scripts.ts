@@ -40,39 +40,59 @@ var PGT_KEY='pgPortalToken_'+SLUG;
 // ── helpers ───────────────────────────────────────────────────────────────────
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function fmtPrice(n){if(n===0)return 'Gratis';return '$'+Number(n||0).toLocaleString('es-CL');}
+var gisInitialized=false;
+
 function pfetch(url,opts){
   opts=opts||{};
   if(portalToken){
     opts.headers=Object.assign({},opts.headers||{},{'Authorization':'Bearer '+portalToken});
   }
   return fetch(url,opts).then(function(r){
-    if(r.status===401){signOut();throw new Error('session_expired');}
+    // solo deslogueamos si teníamos token (sesión expirada), no si nunca estuvimos logueados
+    if(r.status===401 && portalToken){signOut();throw new Error('session_expired');}
     return r;
   });
 }
 
+function startPortal(){
+  loadServices();
+  loadProviders();
+  loadCalendar();
+  ensureReviews();
+}
+
 // ── gate (login screen) ───────────────────────────────────────────────────────
+function initGis(){
+  if(gisInitialized||!GOOGLE_CLIENT_ID) return;
+  if(window.google && window.google.accounts){
+    gisInitialized=true;
+    window.google.accounts.id.initialize({
+      client_id:GOOGLE_CLIENT_ID,
+      callback:handleGoogleSignIn,
+      auto_select:false
+    });
+  } else {
+    setTimeout(initGis,300);
+  }
+}
+
 function showGate(){
   var g=document.getElementById('portalGate');
   if(g) g.style.display='flex';
   if(GOOGLE_CLIENT_ID){
-    function tryRenderGateBtn(){
+    function tryRenderBtn(){
       if(window.google && window.google.accounts){
-        window.google.accounts.id.initialize({
-          client_id:GOOGLE_CLIENT_ID,
-          callback:handleGoogleSignIn,
-          auto_select:false
-        });
+        initGis();
         var el=document.getElementById('gateGoogleBtn');
         if(el) window.google.accounts.id.renderButton(el,{
           type:'standard',theme:'outline',size:'large',
           text:'signin_with',shape:'rectangular',width:260
         });
       } else {
-        setTimeout(tryRenderGateBtn,300);
+        setTimeout(tryRenderBtn,300);
       }
     }
-    tryRenderGateBtn();
+    tryRenderBtn();
   }
 }
 
@@ -1002,6 +1022,7 @@ function handleGoogleSignIn(response){
     }catch(e){}
     hideGate();
     renderUserChip(portalGoogleUser);
+    startPortal();
   })
   .catch(function(){}); // error de red — gate queda visible
 }
@@ -1124,14 +1145,9 @@ function submitReview(){
 
 // ── init ─────────────────────────────────────────────────────────────────────
 (function init(){
-  loadServices();
-  loadProviders();
-  loadCalendar();
-  ensureReviews();
-
   if(!GOOGLE_CLIENT_ID){
-    // sin Google configurado — portal abierto sin login
     hideGate();
+    startPortal();
     return;
   }
 
@@ -1146,20 +1162,14 @@ function submitReview(){
         portalToken=storedToken;
         hideGate();
         renderUserChip(portalGoogleUser);
-        // renovar credential en background (token JWT caduca en 7d; GIS lo puede refrescar silenciosamente)
-        function tryInitSilent(){
-          if(window.google && window.google.accounts){
-            window.google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID,callback:handleGoogleSignIn,auto_select:true});
-            window.google.accounts.id.prompt(function(n){void n;});
-          } else { setTimeout(tryInitSilent,400); }
-        }
-        tryInitSilent();
+        startPortal();
         return;
       }
     }
   }catch(e){}
 
-  // sin sesión guardada — mostrar gate
+  // sin sesión — mostrar gate (GIS se inicializa una sola vez dentro de showGate)
+  initGis();
   showGate();
 })();
 `;
