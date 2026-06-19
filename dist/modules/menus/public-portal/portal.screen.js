@@ -35,7 +35,7 @@ function prRow(icon, label, val, badge) {
   </div>`;
 }
 function renderPortalHtml(data) {
-    const { businessName, publicSlug, userId, productCount, phone, address, city, brandColor, description, welcomeMessage, instagramUrl, whatsappNumber, businessHours, enabledModules, products, googleClientId, } = data;
+    const { businessName, publicSlug, userId, productCount, phone, address, city, brandColor, description, welcomeMessage, instagramUrl, whatsappNumber, businessHours, enabledModules, products, portalUser, } = data;
     const safeColor = sanitizeBrandColor(brandColor);
     const s = {
         name: (0, html_1.escapeHtml)(businessName),
@@ -68,23 +68,12 @@ function renderPortalHtml(data) {
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 ${(0, portal_styles_1.portalStyles)()}
 ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--primary-glow:${safeColor}38}` : ""}
 </style>
 </head>
 <body>
-
-<!-- LOGIN GATE -->
-<div id="portalGate" class="portal-gate">
-  <div class="gate-card">
-    <div class="gate-av">${initials}</div>
-    <div class="gate-biz">${s.name}</div>
-    <div class="gate-sub">Iniciá sesión para continuar</div>
-    <div id="gateGoogleBtn" class="gate-google-wrap"></div>
-  </div>
-</div>
 
 <!-- ICON RAIL -->
 <nav class="icon-rail">
@@ -94,11 +83,14 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
   <button class="ir-btn" data-tab="nosotros" type="button">${S_PROD}<span class="ir-lbl">Productos</span></button>
   <button class="ir-btn" data-tab="cotizar" type="button">${S_COT}<span class="ir-lbl">Cotizar</span></button>
   <button class="ir-btn" data-tab="resenas" type="button">${S_STAR}<span class="ir-lbl">Reseñas</span></button>
-  <div id="irUserChip" class="ir-user-chip" style="display:none">
-    <div id="irUserAv" class="ir-user-av"></div>
-    <div id="irUserEmail" class="ir-user-email"></div>
-    <button id="irUserOut" class="ir-user-out" type="button">Salir</button>
-  </div>
+${portalUser ? `
+  <div class="ir-user-chip">
+    <div class="ir-user-av">${portalUser.picture
+        ? `<img src="${(0, html_1.escapeHtml)(portalUser.picture)}" style="width:32px;height:32px;border-radius:50%;object-fit:cover" referrerpolicy="no-referrer">`
+        : `<div style="width:32px;height:32px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">${(0, html_1.escapeHtml)((portalUser.name || "?").charAt(0).toUpperCase())}</div>`}</div>
+    <div class="ir-user-email">${(0, html_1.escapeHtml)(portalUser.email || portalUser.name || "")}</div>
+    <a href="/auth/portal/logout?slug=${encodeURIComponent(publicSlug)}" class="ir-user-out">Salir</a>
+  </div>` : ""}
 </nav>
 
 <div class="portal-main">
@@ -163,10 +155,13 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
   <div class="mhdr-av">${initials}</div>
   <div class="mhdr-name">${s.name}</div>
   <span class="mhdr-badge">En línea</span>
-  <div id="mhdrUser" class="mhdr-user" style="display:none">
-    <div id="mhdrUserAv" class="mhdr-user-av"></div>
-    <button id="mhdrUserOut" class="mhdr-user-out" type="button">Salir</button>
-  </div>
+${portalUser ? `
+  <div class="mhdr-user">
+    <div class="mhdr-user-av">${portalUser.picture
+        ? `<img src="${(0, html_1.escapeHtml)(portalUser.picture)}" style="width:28px;height:28px;border-radius:50%;object-fit:cover" referrerpolicy="no-referrer">`
+        : `<div style="width:28px;height:28px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">${(0, html_1.escapeHtml)((portalUser.name || "?").charAt(0).toUpperCase())}</div>`}</div>
+    <a href="/auth/portal/logout?slug=${encodeURIComponent(publicSlug)}" class="mhdr-user-out">Salir</a>
+  </div>` : ""}
 </header>
 
 <!-- MOBILE BOTTOM NAV -->
@@ -215,7 +210,7 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
   <div class="sp-body" id="reviewPanelBody"></div>
 </div>
 
-<script>${(0, portal_scripts_1.portalScripts)(publicSlug, businessName, userId, enabledModules, products, { phone: s.phone, address: s.address, city: s.city, description: s.desc, welcomeMessage: welcomeMessage ?? null, businessHours: s.hours, instagramUrl: s.ig, whatsappNumber: s.wa }, initials, googleClientId ?? null)}</script>
+<script>${(0, portal_scripts_1.portalScripts)(publicSlug, businessName, userId, enabledModules, products, { phone: s.phone, address: s.address, city: s.city, description: s.desc, welcomeMessage: welcomeMessage ?? null, businessHours: s.hours, instagramUrl: s.ig, whatsappNumber: s.wa }, initials)}</script>
 </body>
 </html>`;
 }

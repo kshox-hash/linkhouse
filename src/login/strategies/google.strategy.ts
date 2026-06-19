@@ -6,15 +6,23 @@ import DB from "../../db/db_configuration";
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      callbackURL: process.env.GOOGLE_CALLBACK_URL as string,
-    },
-    async (_accessToken, _refreshToken, profile, done) => {
+      clientID:        process.env.GOOGLE_CLIENT_ID    as string,
+      clientSecret:    process.env.GOOGLE_CLIENT_SECRET as string,
+      callbackURL:     process.env.GOOGLE_CALLBACK_URL  as string,
+      passReqToCallback: true,
+    } as any,
+    async (req: any, _accessToken: string, _refreshToken: string, profile: any, done: any) => {
       try {
-        const email = profile.emails?.[0]?.value;
-        const name = profile.displayName;
+        const email   = profile.emails?.[0]?.value;
+        const name    = profile.displayName;
         const picture = profile.photos?.[0]?.value;
+
+        // flujo portal: state = "portal:<slug>"
+        const rawState = (req.query?.state as string) || "";
+        if (rawState.startsWith("portal:")) {
+          const slug = rawState.slice(7);
+          return done(null, { __type: "portal", slug, name, email, picture });
+        }
 
         if (!email) {
           return done(new Error("Google no devolvió correo"));

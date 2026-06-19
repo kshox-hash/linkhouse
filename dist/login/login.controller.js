@@ -8,6 +8,7 @@ exports.googleCallbackController = googleCallbackController;
 exports.loginController = loginController;
 exports.googleLoginController = googleLoginController;
 const login_service_1 = require("./login.service");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const passport_1 = __importDefault(require("passport"));
 function googleStartController(req, res, next) {
     passport_1.default.authenticate("google", {
@@ -17,6 +18,18 @@ function googleStartController(req, res, next) {
 }
 async function googleCallbackController(req, res) {
     const authUser = req.user;
+    // flujo portal
+    if (authUser?.__type === "portal") {
+        const token = jsonwebtoken_1.default.sign({ email: authUser.email, name: authUser.name ?? "", picture: authUser.picture ?? "" }, process.env.JWT_SECRET, { expiresIn: "7d", issuer: "portal" });
+        res.cookie("portal_session", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+        return res.redirect("/shop/" + encodeURIComponent(authUser.slug));
+    }
+    // flujo app (dueño del negocio)
     if (!authUser?.token || !authUser?.user) {
         return res.status(401).send("No se pudo iniciar sesión");
     }

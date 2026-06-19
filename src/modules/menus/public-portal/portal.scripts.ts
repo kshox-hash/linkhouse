@@ -8,7 +8,6 @@ export function portalScripts(
   products: ProductData[],
   _bizInfo: unknown,
   initials: string,
-  googleClientId: string | null,
 ): string {
   const safeProducts = products.map(p => ({
     id:          String(p.id),
@@ -24,122 +23,17 @@ export function portalScripts(
 var SLUG=${JSON.stringify(slug)};
 var USER_ID=${JSON.stringify(userId)};
 var PRODUCTS=${JSON.stringify(safeProducts)};
-var GOOGLE_CLIENT_ID=${JSON.stringify(googleClientId || '')};
 var BIZ_NAME=${JSON.stringify(safeBizName)};
 var BIZ_INITIALS=${JSON.stringify(safeInitials)};
-var PGU_KEY='pgPortalUser_'+SLUG;
 var TABS=['chat','reservas','nosotros','cotizar','resenas'];
 var svcsLoaded=false;
 var svcsCache=[];
 var QCart={};
 var reviewsLoaded=false;
-var portalGoogleUser=null; // {name,email,picture,credential}
-var portalToken=null;
-var PGT_KEY='pgPortalToken_'+SLUG;
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function fmtPrice(n){if(n===0)return 'Gratis';return '$'+Number(n||0).toLocaleString('es-CL');}
-var gisInitialized=false;
-
-function pfetch(url,opts){
-  opts=opts||{};
-  if(portalToken){
-    opts.headers=Object.assign({},opts.headers||{},{'Authorization':'Bearer '+portalToken});
-  }
-  return fetch(url,opts).then(function(r){
-    // solo deslogueamos si teníamos token (sesión expirada), no si nunca estuvimos logueados
-    if(r.status===401 && portalToken){signOut();throw new Error('session_expired');}
-    return r;
-  });
-}
-
-function startPortal(){
-  loadServices();
-  loadProviders();
-  loadCalendar();
-  ensureReviews();
-}
-
-// ── gate (login screen) ───────────────────────────────────────────────────────
-function initGis(){
-  if(gisInitialized||!GOOGLE_CLIENT_ID) return;
-  if(window.google && window.google.accounts){
-    gisInitialized=true;
-    window.google.accounts.id.initialize({
-      client_id:GOOGLE_CLIENT_ID,
-      callback:handleGoogleSignIn,
-      auto_select:false
-    });
-  } else {
-    setTimeout(initGis,300);
-  }
-}
-
-function showGate(){
-  var g=document.getElementById('portalGate');
-  if(g) g.style.display='flex';
-  if(GOOGLE_CLIENT_ID){
-    function tryRenderBtn(){
-      if(window.google && window.google.accounts){
-        initGis();
-        var el=document.getElementById('gateGoogleBtn');
-        if(el) window.google.accounts.id.renderButton(el,{
-          type:'standard',theme:'outline',size:'large',
-          text:'signin_with',shape:'rectangular',width:260
-        });
-      } else {
-        setTimeout(tryRenderBtn,300);
-      }
-    }
-    tryRenderBtn();
-  }
-}
-
-function hideGate(){
-  var g=document.getElementById('portalGate');
-  if(g){g.style.opacity='0';g.style.pointerEvents='none';setTimeout(function(){g.style.display='none';g.style.opacity='';},350);}
-}
-
-function renderUserChip(user){
-  // desktop icon rail chip
-  var chip=document.getElementById('irUserChip');
-  var avEl=document.getElementById('irUserAv');
-  var emailEl=document.getElementById('irUserEmail');
-  if(chip && avEl && emailEl){
-    avEl.innerHTML=user.picture
-      ?'<img src="'+escH(user.picture)+'" style="width:32px;height:32px;border-radius:50%;object-fit:cover" referrerpolicy="no-referrer">'
-      :'<div style="width:32px;height:32px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">'+escH((user.name||'?').charAt(0).toUpperCase())+'</div>';
-    emailEl.textContent=user.email||user.name||'';
-    chip.style.display='flex';
-  }
-  // mobile header chip
-  var mhdr=document.getElementById('mhdrUser');
-  var mhdrAv=document.getElementById('mhdrUserAv');
-  if(mhdr && mhdrAv){
-    mhdrAv.innerHTML=user.picture
-      ?'<img src="'+escH(user.picture)+'" style="width:28px;height:28px;border-radius:50%;object-fit:cover" referrerpolicy="no-referrer">'
-      :'<div style="width:28px;height:28px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">'+escH((user.name||'?').charAt(0).toUpperCase())+'</div>';
-    mhdr.style.display='flex';
-  }
-  // wire logout buttons
-  ['irUserOut','mhdrUserOut'].forEach(function(id){
-    var btn=document.getElementById(id);
-    if(btn) btn.onclick=signOut;
-  });
-}
-
-function signOut(){
-  portalGoogleUser=null;
-  portalToken=null;
-  try{localStorage.removeItem(PGU_KEY);localStorage.removeItem(PGT_KEY);}catch(e){}
-  if(window.google && window.google.accounts) window.google.accounts.id.disableAutoSelect();
-  var chip=document.getElementById('irUserChip');
-  if(chip) chip.style.display='none';
-  var mhdr=document.getElementById('mhdrUser');
-  if(mhdr) mhdr.style.display='none';
-  showGate();
-}
 
 // ── tab switching ─────────────────────────────────────────────────────────────
 function setActive(t){
@@ -182,7 +76,7 @@ var providersLoaded=false;
 
 function loadProviders(){
   if(providersLoaded) return;
-  pfetch('/api/public/'+SLUG+'/providers')
+  fetch('/api/public/'+SLUG+'/providers')
     .then(function(r){return r.json();})
     .then(function(d){
       providersLoaded=true;
@@ -337,7 +231,7 @@ function submitBooking(){
   if(errEl) errEl.textContent='';
   var btn=document.getElementById('bkSubmit');
   if(btn){btn.textContent='Enviando…';btn.disabled=true;}
-  pfetch('/api/public/'+SLUG+'/bookings',{
+  fetch('/api/public/'+SLUG+'/bookings',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
@@ -488,7 +382,7 @@ function ensureServices(){
 }
 
 function loadServices(){
-  pfetch('/api/public/'+SLUG+'/booking-services')
+  fetch('/api/public/'+SLUG+'/booking-services')
     .then(function(r){return r.json();})
     .then(function(d){
       var list=Array.isArray(d)?d:Array.isArray(d.services)?d.services:[];
@@ -606,7 +500,7 @@ var DAYS_SHORT=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 
 function loadCalendar(){
   if(calLoaded){renderAllCals();return;}
-  pfetch('/api/public/'+SLUG+'/slots')
+  fetch('/api/public/'+SLUG+'/slots')
     .then(function(r){return r.json();})
     .then(function(data){
       calLoaded=true;calSlots={};
@@ -816,7 +710,7 @@ function renderQPStep2(){
     if(!name||!phone){errEl.textContent='Nombre y teléfono son obligatorios.';errEl.style.display='block';return;}
     errEl.style.display='none';sendBtn.disabled=true;sendBtn.textContent='Enviando...';
     var items=PRODUCTS.filter(function(p){return (QCart[p.id]||0)>0;}).map(function(p){return {productId:p.id,quantity:QCart[p.id]};});
-    pfetch('/shop/'+SLUG+'/quotes/submit',{method:'POST',headers:{'Content-Type':'application/json'},
+    fetch('/shop/'+SLUG+'/quotes/submit',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({customer:{name:name,phone:phone,email:email||'',message:''},items:items})})
     .then(function(r){return r.json();})
     .then(function(d){
@@ -854,7 +748,7 @@ function renderStars(avg){
 function ensureReviews(){
   if(reviewsLoaded) return;
   reviewsLoaded=true;
-  pfetch('/api/public/reviews/'+USER_ID)
+  fetch('/api/public/reviews/'+USER_ID)
     .then(function(r){return r.json();})
     .then(function(data){
       renderReviewsTab(data);
@@ -1000,33 +894,6 @@ function renderReviewsTab(data){
 // ── Review panel ─────────────────────────────────────────────────────────────
 var rvRating=0;
 
-function handleGoogleSignIn(response){
-  if(!response||!response.credential) return;
-  fetch('/api/public/'+SLUG+'/auth',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({googleCredential:response.credential})
-  })
-  .then(function(r){return r.json();})
-  .then(function(d){
-    if(!d.ok||!d.token) return; // auth falló, gate queda visible
-    try{
-      var parts=response.credential.split('.');
-      var pl=JSON.parse(atob(parts[1].replace(/-/g,'+').replace(/_/g,'/')));
-      portalGoogleUser={name:pl.name||'',email:pl.email||'',picture:pl.picture||'',credential:response.credential};
-    }catch(e){ portalGoogleUser={name:d.name||'',email:d.email||'',picture:'',credential:null}; }
-    portalToken=d.token;
-    try{
-      localStorage.setItem(PGU_KEY,JSON.stringify({name:portalGoogleUser.name,email:portalGoogleUser.email,picture:portalGoogleUser.picture}));
-      localStorage.setItem(PGT_KEY,d.token);
-    }catch(e){}
-    hideGate();
-    renderUserChip(portalGoogleUser);
-    startPortal();
-  })
-  .catch(function(){}); // error de red — gate queda visible
-}
-
 function openReviewPanel(){
   rvRating=0;
   renderReviewForm();
@@ -1040,85 +907,34 @@ function renderReviewForm(err){
       +'" style="font-size:34px;background:none;border:none;cursor:pointer;padding:0 2px;color:'
       +(n<=rvRating?'#F59E0B':'#D1D5DB')+'">★</button>';
   }).join('');
-
-  var authHtml='';
-  if(GOOGLE_CLIENT_ID){
-    if(portalGoogleUser){
-      authHtml='<div style="display:flex;align-items:center;gap:10px;'
-        +'background:var(--bg);border:1px solid var(--border);border-radius:12px;'
-        +'padding:10px 14px;margin-bottom:20px">'
-        +(portalGoogleUser.picture
-          ?'<img src="'+escH(portalGoogleUser.picture)+'" style="width:34px;height:34px;border-radius:50%;object-fit:cover" referrerpolicy="no-referrer">'
-          :'<div style="width:34px;height:34px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff">'+escH((portalGoogleUser.name||'?').charAt(0).toUpperCase())+'</div>')
-        +'<div style="flex:1;min-width:0">'
-        +'<div style="font-size:13px;font-weight:600;color:var(--text)">'+escH(portalGoogleUser.name)+'</div>'
-        +'<div style="font-size:11.5px;color:var(--soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escH(portalGoogleUser.email)+'</div>'
-        +'</div>'
-        +'<button type="button" id="rvGoogleOut" style="font-size:11px;color:var(--soft);background:none;border:none;cursor:pointer">Salir</button>'
-        +'</div>';
-    } else {
-      authHtml='<div style="margin-bottom:20px">'
-        +'<div id="rvGoogleBtn"></div>'
-        +'<div style="text-align:center;font-size:11.5px;color:var(--dim);margin-top:8px">o dejá tu nombre abajo</div>'
-        +'</div>';
-    }
-  }
-
-  var nameField=portalGoogleUser?''
-    :'<div class="bk-inp-wrap"><div class="bk-inp-lbl">Tu nombre (opcional)</div>'
-    +'<input class="bk-inp" id="rvName" type="text" placeholder="¿Cómo te llamás?" autocomplete="name"></div>';
-
   body.innerHTML='<div style="padding:24px 20px">'
-    +authHtml
     +'<div style="font-size:13px;font-weight:600;color:var(--soft);margin-bottom:14px">¿Cómo calificarías tu experiencia?</div>'
     +'<div style="display:flex;gap:2px;margin-bottom:22px">'+starsHtml+'</div>'
-    +nameField
     +'<div class="bk-inp-wrap"><div class="bk-inp-lbl">Comentario (opcional)</div>'
     +'<textarea class="bk-inp" id="rvComment" rows="3" placeholder="Contanos tu experiencia…" style="resize:none;font-family:inherit"></textarea></div>'
     +(err?'<div class="bk-inp-err" style="margin-bottom:10px">'+escH(err)+'</div>':'')
     +'<button class="btn-primary" type="button" id="rvSubmit" style="width:100%;font-size:14px;margin-top:4px">Enviar reseña</button>'
     +'</div>';
-
-  // render Google button if needed
-  if(GOOGLE_CLIENT_ID && !portalGoogleUser){
-    var gbEl=document.getElementById('rvGoogleBtn');
-    if(gbEl && window.google && window.google.accounts){
-      window.google.accounts.id.renderButton(gbEl,{
-        type:'standard',theme:'outline',size:'large',
-        text:'signin_with',shape:'rectangular',width:280
-      });
-    }
-  }
-
   body.querySelectorAll('[data-rv-star]').forEach(function(btn){
     btn.addEventListener('click',function(){
       rvRating=parseInt(btn.getAttribute('data-rv-star')||'0',10);
       renderReviewForm();
     });
   });
-  var out=document.getElementById('rvGoogleOut');
-  if(out) out.addEventListener('click',function(){portalGoogleUser=null;renderReviewForm();});
   var sub=document.getElementById('rvSubmit');
   if(sub) sub.addEventListener('click',submitReview);
 }
 
 function submitReview(){
   if(!rvRating){ renderReviewForm('Elegí una calificación.'); return; }
-  var nameEl=document.getElementById('rvName');
-  var name=nameEl?(nameEl.value||'').trim():'';
   var commentEl=document.getElementById('rvComment');
   var comment=commentEl?(commentEl.value||'').trim():'';
   var btn=document.getElementById('rvSubmit');
   if(btn){btn.textContent='Enviando…';btn.disabled=true;}
-  pfetch('/api/public/'+SLUG+'/reviews',{
+  fetch('/api/public/'+SLUG+'/reviews',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      rating:rvRating,
-      clientName:name||null,
-      comment:comment||null,
-      googleCredential:portalGoogleUser?portalGoogleUser.credential:null
-    })
+    body:JSON.stringify({rating:rvRating,comment:comment||null})
   })
   .then(function(r){return r.json();})
   .then(function(d){
@@ -1145,32 +961,10 @@ function submitReview(){
 
 // ── init ─────────────────────────────────────────────────────────────────────
 (function init(){
-  if(!GOOGLE_CLIENT_ID){
-    hideGate();
-    startPortal();
-    return;
-  }
-
-  // intentar restaurar sesión desde localStorage
-  try{
-    var stored=localStorage.getItem(PGU_KEY);
-    var storedToken=localStorage.getItem(PGT_KEY);
-    if(stored && storedToken){
-      var parsed=JSON.parse(stored);
-      if(parsed && parsed.email){
-        portalGoogleUser={name:parsed.name||'',email:parsed.email,picture:parsed.picture||'',credential:null};
-        portalToken=storedToken;
-        hideGate();
-        renderUserChip(portalGoogleUser);
-        startPortal();
-        return;
-      }
-    }
-  }catch(e){}
-
-  // sin sesión — mostrar gate (GIS se inicializa una sola vez dentro de showGate)
-  initGis();
-  showGate();
+  loadServices();
+  loadProviders();
+  loadCalendar();
+  ensureReviews();
 })();
 `;
 }

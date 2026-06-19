@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.portalScripts = portalScripts;
-function portalScripts(slug, bizName, userId, _modules, products, _bizInfo, initials, googleClientId) {
+function portalScripts(slug, bizName, userId, _modules, products, _bizInfo, initials) {
     const safeProducts = products.map(p => ({
         id: String(p.id),
         name: p.name,
@@ -14,7 +14,6 @@ function portalScripts(slug, bizName, userId, _modules, products, _bizInfo, init
 var SLUG=${JSON.stringify(slug)};
 var USER_ID=${JSON.stringify(userId)};
 var PRODUCTS=${JSON.stringify(safeProducts)};
-var GOOGLE_CLIENT_ID=${JSON.stringify(googleClientId || '')};
 var BIZ_NAME=${JSON.stringify(safeBizName)};
 var BIZ_INITIALS=${JSON.stringify(safeInitials)};
 var PGU_KEY='pgPortalUser_'+SLUG;

@@ -1,6 +1,7 @@
 import "./config/env"; // valida variables de entorno al arrancar
 
 import express from "express";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
@@ -86,6 +87,7 @@ app.use(
   })
 );
 
+app.use(cookieParser());
 app.use(express.json({ limit: "1mb" }));
 
 // ─── Rate limiting en rutas de auth ──────────────────────────────────────────

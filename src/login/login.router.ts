@@ -10,6 +10,19 @@ router.post("/google", googleLoginController);
 
 router.get("/google/start", googleStartController);
 
+// Portal customer login — reutiliza el mismo callback URL ya registrado en Google
+router.get("/portal/:slug/google", (req, res, next) => {
+  const state = "portal:" + req.params["slug"];
+  passport.authenticate("google", { scope: ["profile", "email"], session: false, state } as any)(req, res, next);
+});
+
+// Portal logout
+router.get("/portal/logout", (req, res) => {
+  res.clearCookie("portal_session");
+  const slug = (req.query["slug"] as string) || "";
+  return res.redirect(slug ? "/shop/" + encodeURIComponent(slug) : "/");
+});
+
 router.get(
   "/google/callback",
   passport.authenticate("google", {

@@ -10,6 +10,17 @@ const router = (0, express_1.Router)();
 router.post("/login", login_controller_1.loginController);
 router.post("/google", login_controller_1.googleLoginController);
 router.get("/google/start", login_controller_1.googleStartController);
+// Portal customer login — reutiliza el mismo callback URL ya registrado en Google
+router.get("/portal/:slug/google", (req, res, next) => {
+    const state = "portal:" + req.params["slug"];
+    passport_1.default.authenticate("google", { scope: ["profile", "email"], session: false, state })(req, res, next);
+});
+// Portal logout
+router.get("/portal/logout", (req, res) => {
+    res.clearCookie("portal_session");
+    const slug = req.query["slug"] || "";
+    return res.redirect(slug ? "/shop/" + encodeURIComponent(slug) : "/");
+});
 router.get("/google/callback", passport_1.default.authenticate("google", {
     session: false,
     failureRedirect: "/auth/google/failure",

@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import jwt from "jsonwebtoken";
 import { getSlugByValueService } from "../../slug/slug.service";
 import { quoteHtml } from "../../quotes/quote-html";
 import { getProductsRepository, getActiveProductsRepository } from "../../quotes/products/products.repository";
@@ -9,11 +8,9 @@ import { renderPortalHtml } from "./portal.screen";
 import { StatisticsService } from "../../stadistics/stadistics.service";
 import { isBot, shouldCountVisit } from "../../stadistics/visit-tracker";
 import { ReviewsRepository } from "../../stadistics/reviews.repository";
-import { OAuth2Client } from "google-auth-library";
 
 const statsService  = new StatisticsService();
 const reviewsRepo   = new ReviewsRepository();
-const googleClient  = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 
 
@@ -69,6 +66,23 @@ export const publicPortalController = {
         return res.status(400).send("Slug público obligatorio");
       }
 
+      // Redirigir a login si Google auth está activo y no hay sesión de portal
+      if (process.env.GOOGLE_CLIENT_ID) {
+        const jwt = await import("jsonwebtoken");
+        const token: string | undefined = req.cookies?.["portal_session"];
+        if (!token) {
+          return res.redirect("/auth/portal/" + encodeURIComponent(publicSlug) + "/google");
+        }
+        try {
+          jwt.verify(token, process.env.JWT_SECRET!, { issuer: "portal" });
+        } catch {
+          res.clearCookie("portal_session");
+          return res.redirect("/auth/portal/" + encodeURIComponent(publicSlug) + "/google");
+        }
+      }
+
+      const portalUser = (req as any).portalUser as { name?: string; email?: string; picture?: string } | undefined;
+
       const slug = await getSlugByValueService(publicSlug);
 
       if (!slug) {
@@ -102,7 +116,7 @@ export const publicPortalController = {
           price:       Number(p.price || 0),
           description: p.description ?? null,
         })),
-        googleClientId: process.env.GOOGLE_CLIENT_ID ?? null,
+        portalUser: portalUser ?? null,
       });
 
       const ip = req.ip ?? req.socket?.remoteAddress ?? "";
@@ -123,75 +137,27 @@ export const publicPortalController = {
       const slug = await getSlugByValueService(String(req.params["publicSlug"]));
       if (!slug) return res.status(404).json({ ok: false, message: "Negocio no encontrado." });
 
-      const { rating, clientName, comment, googleCredential } = req.body || {};
+      const { rating, comment } = req.body || {};
       const r = Number(rating);
       if (!r || r < 1 || r > 5) {
         return res.status(400).json({ ok: false, message: "Calificación inválida (1-5)." });
       }
 
-      let googleName: string | null = null;
-      let googleEmail: string | null = null;
-      let googleAvatarUrl: string | null = null;
-
-      if (googleCredential) {
-        try {
-          const ticket = await googleClient.verifyIdToken({
-            idToken: googleCredential,
-            audience: process.env.GOOGLE_CLIENT_ID,
-          });
-          const payload = ticket.getPayload();
-          if (payload) {
-            googleName      = payload.name       ?? null;
-            googleEmail     = payload.email      ?? null;
-            googleAvatarUrl = payload.picture    ?? null;
-          }
-        } catch {
-          // token inválido — ignorar y guardar como anónimo
-        }
-      }
+      const portalUser = (req as any).portalUser as { name?: string; email?: string; picture?: string } | undefined;
 
       await reviewsRepo.create(
         slug.user_id, r,
         comment?.trim() || null,
-        (googleName ?? clientName?.trim()) || null,
+        portalUser?.name ?? null,
         null,
-        googleName, googleEmail, googleAvatarUrl,
+        portalUser?.name ?? null,
+        portalUser?.email ?? null,
+        portalUser?.picture ?? null,
       );
 
       return res.json({ ok: true });
     } catch (e: any) {
       return res.status(500).json({ ok: false, message: e.message });
-    }
-  },
-
-  async portalSignIn(req: Request, res: Response): Promise<Response> {
-    try {
-      const { googleCredential } = req.body || {};
-      if (!googleCredential) {
-        return res.status(400).json({ ok: false, message: "Credencial requerida." });
-      }
-      if (!process.env.GOOGLE_CLIENT_ID) {
-        return res.status(500).json({ ok: false, message: "Google auth no configurado." });
-      }
-
-      const ticket = await googleClient.verifyIdToken({
-        idToken: googleCredential,
-        audience: process.env.GOOGLE_CLIENT_ID,
-      });
-      const payload = ticket.getPayload();
-      if (!payload?.email) {
-        return res.status(401).json({ ok: false, message: "Token inválido." });
-      }
-
-      const token = jwt.sign(
-        { email: payload.email, name: payload.name ?? "", picture: payload.picture ?? "" },
-        process.env.JWT_SECRET!,
-        { expiresIn: "7d", issuer: "portal" },
-      );
-
-      return res.json({ ok: true, token });
-    } catch {
-      return res.status(401).json({ ok: false, message: "Error de autenticación." });
     }
   },
 };

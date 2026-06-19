@@ -7,7 +7,6 @@ const router = Router();
 
 router.get("/shop/:publicSlug",           publicPortalController.open);
 router.get("/shop/:publicSlug/cotizador", publicPortalController.openQuotes);
-router.post("/api/public/:publicSlug/auth", publicPortalController.portalSignIn);
 router.post("/shop/:publicSlug/quotes/submit", portalSessionMiddleware, quotesSubmitController.submit);
 router.post("/api/public/:publicSlug/reviews", publicPortalController.submitReview);
 

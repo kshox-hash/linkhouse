@@ -10,22 +10,17 @@ function portalSessionMiddleware(req, res, next) {
         next();
         return;
     }
-    // auth endpoint itself no requiere token
-    if (/^\/[^/]+\/auth$/.test(req.path) && req.method === "POST") {
-        next();
-        return;
-    }
-    const auth = req.headers.authorization;
-    if (!auth?.startsWith("Bearer ")) {
+    const token = req.cookies?.["portal_session"];
+    if (!token) {
         res.status(401).json({ ok: false, message: "No autenticado." });
         return;
     }
     try {
-        const payload = jsonwebtoken_1.default.verify(auth.slice(7), process.env.JWT_SECRET, { issuer: "portal" });
+        const payload = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET, { issuer: "portal" });
         req.portalUser = payload;
         next();
     }
     catch {
-        res.status(401).json({ ok: false, message: "Sesión expirada. Iniciá sesión nuevamente." });
+        res.status(401).json({ ok: false, message: "Sesión expirada." });
     }
 }

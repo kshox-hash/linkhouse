@@ -11,11 +11,18 @@ passport_1.default.use(new passport_google_oauth20_1.Strategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: process.env.GOOGLE_CALLBACK_URL,
-}, async (_accessToken, _refreshToken, profile, done) => {
+    passReqToCallback: true,
+}, async (req, _accessToken, _refreshToken, profile, done) => {
     try {
         const email = profile.emails?.[0]?.value;
         const name = profile.displayName;
         const picture = profile.photos?.[0]?.value;
+        // flujo portal: state = "portal:<slug>"
+        const rawState = req.query?.state || "";
+        if (rawState.startsWith("portal:")) {
+            const slug = rawState.slice(7);
+            return done(null, { __type: "portal", slug, name, email, picture });
+        }
         if (!email) {
             return done(new Error("Google no devolvió correo"));
         }

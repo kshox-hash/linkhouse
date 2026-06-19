@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { loginUser } from "./login.service";
-
+import jwt from "jsonwebtoken";
 import passport from "passport";
 
 export function googleStartController(req: Request, res: Response, next: any) {
@@ -13,19 +13,35 @@ export function googleStartController(req: Request, res: Response, next: any) {
 export async function googleCallbackController(req: Request, res: Response) {
   const authUser = req.user as any;
 
+  // flujo portal
+  if (authUser?.__type === "portal") {
+    const token = jwt.sign(
+      { email: authUser.email, name: authUser.name ?? "", picture: authUser.picture ?? "" },
+      process.env.JWT_SECRET!,
+      { expiresIn: "7d", issuer: "portal" },
+    );
+    res.cookie("portal_session", token, {
+      httpOnly: true,
+      secure:   true,
+      sameSite: "lax",
+      maxAge:   7 * 24 * 60 * 60 * 1000,
+    });
+    return res.redirect("/shop/" + encodeURIComponent(authUser.slug));
+  }
+
+  // flujo app (dueño del negocio)
   if (!authUser?.token || !authUser?.user) {
     return res.status(401).send("No se pudo iniciar sesión");
   }
 
   const deeplinkBase = process.env.APP_DEEPLINK_URL || "automatiza://auth";
-
   const redirectUrl =
     `${deeplinkBase}` +
-      `?token=${encodeURIComponent(authUser.token)}` +
-  `&userId=${encodeURIComponent(authUser.user.id)}` +
-  `&email=${encodeURIComponent(authUser.user.email)}` +
-  `&name=${encodeURIComponent(authUser.user.name ?? "")}` +
-  `&picture=${encodeURIComponent(authUser.user.picture ?? "")}`;
+    `?token=${encodeURIComponent(authUser.token)}` +
+    `&userId=${encodeURIComponent(authUser.user.id)}` +
+    `&email=${encodeURIComponent(authUser.user.email)}` +
+    `&name=${encodeURIComponent(authUser.user.name ?? "")}` +
+    `&picture=${encodeURIComponent(authUser.user.picture ?? "")}`;
   return res.redirect(redirectUrl);
 }
 
