@@ -936,9 +936,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 
 /* ── DESKTOP ── */
 @media(min-width:800px){
-  .hm-panel{display:grid!important;overflow:hidden!important;grid-template-rows:auto auto;padding:0;gap:0}
+  .hm-panel{display:grid!important;overflow:hidden!important;grid-template-rows:auto 1fr;padding:0;gap:0}
   .hm-stats{grid-template-columns:repeat(4,1fr);padding:14px 20px 10px;gap:10px}
-  .hm-main{flex-direction:row;padding:0 20px 20px;gap:14px;overflow:hidden;height:460px}
+  .hm-main{flex-direction:row;padding:0 20px 20px;gap:14px;overflow:hidden;min-height:0}
 
   /* 6 — Calendario: columna izquierda */
   .hm-card-left{flex:12;display:flex;flex-direction:column;overflow:hidden}

@@ -180,9 +180,6 @@ export function chatTabHtml(d: ChatData): string {
               <div class="spinner" style="margin:0 auto 8px"></div>Cargando…
             </div>
           </div>
-          <div class="hm-card-foot">
-            <button id="openReviewBtn" class="hm-foot-btn" type="button">✏ Escribir una reseña</button>
-          </div>
         </div>
 
       </div>
