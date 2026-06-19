@@ -128,7 +128,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   }
   /* Nav list */
   .ir-nav{
-    display:flex;flex-direction:column;gap:2px;padding:14px 10px;flex:1
+    display:flex;flex-direction:column;gap:6px;padding:14px 10px;flex:1
   }
   .ir-btn{
     width:100%;padding:10px 14px;border-radius:14px;border:none;cursor:pointer;
@@ -140,7 +140,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   .ir-lbl{font-size:13.5px;font-weight:600;letter-spacing:-.02em;color:inherit}
   .ir-btn:hover:not(.active){background:var(--primary-dim);color:var(--primary)}
   .ir-btn:hover:not(.active) svg{stroke:var(--primary)}
-  .ir-btn.active{background:var(--primary);color:#fff;box-shadow:0 4px 12px var(--primary-glow)}
+  .ir-btn.active{background:var(--primary);color:#fff}
   .ir-btn.active svg{stroke:#fff}
   .ir-btn.active .ir-lbl{font-weight:700}
 
