@@ -79,30 +79,30 @@ export function chatTabHtml(d: ChatData): string {
     <!-- ROW 3 — Main content -->
     <div class="hm-main">
 
-      <!-- LEFT: Services -->
-      <div class="hm-card hm-card--blue">
+      <!-- LEFT: Calendar (espacio grande) -->
+      ${hasBooking ? `
+      <div class="hm-card hm-card--green hm-card-left">
         <div class="hm-card-hdr">
-          <div class="hm-card-title">Servicios</div>
-          ${hasBooking ? `<button class="sec-link" type="button" data-action="reservas">Ver todos →</button>` : ""}
+          <div class="hm-card-title">Disponibilidad</div>
+          <button class="sec-link" type="button" data-action="reservas">Reservar →</button>
         </div>
-        <div class="svc-cards-grid hm-card-scroll" id="homeServiceGrid">
-          <div class="svc-empty" style="grid-column:1/-1"><div class="spinner" style="margin:0 auto 8px"></div>Cargando…</div>
+        <div class="cal-widget hm-cal-inner" id="calHome">
+          <div class="cal-loading"><div class="spinner"></div>Cargando…</div>
         </div>
-        ${hasCotizar ? `<button class="hm-cot-btn" type="button" data-action="cotizar">${S_COT} Pedir cotización</button>` : ""}
-      </div>
+      </div>` : `<div id="calHome" style="display:none"></div>`}
 
-      <!-- RIGHT col: Calendar + Reviews -->
+      <!-- RIGHT col: Services + Reviews -->
       <div class="hm-right-col">
-        ${hasBooking ? `
-        <div class="hm-card hm-card--green">
+        <div class="hm-card hm-card--blue">
           <div class="hm-card-hdr">
-            <div class="hm-card-title">Disponibilidad</div>
-            <button class="sec-link" type="button" data-action="reservas">Reservar →</button>
+            <div class="hm-card-title">Servicios</div>
+            ${hasBooking ? `<button class="sec-link" type="button" data-action="reservas">Ver todos →</button>` : ""}
           </div>
-          <div class="cal-widget hm-cal-inner" id="calHome">
-            <div class="cal-loading"><div class="spinner"></div>Cargando…</div>
+          <div class="svc-cards-grid hm-card-scroll" id="homeServiceGrid">
+            <div class="svc-empty" style="grid-column:1/-1"><div class="spinner" style="margin:0 auto 8px"></div>Cargando…</div>
           </div>
-        </div>` : `<div id="calHome" style="display:none"></div>`}
+          ${hasCotizar ? `<button class="hm-cot-btn" type="button" data-action="cotizar">${S_COT} Pedir cotización</button>` : ""}
+        </div>
 
         <div class="hm-card hm-card--purple">
           <div class="hm-card-hdr">

@@ -965,8 +965,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
     overflow:hidden;min-height:0
   }
   .hm-card{min-height:0}
-  /* services left (55%), right col (45%) */
-  .hm-card.hm-card--blue{flex:11}
+  /* calendar left (55%), services+reviews right (45%) */
+  .hm-card-left{flex:11;min-height:0}
   .hm-right-col{flex:9;display:flex;flex-direction:column;gap:12px;min-height:0;overflow:hidden}
   .hm-right-col .hm-card{flex:1;min-height:0}
   .hm-card-scroll{overflow-y:auto;scrollbar-width:thin}
