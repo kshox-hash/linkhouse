@@ -7,7 +7,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 
 /* ── TOKENS ──────────────────────────────────────────────────────────── */
 :root{
-  --bg:#F6F8F7;
+  --bg:#DDE4EF;
   --panel:#FFFFFF;
   --rail:#FFFFFF;
   --rail-icon:#6B7280;
@@ -282,10 +282,10 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   }
   .svc-card{
     background:var(--panel);border-radius:20px;border:1px solid var(--border);
-    box-shadow:var(--shadow-s);overflow:hidden;cursor:pointer;
-    transition:box-shadow .22s,transform .18s
+    overflow:hidden;cursor:pointer;
+    transition:border-color .22s,transform .18s
   }
-  .svc-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+  .svc-card:hover{border-color:var(--primary);transform:translateY(-2px)}
   .svc-card-top{
     height:110px;padding:14px 16px;
     display:flex;flex-direction:column;justify-content:space-between
@@ -337,10 +337,10 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .prd-list{display:flex;flex-direction:column;gap:8px}
 .prd-card{
   background:var(--panel);border-radius:16px;border:1px solid var(--border);
-  box-shadow:var(--shadow-s);display:flex;overflow:hidden;
-  transition:box-shadow .18s,transform .15s
+  display:flex;overflow:hidden;
+  transition:border-color .18s,transform .15s
 }
-.prd-card:hover{box-shadow:var(--shadow);transform:translateY(-1px)}
+.prd-card:hover{border-color:var(--primary);transform:translateY(-1px)}
 
 .prd-accent{width:4px;flex-shrink:0}
 .prd-body{padding:14px 18px;flex:1;display:flex;align-items:center;gap:14px}
@@ -350,7 +350,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .prd-price{font-size:14px;font-weight:700;color:var(--primary);white-space:nowrap;flex-shrink:0;font-variant-numeric:tabular-nums}
 
 /* Inbox panel */
-.inbox-card{background:var(--panel);border-radius:26px;border:1px solid var(--border);box-shadow:var(--shadow-s);overflow:hidden}
+.inbox-card{background:var(--panel);border-radius:26px;border:1px solid var(--border);overflow:hidden}
 .inbox-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border-inner)}
 .inbox-hdr-title{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-.03em}
 .inbox-hdr-count{font-size:11px;font-weight:700;color:var(--primary);background:var(--primary-dim);border-radius:999px;padding:4px 12px}
@@ -374,7 +374,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .inbox-empty{text-align:center;padding:28px 16px;color:var(--dim);font-size:13px}
 
 /* ── PRODUCTS LIST ───────────────────────────────────────────────────── */
-.prod-card-wrap{background:var(--panel);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--shadow-s);overflow:hidden}
+.prod-card-wrap{background:var(--panel);border-radius:var(--r);border:1px solid var(--border);overflow:hidden}
 .prod-card-hdr{padding:14px 18px 10px;border-bottom:1px solid var(--border-inner)}
 .prod-item{
   display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
@@ -391,7 +391,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 /* ── COTIZAR CTA CARD ────────────────────────────────────────────────── */
 .cot-card{
   background:var(--panel);border-radius:24px;border:1px solid var(--border);
-  box-shadow:var(--shadow-s);padding:24px;display:flex;flex-direction:column;gap:14px;
+  padding:24px;display:flex;flex-direction:column;gap:14px;
   min-height:220px;justify-content:space-between
 }
 .cot-icon-wrap{
@@ -418,10 +418,10 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .svc-row{
   display:flex;align-items:center;gap:14px;
   background:var(--panel);border:1px solid var(--border);border-radius:var(--r);
-  padding:14px 18px;box-shadow:var(--shadow-s);cursor:pointer;
-  transition:box-shadow .18s,transform .15s;-webkit-tap-highlight-color:transparent
+  padding:14px 18px;cursor:pointer;
+  transition:border-color .18s,transform .15s;-webkit-tap-highlight-color:transparent
 }
-.svc-row:hover{box-shadow:var(--shadow);transform:translateY(-1px)}
+.svc-row:hover{border-color:var(--primary);transform:translateY(-1px)}
 .svc-row:active{transform:scale(.99)}
 .svc-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
 .svc-body{flex:1;min-width:0}
@@ -452,7 +452,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .rdash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
 .rstat-card{
   background:var(--panel);border:1px solid var(--border);border-radius:16px;
-  padding:14px 12px;box-shadow:var(--shadow-s);text-align:center
+  padding:14px 12px;text-align:center
 }
 .rstat-icon{
   width:36px;height:36px;border-radius:12px;
@@ -495,7 +495,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 /* Slots area */
 .slots-area{
   background:var(--panel);border:1px solid var(--border);border-radius:20px;
-  padding:16px 18px;margin:16px 0;box-shadow:var(--shadow-s)
+  padding:16px 18px;margin:16px 0
 }
 .slots-date-lbl{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px}
 .slots-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
@@ -517,11 +517,11 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .svc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .svc-grid-item{
   background:var(--panel);border:1px solid var(--border);border-radius:16px;
-  padding:16px 14px;cursor:pointer;box-shadow:var(--shadow-s);
-  transition:box-shadow .18s,transform .15s;-webkit-tap-highlight-color:transparent;
+  padding:16px 14px;cursor:pointer;
+  transition:border-color .18s,transform .15s;-webkit-tap-highlight-color:transparent;
   display:flex;flex-direction:column;gap:6px
 }
-.svc-grid-item:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.svc-grid-item:hover{border-color:var(--primary);transform:translateY(-2px)}
 .svc-grid-item:active{transform:scale(.98)}
 .svc-grid-dot{width:10px;height:10px;border-radius:50%;margin-bottom:2px}
 .svc-grid-name{font-size:13px;font-weight:700;color:var(--text);letter-spacing:-.03em;line-height:1.3}
@@ -605,7 +605,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .rv-layout{
   display:flex;align-items:center;gap:20px;
   background:var(--panel);border-radius:var(--r);border:1px solid var(--border);
-  box-shadow:var(--shadow-s);padding:22px;margin-bottom:4px
+  padding:22px;margin-bottom:4px
 }
 .rv-summary{text-align:center;flex-shrink:0}
 .rv-avg-big{font-size:42px;font-weight:800;color:var(--text);line-height:1}
@@ -619,7 +619,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .rv-bar-count{font-size:11px;color:var(--dim);width:18px;flex-shrink:0}
 .rv-card{
   background:var(--panel);border:1px solid var(--border);border-radius:14px;
-  padding:14px 18px;margin-bottom:10px;box-shadow:var(--shadow-s)
+  padding:14px 18px;margin-bottom:10px
 }
 .rv-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .rv-card-stars{font-size:13px;letter-spacing:1px}
@@ -631,7 +631,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 /* ── CALENDAR WIDGET ─────────────────────────────────────────────────── */
 .cal-widget{
   background:var(--panel);border-radius:24px;border:1px solid var(--border);
-  box-shadow:var(--shadow-s);padding:22px 20px;
+  padding:22px 20px;
 }
 .cal-hdr{
   display:flex;align-items:center;justify-content:space-between;margin-bottom:14px
@@ -748,7 +748,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 /* Mobile perfil view */
 .mobile-profile{
   background:var(--panel);border-radius:24px;border:1px solid var(--border);
-  box-shadow:var(--shadow-s);padding:22px;margin-bottom:16px
+  padding:22px;margin-bottom:16px
 }
 .mob-av{
   width:66px;height:66px;border-radius:50%;margin-bottom:12px;
@@ -849,9 +849,24 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   -webkit-tap-highlight-color:transparent;
 }
 
-/* ── HOME DASHBOARD ──────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════════════
+   HOME DASHBOARD — todos los estilos del panel de inicio
+   ════════════════════════════════════════════════════════════════════════
+
+   SECCIONES:
+   1. .hm-panel          → contenedor principal (grid en desktop)
+   2. .hm-row-greeting   → fila saludo + botones
+   3. .hm-stats          → 4 tarjetas de resumen (servicios, rating, turno, reseñas)
+   4. .hm-main           → área principal (flex-row en desktop)
+   5. .hm-card           → tarjeta genérica (calendario, servicios, reseñas)
+   6. .hm-card-left      → tarjeta izquierda = CALENDARIO (flex:13)
+   7. .hm-right-col      → columna derecha = SERVICIOS + RESEÑAS (flex:7)
+   8. .hm-card-foot      → pie de tarjeta (botón cotizar / escribir reseña)
+   ════════════════════════════════════════════════════════════════════════ */
+
 .hm-panel{overflow-y:auto!important}
 
+/* 2 — Saludo */
 .hm-row-greeting{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:22px 20px 0}
 .hm-greet-hi{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.05em}
 .hm-greet-sub{font-size:12px;color:var(--dim);margin-top:2px}
@@ -863,9 +878,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .hm-action-wa{background:#22c55e;color:#fff}
 .hm-action-wa svg{stroke:#fff}
 
-/* Stats */
+/* 3 — Stats: ícono circular 48px, label arriba, número 26px, sparkline derecha */
 .hm-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px 20px}
-.hm-stat{background:#fff;border:1px solid var(--border);border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 1px 5px rgba(0,0,0,.05)}
+.hm-stat{background:#fff;border:1px solid var(--border);border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:14px}
 .hm-stat-icon{width:48px;height:48px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .hm-stat-icon svg{width:22px;height:22px;stroke-width:2}
 .hm-stat-body{flex:1;min-width:0}
@@ -873,28 +888,29 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .hm-stat-val{font-size:26px;font-weight:800;color:var(--text);letter-spacing:-.05em;line-height:1}
 .hm-stat-spark{flex-shrink:0;opacity:.75}
 
-/* Main */
+/* 4 — Área principal */
 .hm-main{display:flex;flex-direction:column;gap:12px;padding:0 20px 20px}
 
-/* Cards — limpias, sin borde de color arriba */
-.hm-card{background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:0 1px 6px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden}
+/* 5 — Tarjeta genérica */
+.hm-card{background:#fff;border:1px solid var(--border);border-radius:18px;display:flex;flex-direction:column;overflow:hidden}
 .hm-card-hdr{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;flex-shrink:0;border-bottom:1px solid var(--border)}
 .hm-card-title{font-size:13.5px;font-weight:700;color:var(--text)}
 
-/* Contenido de cards — sin scroll, JS limita ítems */
+/* Listas dentro de cards */
 .hm-svc-list{padding:6px 16px 4px}
 #homeInbox{padding:4px 16px}
 
-/* Calendario — sin chrome propio, celdas de altura fija */
+/* Calendario: sin chrome, celdas altura fija 36px */
 .hm-cal-inner{border:none!important;border-radius:0!important;box-shadow:none!important;padding:10px 16px!important;margin:0!important}
 .hm-cal-inner .cal-cell{aspect-ratio:unset!important;height:36px}
 
-/* Footer de card — botones secundarios */
+/* 8 — Pie de tarjeta */
 .hm-card-foot{padding:0 16px 14px;flex-shrink:0}
 .hm-foot-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:9px;border-radius:11px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;border:1px solid var(--border);background:var(--bg);color:var(--soft);transition:background .15s,color .15s}
 .hm-foot-btn:hover{background:var(--primary-dim);color:var(--primary);border-color:var(--primary-glow)}
 .hm-foot-btn svg{width:13px;height:13px;stroke:currentColor;flex-shrink:0}
 
+/* 7 — Columna derecha */
 .hm-right-col{display:flex;flex-direction:column;gap:12px}
 
 /* ── DESKTOP ── */
@@ -904,11 +920,11 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   .hm-stats{grid-template-columns:repeat(4,1fr);padding:12px 20px;gap:10px}
   .hm-main{flex-direction:row;padding:0 20px 20px;gap:14px;overflow:hidden;min-height:0}
 
-  /* Columna izquierda: calendario */
+  /* 6 — Calendario: columna izquierda (flex:13 = ~65% del ancho) */
   .hm-card-left{flex:13;min-height:0;display:flex;flex-direction:column;overflow:hidden}
   .hm-card-left .hm-cal-inner{overflow:hidden}
 
-  /* Columna derecha: servicios + reseñas apilados */
+  /* 7 — Columna derecha (flex:7 = ~35% del ancho) */
   .hm-right-col{flex:7;min-height:0;display:flex;flex-direction:column;gap:12px;overflow:hidden}
   .hm-right-col .hm-card{overflow:hidden}
   .hm-right-col .hm-card:last-child{flex:1;min-height:0}
