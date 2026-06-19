@@ -91,35 +91,31 @@ export function chatTabHtml(d: ChatData): string {
         ${hasCotizar ? `<button class="hm-cot-btn" type="button" data-action="cotizar">${S_COT} Pedir cotización</button>` : ""}
       </div>
 
-      <!-- RIGHT: Calendar -->
-      ${hasBooking ? `
-      <div class="hm-card hm-card--green hm-card-cal-wrap">
-        <div class="hm-card-hdr">
-          <div class="hm-card-title">Disponibilidad</div>
-          <button class="sec-link" type="button" data-action="reservas">Reservar →</button>
-        </div>
-        <div class="cal-widget hm-cal-inner" id="calHome">
-          <div class="cal-loading"><div class="spinner"></div>Cargando…</div>
-        </div>
-      </div>` : `<div id="calHome" style="display:none"></div>`}
+      <!-- RIGHT col: Calendar + Reviews -->
+      <div class="hm-right-col">
+        ${hasBooking ? `
+        <div class="hm-card hm-card--green">
+          <div class="hm-card-hdr">
+            <div class="hm-card-title">Disponibilidad</div>
+            <button class="sec-link" type="button" data-action="reservas">Reservar →</button>
+          </div>
+          <div class="cal-widget hm-cal-inner" id="calHome">
+            <div class="cal-loading"><div class="spinner"></div>Cargando…</div>
+          </div>
+        </div>` : `<div id="calHome" style="display:none"></div>`}
 
-      <!-- hidden reviews stubs for JS compat -->
-      <div id="homeInbox" style="display:none"></div>
-    </div>
-
-    <!-- ROW 4 — Footer banner -->
-    <div class="hm-footer-banner">
-      <div class="hm-banner-deco hm-banner-deco-1"></div>
-      <div class="hm-banner-deco hm-banner-deco-2"></div>
-      <div class="hm-banner-content">
-        <div class="hm-banner-icon">✨</div>
-        <div>
-          <div class="hm-banner-title">${d.welcome ?? "Tu experiencia, nuestra prioridad"}</div>
-          <div class="hm-banner-sub">${d.name} — siempre a tu servicio</div>
+        <div class="hm-card hm-card--purple">
+          <div class="hm-card-hdr">
+            <div class="hm-card-title">Opiniones</div>
+            <button class="sec-link" type="button" data-action="resenas">Ver todas →</button>
+          </div>
+          <div class="hm-card-scroll" id="homeInbox">
+            <div class="inbox-empty"><div class="spinner" style="margin:0 auto 8px"></div>Cargando…</div>
+          </div>
         </div>
       </div>
-      ${hasBooking ? `<button class="hm-banner-btn" type="button" data-action="reservas">${S_CAL} Reservar ahora</button>` : ""}
     </div>
+
 
     <!-- JS compat stubs -->
     <div id="mobilePerfil" style="display:none"></div>

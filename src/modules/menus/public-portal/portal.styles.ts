@@ -924,9 +924,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .hm-cot-btn:hover{background:var(--primary-dim);border-color:var(--primary-glow);color:var(--primary)}
 .hm-cot-btn svg{width:15px;height:15px;stroke:currentColor;flex-shrink:0}
 
-/* Calendar card fills right column */
-.hm-card-cal-wrap{flex:1;min-height:0;display:flex;flex-direction:column}
-.hm-card-cal-wrap .hm-cal-inner{flex:1;overflow-y:auto}
+/* Right column stacked */
+.hm-right-col{display:flex;flex-direction:column;gap:12px}
 
 /* Footer banner */
 .hm-footer-banner{
@@ -957,20 +956,20 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 @media(min-width:800px){
   .hm-panel{
     display:grid!important;overflow:hidden!important;
-    grid-template-rows:auto auto 1fr auto;padding:0;gap:0
+    grid-template-rows:auto auto 1fr;padding:0;gap:0
   }
-  .hm-row-greeting{padding:26px 28px 0}
-  .hm-stats{padding:16px 28px;grid-template-columns:repeat(4,1fr);gap:14px}
+  .hm-row-greeting{padding:20px 24px 0}
+  .hm-stats{padding:12px 24px;grid-template-columns:repeat(4,1fr);gap:10px}
   .hm-main{
-    flex-direction:row;padding:0 28px;gap:16px;
+    flex-direction:row;padding:0 24px 20px;gap:12px;
     overflow:hidden;min-height:0
   }
   .hm-card{min-height:0}
-  /* 50/50 split: services left, calendar right */
-  .hm-card.hm-card--blue{flex:1}
-  .hm-card-cal-wrap{flex:1}
-  .hm-card-scroll{overflow-y:auto}
-  .hm-footer-banner{margin:14px 28px 22px}
+  /* services left (55%), right col (45%) */
+  .hm-card.hm-card--blue{flex:11}
+  .hm-right-col{flex:9;display:flex;flex-direction:column;gap:12px;min-height:0;overflow:hidden}
+  .hm-right-col .hm-card{flex:1;min-height:0}
+  .hm-card-scroll{overflow-y:auto;scrollbar-width:thin}
 }
 `;
 }
