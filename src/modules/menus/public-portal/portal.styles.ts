@@ -20,6 +20,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   --primary:#4F87F5;
   --primary-dim:rgba(79,135,245,.12);
   --primary-glow:rgba(79,135,245,.22);
+  --nav-act:#4F87F5;
+  --nav-act-bg:rgba(79,135,245,.12);
   --green:#22C55E;
   --green-dim:rgba(34,197,94,.10);
   --red:#EF4444;
@@ -94,7 +96,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 }
 .bn-item svg{width:20px;height:20px;stroke-width:1.75;transition:transform .18s}
 .bn-item span{font-size:10px;font-weight:600;letter-spacing:.01em}
-.bn-item.active{color:var(--primary);background:var(--primary-dim);border-radius:12px}
+.bn-item.active{color:var(--nav-act);background:var(--nav-act-bg);border-radius:12px}
 .bn-item.active svg{transform:scale(1.08)}
 .bn-item:active{opacity:.5}
 
@@ -137,10 +139,10 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   }
   .ir-btn svg{width:19px;height:19px;stroke-width:1.9;flex-shrink:0;transition:stroke .15s}
   .ir-lbl{font-size:13.5px;font-weight:600;letter-spacing:-.02em;color:inherit}
-  .ir-btn:hover:not(.active){background:var(--primary-dim);color:var(--primary)}
-  .ir-btn:hover:not(.active) svg{stroke:var(--primary)}
-  .ir-btn.active{background:var(--primary-dim);color:var(--primary)}
-  .ir-btn.active svg{stroke:var(--primary)}
+  .ir-btn:hover:not(.active){background:var(--nav-act-bg);color:var(--nav-act)}
+  .ir-btn:hover:not(.active) svg{stroke:var(--nav-act)}
+  .ir-btn.active{background:var(--nav-act-bg);color:var(--nav-act)}
+  .ir-btn.active svg{stroke:var(--nav-act)}
   .ir-btn.active .ir-lbl{font-weight:700}
 
   .portal-main{display:contents}
