@@ -9,9 +9,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 :root{
   --bg:#F6F8F7;
   --panel:#FFFFFF;
-  --rail:#1B1E2E;
-  --rail-icon:#5E6A8A;
-  --rail-icon-act:#FFFFFF;
+  --rail:#FFFFFF;
+  --rail-icon:#7C8FA6;
+  --rail-icon-act:var(--primary);
   --border:#E3E8EF;
   --border-inner:#F2F5F9;
   --text:#19202A;
@@ -31,8 +31,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   --shadow-l:0 12px 38px rgba(15,23,42,.12),0 2px 10px rgba(15,23,42,.06);
   --r:22px;
   --rs:12px;
-  --rail-w:64px;
-  --prof-w:286px;
+  --rail-w:210px;
+  --prof-w:260px;
   --hdr:58px;
   --nav:70px;
 }
@@ -104,26 +104,43 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   .mobile-hdr{display:none}
   .bottom-nav{display:none}
 
-  /* ICON RAIL */
+  /* SIDEBAR */
   .icon-rail{
-    display:flex;flex-direction:column;align-items:center;
+    display:flex;flex-direction:column;
     position:fixed;top:0;left:0;bottom:0;width:var(--rail-w);
-    background:var(--rail);z-index:300;padding:18px 0 12px;gap:2px
+    background:var(--rail);border-right:1px solid var(--border);
+    z-index:300;padding:0;
+  }
+  /* Brand */
+  .ir-brand{
+    display:flex;align-items:center;gap:11px;
+    padding:22px 18px 20px;border-bottom:1px solid var(--border)
+  }
+  .ir-brand-av{
+    width:36px;height:36px;border-radius:11px;flex-shrink:0;
+    background:var(--primary-dim);border:1.5px solid var(--primary-glow);
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:800;color:var(--primary);letter-spacing:-.02em
+  }
+  .ir-brand-name{
+    font-size:13.5px;font-weight:700;color:var(--text);letter-spacing:-.03em;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+  }
+  /* Nav list */
+  .ir-nav{
+    display:flex;flex-direction:column;gap:2px;padding:14px 10px;flex:1
   }
   .ir-btn{
-    width:54px;padding:8px 0;border-radius:13px;border:none;cursor:pointer;
-    background:none;display:flex;flex-direction:column;align-items:center;gap:4px;
+    width:100%;padding:10px 12px;border-radius:12px;border:none;cursor:pointer;
+    background:none;display:flex;flex-direction:row;align-items:center;gap:11px;
     color:var(--rail-icon);transition:background .15s,color .15s;
-    -webkit-tap-highlight-color:transparent;position:relative
+    -webkit-tap-highlight-color:transparent;text-align:left
   }
-  .ir-btn svg{width:18px;height:18px;stroke-width:1.75}
-  .ir-lbl{font-size:9px;font-weight:600;letter-spacing:.02em;line-height:1;color:inherit}
-  .ir-btn:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7)}
-  .ir-btn.active{color:#fff}
-  .ir-btn.active::before{
-    content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
-    width:3px;height:26px;background:var(--primary);border-radius:0 4px 4px 0
-  }
+  .ir-btn svg{width:18px;height:18px;stroke-width:1.9;flex-shrink:0}
+  .ir-lbl{font-size:13px;font-weight:600;letter-spacing:-.02em;color:inherit}
+  .ir-btn:hover{background:var(--bg);color:var(--text)}
+  .ir-btn.active{background:var(--primary-dim);color:var(--primary)}
+  .ir-btn.active .ir-lbl{font-weight:700}
 
   .portal-main{display:contents}
 
@@ -802,23 +819,31 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .gate-sub{font-size:13px;color:var(--soft);margin-bottom:8px}
 .gate-google-wrap{margin-top:4px}
 
-/* ── IR USER CHIP (icon rail bottom) ─────────────────────────────────── */
+/* ── SIDEBAR USER CHIP (bottom) ──────────────────────────────────────── */
 .ir-user-chip{
-  display:flex;margin-top:auto;padding:10px 8px 14px;
-  flex-direction:column;align-items:center;gap:5px;
-  border-top:1px solid var(--border);width:100%;
+  display:flex;align-items:center;gap:10px;
+  padding:14px 14px 18px;border-top:1px solid var(--border);
+  margin-top:auto;
 }
-.ir-user-av{display:flex;align-items:center;justify-content:center}
+.ir-user-av{display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ir-user-info{flex:1;min-width:0}
+.ir-user-name{
+  font-size:12.5px;font-weight:700;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
 .ir-user-email{
-  font-size:9.5px;color:var(--dim);font-weight:500;
-  max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;
+  font-size:10.5px;color:var(--dim);font-weight:400;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px
 }
 .ir-user-out{
-  font-size:10px;color:var(--soft);background:none;border:none;
-  cursor:pointer;padding:2px 6px;border-radius:6px;transition:background .15s;
-  -webkit-tap-highlight-color:transparent;
+  display:flex;align-items:center;justify-content:center;
+  width:28px;height:28px;border-radius:8px;flex-shrink:0;
+  color:var(--dim);background:none;border:none;cursor:pointer;
+  transition:background .15s,color .15s;-webkit-tap-highlight-color:transparent;
+  text-decoration:none;
 }
-.ir-user-out:hover{background:var(--bg);color:var(--text)}
+.ir-user-out svg{width:16px;height:16px;stroke-width:2}
+.ir-user-out:hover{background:var(--bg);color:var(--primary)}
 
 /* ── MOBILE HEADER USER ───────────────────────────────────────────────── */
 .mhdr-user{

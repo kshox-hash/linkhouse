@@ -107,21 +107,37 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
 </head>
 <body>
 
-<!-- ICON RAIL -->
+<!-- SIDEBAR -->
 <nav class="icon-rail">
-  <button class="ir-btn active" data-tab="chat" type="button">${S_HOME}<span class="ir-lbl">Inicio</span></button>
-  <button class="ir-btn" data-tab="reservas" type="button">${S_CAL}<span class="ir-lbl">Reservas</span></button>
-  <button class="ir-btn" data-tab="nosotros" type="button">${S_PROD}<span class="ir-lbl">Productos</span></button>
-  <button class="ir-btn" data-tab="cotizar" type="button">${S_COT}<span class="ir-lbl">Cotizar</span></button>
-  <button class="ir-btn" data-tab="resenas" type="button">${S_STAR}<span class="ir-lbl">Reseñas</span></button>
-${portalUser ? `
+  <!-- Brand -->
+  <div class="ir-brand">
+    <div class="ir-brand-av">${initials}</div>
+    <div class="ir-brand-name">${s.name}</div>
+  </div>
+
+  <!-- Nav items -->
+  <div class="ir-nav">
+    <button class="ir-btn active" data-tab="chat" type="button">${S_HOME}<span class="ir-lbl">Inicio</span></button>
+    <button class="ir-btn" data-tab="reservas" type="button">${S_CAL}<span class="ir-lbl">Reservas</span></button>
+    <button class="ir-btn" data-tab="nosotros" type="button">${S_PROD}<span class="ir-lbl">Productos</span></button>
+    <button class="ir-btn" data-tab="cotizar" type="button">${S_COT}<span class="ir-lbl">Cotizar</span></button>
+    <button class="ir-btn" data-tab="resenas" type="button">${S_STAR}<span class="ir-lbl">Reseñas</span></button>
+  </div>
+
+  <!-- User chip -->
+  ${portalUser ? `
   <div class="ir-user-chip">
     <div class="ir-user-av">${portalUser.picture
-      ? `<img src="${escapeHtml(portalUser.picture)}" style="width:32px;height:32px;border-radius:50%;object-fit:cover" referrerpolicy="no-referrer">`
-      : `<div style="width:32px;height:32px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">${escapeHtml((portalUser.name || "?").charAt(0).toUpperCase())}</div>`
+      ? `<img src="${escapeHtml(portalUser.picture)}" style="width:36px;height:36px;border-radius:50%;object-fit:cover" referrerpolicy="no-referrer">`
+      : `<div style="width:36px;height:36px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff">${escapeHtml((portalUser.name || "?").charAt(0).toUpperCase())}</div>`
     }</div>
-    <div class="ir-user-email">${escapeHtml(portalUser.email || portalUser.name || "")}</div>
-    <a href="/auth/portal/logout?slug=${encodeURIComponent(publicSlug)}" class="ir-user-out">Salir</a>
+    <div class="ir-user-info">
+      <div class="ir-user-name">${escapeHtml(portalUser.name || "")}</div>
+      <div class="ir-user-email">${escapeHtml(portalUser.email || "")}</div>
+    </div>
+    <a href="/auth/portal/logout?slug=${encodeURIComponent(publicSlug)}" class="ir-user-out" title="Salir">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </a>
   </div>` : ""}
 </nav>
 
