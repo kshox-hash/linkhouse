@@ -872,21 +872,21 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 
 /* Stat row */
 .hm-stats{
-  display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:18px 24px
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px 24px
 }
 .hm-stat{
-  background:var(--panel);border:1px solid var(--border);border-radius:18px;
-  padding:16px;box-shadow:var(--shadow-s);
-  display:flex;align-items:center;gap:13px;
+  background:var(--panel);border:1px solid var(--border);border-radius:16px;
+  padding:12px 14px;box-shadow:var(--shadow-s);
+  display:flex;align-items:center;gap:11px;
   border-top:3px solid var(--accent,var(--primary))
 }
 .hm-stat-icon{
-  width:42px;height:42px;border-radius:13px;flex-shrink:0;
+  width:36px;height:36px;border-radius:11px;flex-shrink:0;
   display:flex;align-items:center;justify-content:center
 }
-.hm-stat-icon svg{width:19px;height:19px;stroke-width:2}
-.hm-stat-val{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.05em;line-height:1}
-.hm-stat-lbl{font-size:11px;color:var(--dim);font-weight:500;margin-top:3px}
+.hm-stat-icon svg{width:17px;height:17px;stroke-width:2}
+.hm-stat-val{font-size:19px;font-weight:800;color:var(--text);letter-spacing:-.05em;line-height:1}
+.hm-stat-lbl{font-size:10px;color:var(--dim);font-weight:500;margin-top:2px}
 
 /* Main content */
 .hm-main{display:flex;flex-direction:column;gap:14px;padding:0 24px}
@@ -924,8 +924,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .hm-cot-btn:hover{background:var(--primary-dim);border-color:var(--primary-glow);color:var(--primary)}
 .hm-cot-btn svg{width:15px;height:15px;stroke:currentColor;flex-shrink:0}
 
-/* Right column (cal + reviews stacked) */
-.hm-right-col{display:flex;flex-direction:column;gap:14px}
+/* Calendar card fills right column */
+.hm-card-cal-wrap{flex:1;min-height:0;display:flex;flex-direction:column}
+.hm-card-cal-wrap .hm-cal-inner{flex:1;overflow-y:auto}
 
 /* Footer banner */
 .hm-footer-banner{
@@ -965,11 +966,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
     overflow:hidden;min-height:0
   }
   .hm-card{min-height:0}
-  /* services takes 60%, right col 40% */
-  .hm-card.hm-card--blue{flex:3}
-  .hm-right-col{flex:2;min-height:0;overflow:hidden}
-  .hm-right-col .hm-card{flex:1}
-  .hm-right-col .hm-card:last-child{flex:1;min-height:0;overflow:hidden}
+  /* 50/50 split: services left, calendar right */
+  .hm-card.hm-card--blue{flex:1}
+  .hm-card-cal-wrap{flex:1}
   .hm-card-scroll{overflow-y:auto}
   .hm-footer-banner{margin:14px 28px 22px}
 }
