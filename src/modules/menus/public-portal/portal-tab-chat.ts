@@ -32,6 +32,15 @@ export function chatTabHtml(d: ChatData): string {
   return `
   <div id="panel-chat" class="panel active hm-panel">
 
+    <!-- Bienvenida -->
+    <div class="hm-welcome">
+      <div>
+        <div class="hm-welcome-title">Bienvenido a <span>${d.name}</span></div>
+        <div class="hm-welcome-sub">Reservá, consultá y explorá nuestros servicios</div>
+      </div>
+      ${hasBooking ? `<button class="hm-welcome-cta" type="button" data-action="reservas">Reservar ahora</button>` : ""}
+    </div>
+
     <!-- MAIN content — ocupa toda la altura -->
     <div class="hm-main">
 

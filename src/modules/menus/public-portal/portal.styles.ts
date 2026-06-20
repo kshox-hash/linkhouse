@@ -873,6 +873,18 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .hm-action-wa{background:#22c55e;color:#fff}
 .hm-action-wa svg{stroke:#fff}
 
+/* Bienvenida */
+.hm-welcome{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px 4px}
+.hm-welcome-title{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.04em;line-height:1.2}
+.hm-welcome-title span{color:var(--nav-act)}
+.hm-welcome-sub{font-size:12.5px;color:var(--soft);margin-top:3px}
+.hm-welcome-cta{
+  flex-shrink:0;padding:9px 18px;border-radius:12px;border:none;cursor:pointer;
+  background:var(--nav-act);color:#fff;font-size:13px;font-weight:700;
+  font-family:inherit;transition:opacity .15s;white-space:nowrap
+}
+.hm-welcome-cta:hover{opacity:.88}
+
 /* 3 — Stats: ícono circular 48px, label arriba, número 26px, sparkline derecha */
 .hm-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:16px 20px 12px}
 .hm-stat{border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:14px}
@@ -954,8 +966,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 
 /* ── DESKTOP ── */
 @media(min-width:800px){
-  .hm-panel{display:grid!important;overflow:hidden!important;grid-template-rows:1fr;padding:0;gap:0}
-  .hm-main{flex-direction:row;padding:16px 20px 20px;gap:14px;overflow:hidden;min-height:0}
+  .hm-panel{display:grid!important;overflow:hidden!important;grid-template-rows:auto 1fr;padding:0;gap:0}
+  .hm-welcome{padding:18px 24px 0;flex-shrink:0}
+  .hm-main{flex-direction:row;padding:12px 20px 20px;gap:14px;overflow:hidden;min-height:0}
 
   /* Calendario: columna izquierda */
   .hm-card-left{flex:12;display:flex;flex-direction:column;overflow:hidden}
