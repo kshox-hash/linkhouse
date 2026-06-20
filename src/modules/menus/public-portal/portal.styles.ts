@@ -1163,8 +1163,10 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
     flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden
   }
   .hm-card-cal .hm-cal-inner{flex:1;min-height:0;overflow:hidden}
-  /* left-col cards: altura natural */
-  .hm-card-svc{flex:none}
+  /* services: crece para llenar espacio, lista scrolleable adentro */
+  .hm-card-svc{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+  .hm-card-svc .hm-svc-list-home{flex:1;min-height:0;overflow-y:auto}
+  /* reviews y cta: altura natural abajo */
   .hm-card-reviews{flex:none}
   .hm-reviews-panel{overflow:visible}
 }
