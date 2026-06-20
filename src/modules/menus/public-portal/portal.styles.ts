@@ -1135,21 +1135,27 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 @media(min-width:800px){
   .hm-panel{
     display:grid!important;overflow:hidden!important;
-    grid-template-rows:auto 1fr;
+    grid-template-rows:1fr;
     padding:0;gap:0
   }
   .hm-welcome-desk{
     display:block;flex-shrink:0;
-    font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.05em;
-    padding:24px 32px 0
+    font-size:19px;font-weight:800;color:var(--text);letter-spacing:-.04em;
+    padding:0 0 12px
   }
   .hm-welcome-desk span{color:var(--nav-act)}
   .hm-main{
     flex-direction:row;
-    padding:14px 32px 24px 32px;
-    gap:18px;overflow:hidden;min-height:0
+    padding:24px 28px 24px 28px;
+    gap:16px;overflow:hidden;min-height:0
   }
+  /* izquierda angosta: servicios + reviews + cta */
   .hm-left-col{
+    flex:8;display:flex;flex-direction:column;
+    gap:12px;overflow-y:auto;min-height:0
+  }
+  /* derecha ancha: calendario llena altura */
+  .hm-right-col{
     flex:12;display:flex;flex-direction:column;
     gap:12px;overflow:hidden;min-height:0
   }
@@ -1157,13 +1163,10 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
     flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden
   }
   .hm-card-cal .hm-cal-inner{flex:1;min-height:0;overflow:hidden}
-  .hm-right-col{
-    flex:8;display:flex;flex-direction:column;
-    gap:12px;overflow:hidden;min-height:0
-  }
-  .hm-card-svc{flex:3;min-height:0;overflow:hidden;display:flex;flex-direction:column}
-  .hm-card-reviews{flex:2;min-height:0;overflow:hidden;display:flex;flex-direction:column}
-  .hm-reviews-panel{flex:1;min-height:0;overflow:hidden}
+  /* left-col cards: altura natural */
+  .hm-card-svc{flex:none}
+  .hm-card-reviews{flex:none}
+  .hm-reviews-panel{overflow:visible}
 }
 `;
 }

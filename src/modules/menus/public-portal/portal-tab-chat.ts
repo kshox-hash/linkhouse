@@ -49,50 +49,14 @@ export function chatTabHtml(d: ChatData): string {
       <span id="hmStatReviews"></span>
     </div>
 
-    <!-- Bienvenida desktop (oculta en móvil, fuera del layout de columnas) -->
-    <div class="hm-welcome-desk">Bienvenido a <span>${d.name}</span></div>
-
     <!-- MAIN -->
     <div class="hm-main">
 
-      <!-- COLUMNA IZQUIERDA -->
+      <!-- COLUMNA IZQUIERDA — servicios (angosta) -->
       <div class="hm-left-col">
 
-        <!-- Calendario -->
-        ${hasBooking ? `
-        <div class="hm-card hm-card-cal">
-          <div class="hm-card-hdr">
-            <div class="hm-card-title-row">
-              <span class="hm-card-title-icon" style="color:#3B76ED">${S_CAL}</span>
-              <span class="hm-card-title">Disponibilidad</span>
-            </div>
-            ${hasBooking ? `<button class="sec-link" type="button" data-action="reservas">Reservar →</button>` : ""}
-          </div>
-          <div class="cal-widget hm-cal-inner" id="calHome">
-            <div class="cal-loading"><div class="spinner"></div>Cargando…</div>
-          </div>
-        </div>` : `<div id="calHome" style="display:none"></div>`}
-
-        <!-- Disponibilidad próxima -->
-        <div class="hm-card">
-          <div class="hm-card-hdr">
-            <div class="hm-card-title-row">
-              <span class="hm-card-title-icon" style="color:#16A34A">${S_CAL}</span>
-              <span class="hm-card-title">Disponibilidad</span>
-            </div>
-            ${hasBooking ? `<button class="sec-link" type="button" data-action="reservas">Ver agenda →</button>` : ""}
-          </div>
-          <div id="hmUpcoming" class="hm-upcoming-list">
-            <div class="inbox-empty" style="padding:18px 16px;text-align:center">
-              <div class="spinner" style="margin:0 auto 8px"></div>Cargando…
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- COLUMNA DERECHA -->
-      <div class="hm-right-col">
+        <!-- Bienvenida (solo desktop) -->
+        <div class="hm-welcome-desk">Bienvenido a <span>${d.name}</span></div>
 
         <!-- Servicios recientes -->
         <div class="hm-card hm-card-svc">
@@ -140,6 +104,42 @@ export function chatTabHtml(d: ChatData): string {
           <div class="hm-cta-body">
             <div class="hm-cta-title">Organiza tus servicios y crece tu negocio</div>
             ${hasBooking ? `<button class="hm-cta-btn" type="button" data-action="reservas">Crear nueva reserva</button>` : ""}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- COLUMNA DERECHA — calendario (ancha, llena altura) -->
+      <div class="hm-right-col">
+
+        <!-- Calendario -->
+        ${hasBooking ? `
+        <div class="hm-card hm-card-cal">
+          <div class="hm-card-hdr">
+            <div class="hm-card-title-row">
+              <span class="hm-card-title-icon" style="color:#2563EB">${S_CAL}</span>
+              <span class="hm-card-title">Disponibilidad</span>
+            </div>
+            <button class="sec-link" type="button" data-action="reservas">Reservar →</button>
+          </div>
+          <div class="cal-widget hm-cal-inner" id="calHome">
+            <div class="cal-loading"><div class="spinner"></div>Cargando…</div>
+          </div>
+        </div>` : `<div id="calHome" style="display:none"></div>`}
+
+        <!-- Turnos disponibles -->
+        <div class="hm-card">
+          <div class="hm-card-hdr">
+            <div class="hm-card-title-row">
+              <span class="hm-card-title-icon" style="color:#16A34A">${S_CLOCK}</span>
+              <span class="hm-card-title">Turnos disponibles</span>
+            </div>
+            ${hasBooking ? `<button class="sec-link" type="button" data-action="reservas">Ver agenda →</button>` : ""}
+          </div>
+          <div id="hmUpcoming" class="hm-upcoming-list">
+            <div style="padding:14px 16px;display:flex;align-items:center;gap:8px;color:var(--dim);font-size:12.5px">
+              <div class="spinner"></div>Cargando…
+            </div>
           </div>
         </div>
 
