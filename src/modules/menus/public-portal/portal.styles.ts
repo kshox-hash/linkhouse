@@ -969,27 +969,39 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 
 /* ── CARD ACCENT COLORS ──────────────────────────────────────────────── */
 /* Calendario — azul */
-.hm-card-cal{border-top:3px solid #2563EB}
-.hm-card-cal .hm-card-hdr{background:rgba(37,99,235,.04)}
+.hm-card-cal{
+  border:1px solid rgba(37,99,235,.22);border-top:3px solid #2563EB;
+  background:linear-gradient(160deg,#EFF6FF 0%,#fafcff 75%)
+}
+.hm-card-cal .hm-card-hdr{background:transparent;border-bottom-color:rgba(37,99,235,.12)}
 /* Servicios — violeta */
-.hm-card-svc{border-top:3px solid #7C3AED}
-.hm-card-svc .hm-card-hdr{background:rgba(124,58,237,.04)}
+.hm-card-svc{
+  border:1px solid rgba(124,58,237,.22);border-top:3px solid #7C3AED;
+  background:linear-gradient(160deg,#F5F3FF 0%,#faf9ff 75%)
+}
+.hm-card-svc .hm-card-hdr{background:transparent;border-bottom-color:rgba(124,58,237,.12)}
 .hm-card-svc .sec-link{color:#7C3AED}
 .hm-card-svc .sec-link:hover{color:#6D28D9}
 /* Opiniones — ámbar */
-.hm-card-reviews{border-top:3px solid #D97706}
-.hm-card-reviews .hm-card-hdr{background:rgba(217,119,6,.04)}
+.hm-card-reviews{
+  border:1px solid rgba(217,119,6,.22);border-top:3px solid #D97706;
+  background:linear-gradient(160deg,#FFFBEB 0%,#fffef8 75%)
+}
+.hm-card-reviews .hm-card-hdr{background:transparent;border-bottom-color:rgba(217,119,6,.12)}
 .hm-card-reviews .sec-link{color:#D97706}
 .hm-card-reviews .sec-link:hover{color:#B45309}
 .hm-card-reviews .rv-bar-fill{background:#D97706}
 /* Turnos disponibles — esmeralda */
-.hm-card-avail{border-top:3px solid #059669}
-.hm-card-avail .hm-card-hdr{background:rgba(5,150,105,.04)}
+.hm-card-avail{
+  border:1px solid rgba(5,150,105,.22);border-top:3px solid #059669;
+  background:linear-gradient(160deg,#ECFDF5 0%,#f7fefb 75%)
+}
+.hm-card-avail .hm-card-hdr{background:transparent;border-bottom-color:rgba(5,150,105,.12)}
 .hm-card-avail .sec-link{color:#059669}
 .hm-card-avail .sec-link:hover{color:#047857}
-.hm-card-avail .hm-avail-chip{background:rgba(5,150,105,.09);color:#059669;border:1.5px solid rgba(5,150,105,.2)}
+.hm-card-avail .hm-avail-chip{background:rgba(5,150,105,.10);color:#059669;border:1.5px solid rgba(5,150,105,.22)}
 .hm-card-avail .hm-avail-chip:hover{background:#059669;color:#fff;border-color:#059669;box-shadow:0 3px 8px rgba(5,150,105,.32)}
-.hm-card-avail .hm-avail-row:hover{background:rgba(5,150,105,.04)}
+.hm-card-avail .hm-avail-row:hover{background:rgba(5,150,105,.06)}
 .hm-card-avail .hm-avail-more{color:#059669}
 
 /* ── SERVICIOS LISTA (home) ───────────────────────────────────────────── */
