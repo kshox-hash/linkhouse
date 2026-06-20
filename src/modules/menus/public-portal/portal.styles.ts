@@ -126,7 +126,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
     display:flex;flex-direction:column;gap:4px;padding:12px 10px;flex:1
   }
   .ir-btn{
-    flex:1;width:100%;padding:0 14px;border-radius:14px;border:none;cursor:pointer;
+    flex:1;max-height:60px;width:100%;padding:0 14px;border-radius:14px;border:none;cursor:pointer;
     background:none;display:flex;flex-direction:row;align-items:center;gap:12px;
     color:var(--rail-icon);transition:background .15s,color .15s;
     -webkit-tap-highlight-color:transparent;text-align:left
