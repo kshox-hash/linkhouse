@@ -1135,18 +1135,18 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 @media(min-width:800px){
   .hm-panel{
     display:grid!important;overflow:hidden!important;
-    grid-template-rows:1fr;
+    grid-template-rows:auto 1fr;
     padding:0;gap:0
   }
   .hm-welcome-desk{
     display:block;flex-shrink:0;
     font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.05em;
-    padding:0 0 12px
+    padding:24px 32px 0
   }
   .hm-welcome-desk span{color:var(--nav-act)}
   .hm-main{
     flex-direction:row;
-    padding:32px 32px 24px 32px;
+    padding:14px 32px 24px 32px;
     gap:18px;overflow:hidden;min-height:0
   }
   .hm-left-col{

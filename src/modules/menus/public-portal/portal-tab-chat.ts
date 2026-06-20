@@ -49,14 +49,14 @@ export function chatTabHtml(d: ChatData): string {
       <span id="hmStatReviews"></span>
     </div>
 
+    <!-- Bienvenida desktop (oculta en móvil, fuera del layout de columnas) -->
+    <div class="hm-welcome-desk">Bienvenido a <span>${d.name}</span></div>
+
     <!-- MAIN -->
     <div class="hm-main">
 
       <!-- COLUMNA IZQUIERDA -->
       <div class="hm-left-col">
-
-        <!-- Bienvenida desktop (oculta en móvil) -->
-        <div class="hm-welcome-desk">Bienvenido a <span>${d.name}</span></div>
 
         <!-- Calendario -->
         ${hasBooking ? `
