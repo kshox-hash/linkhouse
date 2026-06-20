@@ -35,9 +35,29 @@ var reviewsLoaded=false;
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function fmtPrice(n){if(n===0)return 'Gratis';return '$'+Number(n||0).toLocaleString('es-CL');}
 
+// ── mobile drawer ─────────────────────────────────────────────────────────────
+function openMobileDrawer(){
+  var dr=document.getElementById('mobileDrawer');
+  var ov=document.getElementById('slideOverlay');
+  if(dr) dr.classList.add('open');
+  if(ov) ov.classList.add('open');
+}
+function closeMobileDrawer(){
+  var dr=document.getElementById('mobileDrawer');
+  if(dr) dr.classList.remove('open');
+  var anyPanel=document.querySelector('.slide-panel.open');
+  if(!anyPanel){var ov=document.getElementById('slideOverlay');if(ov) ov.classList.remove('open');}
+}
+(function(){
+  var btn=document.getElementById('mobileMenuBtn');
+  if(btn) btn.addEventListener('click',openMobileDrawer);
+  var cls=document.getElementById('mobileDrawerClose');
+  if(cls) cls.addEventListener('click',closeMobileDrawer);
+})();
+
 // ── tab switching ─────────────────────────────────────────────────────────────
 function setActive(t){
-  document.querySelectorAll('.bn-item,.ir-btn,.cn-tab').forEach(function(el){
+  document.querySelectorAll('.bn-item,.ir-btn,.cn-tab,.mdr-item').forEach(function(el){
     el.classList.toggle('active',el.getAttribute('data-tab')===t);
   });
 }
@@ -301,7 +321,8 @@ document.addEventListener('click',function(e){
 
   // nav tabs (data-tab)
   var tabBtn=t.closest('[data-tab]');
-  if(tabBtn&&(tabBtn.classList.contains('bn-item')||tabBtn.classList.contains('ir-btn')||tabBtn.classList.contains('cn-tab'))){
+  if(tabBtn&&(tabBtn.classList.contains('bn-item')||tabBtn.classList.contains('ir-btn')||tabBtn.classList.contains('cn-tab')||tabBtn.classList.contains('mdr-item'))){
+    if(tabBtn.classList.contains('mdr-item')) closeMobileDrawer();
     showTab(tabBtn.getAttribute('data-tab'));
     return;
   }
@@ -376,7 +397,7 @@ document.addEventListener('click',function(e){
   if(t.closest('#closeDayDetail')){  closePanel('dayDetailPanel');  return; }
   if(t.closest('#closeSvcDetail')){  closePanel('svcDetailPanel');  return; }
   if(t.closest('#openReviewBtn')){ openReviewPanel(); return; }
-  if(t.closest('#slideOverlay')){ closePanel('bookingPanel'); closePanel('quotePanel'); closePanel('reviewPanel'); closePanel('dayDetailPanel'); closePanel('svcDetailPanel'); return; }
+  if(t.closest('#slideOverlay')){ closeMobileDrawer(); closePanel('bookingPanel'); closePanel('quotePanel'); closePanel('reviewPanel'); closePanel('dayDetailPanel'); closePanel('svcDetailPanel'); return; }
 });
 
 // ── services ──────────────────────────────────────────────────────────────────

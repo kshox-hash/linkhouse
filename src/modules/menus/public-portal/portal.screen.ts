@@ -199,9 +199,12 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
 
 <!-- MOBILE HEADER -->
 <header class="mobile-hdr">
-  <div class="mhdr-name">Bienvenido a ${s.name}</div>
+  <button class="mhdr-burger" id="mobileMenuBtn" type="button" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="mhdr-name">${s.name}</div>
   <span class="mhdr-badge">En línea</span>
-${portalUser ? `
+  ${portalUser ? `
   <div class="mhdr-user">
     <div class="mhdr-user-av">${portalUser.picture
       ? `<img src="${escapeHtml(portalUser.picture)}" style="width:28px;height:28px;border-radius:50%;object-fit:cover" referrerpolicy="no-referrer">`
@@ -211,14 +214,39 @@ ${portalUser ? `
   </div>` : ""}
 </header>
 
-<!-- MOBILE BOTTOM NAV -->
-<nav class="bottom-nav">
-  <button class="bn-item active" data-tab="chat" type="button">${S_HOME}<span>Inicio</span></button>
-  <button class="bn-item" data-tab="reservas" type="button">${S_CAL}<span>Reservas</span></button>
-  <button class="bn-item" data-tab="nosotros" type="button">${S_PROD}<span>Productos</span></button>
-  <button class="bn-item" data-tab="cotizar" type="button">${S_COT}<span>Cotizar</span></button>
-  <button class="bn-item" data-tab="resenas" type="button">${S_STAR}<span>Reseñas</span></button>
-</nav>
+<!-- MOBILE DRAWER (hamburger menu) -->
+<div class="mobile-drawer" id="mobileDrawer">
+  <div class="mdr-hdr">
+    <div class="mdr-brand">${s.name}</div>
+    <button class="mdr-close" id="mobileDrawerClose" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <nav class="mdr-nav">
+    <button class="mdr-item active" data-tab="chat" type="button">${S_HOME}<span>Inicio</span></button>
+    <button class="mdr-item" data-tab="reservas" type="button">${S_CAL}<span>Reservas</span></button>
+    <button class="mdr-item" data-tab="nosotros" type="button">${S_PROD}<span>Productos</span></button>
+    <button class="mdr-item" data-tab="cotizar" type="button">${S_COT}<span>Cotizar</span></button>
+    <button class="mdr-item" data-tab="resenas" type="button">${S_STAR}<span>Reseñas</span></button>
+  </nav>
+  ${portalUser ? `
+  <div class="mdr-footer">
+    <div class="mdr-user">
+      <div class="mdr-user-av">${portalUser.picture
+        ? `<img src="${escapeHtml(portalUser.picture)}" referrerpolicy="no-referrer">`
+        : escapeHtml((portalUser.name || "?").charAt(0).toUpperCase())
+      }</div>
+      <div class="mdr-user-info">
+        <div class="mdr-user-name">${escapeHtml(portalUser.name || "")}</div>
+        <div class="mdr-user-email">${escapeHtml(portalUser.email || "")}</div>
+      </div>
+    </div>
+    <a href="/auth/portal/logout?slug=${encodeURIComponent(publicSlug)}" class="mdr-logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Cerrar sesión
+    </a>
+  </div>` : ""}
+</div>
 
 <div class="slide-overlay" id="slideOverlay"></div>
 
