@@ -949,55 +949,22 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .hm-right-col{display:flex;flex-direction:column;gap:14px}
 .hm-welcome-desk{display:none}
 
-/* ── HERO ─────────────────────────────────────────────────────────────── */
-.hm-hero{
-  flex-shrink:0;position:relative;overflow:hidden;
-  background:var(--primary);
-  padding:28px 22px 24px
+/* ── TITLE BLOCK ──────────────────────────────────────────────────────── */
+.hm-title-block{
+  width:100%;flex-shrink:0;
+  padding:20px 0 4px
 }
-.hm-hero::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(0,0,0,.22) 0%,rgba(0,0,0,.06) 100%);
-  pointer-events:none
+.hm-title-name{
+  font-size:24px;font-weight:900;color:var(--text);
+  letter-spacing:-.05em;line-height:1.1;margin-bottom:5px
 }
-.hm-hero::after{
-  content:'';position:absolute;
-  top:-60px;right:-60px;
-  width:220px;height:220px;border-radius:50%;
-  background:rgba(255,255,255,.07);pointer-events:none
-}
-.hm-hero-label{
-  position:relative;z-index:1;
-  font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-  color:rgba(255,255,255,.65);margin-bottom:6px
-}
-.hm-hero-name{
-  position:relative;z-index:1;
-  font-size:28px;font-weight:900;color:#fff;
-  letter-spacing:-.05em;line-height:1.05;
-  text-shadow:0 2px 20px rgba(0,0,0,.2);
-  margin-bottom:8px
-}
-.hm-hero-sub{
-  position:relative;z-index:1;
-  font-size:13px;font-weight:400;color:rgba(255,255,255,.78);
-  line-height:1.5;margin-bottom:16px;
-  max-width:340px;
+.hm-title-sub{
+  font-size:13px;color:var(--dim);line-height:1.5;margin-bottom:8px;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden
 }
-.hm-hero-pills{
-  position:relative;z-index:1;
-  display:flex;align-items:center;gap:0;
-  background:rgba(255,255,255,.13);
-  border:1px solid rgba(255,255,255,.18);
-  border-radius:12px;
-  padding:7px 14px;
-  width:fit-content;backdrop-filter:blur(6px)
-}
-.hm-hero-pill{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:#fff}
-.hm-hero-star{color:#FCD34D;font-size:14px}
-.hm-hero-pill-lbl{font-size:11px;font-weight:500;color:rgba(255,255,255,.65)}
-.hm-hero-pill-sep{width:1px;height:18px;background:rgba(255,255,255,.25);margin:0 12px}
+.hm-title-stats{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--soft)}
+.hm-title-stat{display:flex;align-items:center;gap:3px}
+.hm-title-sep{color:var(--dim)}
 
 /* ── CARDS ────────────────────────────────────────────────────────────── */
 .hm-card{
@@ -1337,12 +1304,12 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 @media(min-width:800px){
   .hm-panel{
     display:grid!important;overflow:hidden!important;
-    grid-template-rows:auto 1fr;
+    grid-template-rows:1fr;
     padding:0;gap:0
   }
   .hm-welcome-desk{display:none}
-  .hm-hero{padding:32px 36px 28px}
-  .hm-hero-name{font-size:34px}
+  .hm-title-block{padding:0 0 16px}
+  .hm-title-name{font-size:30px}
   .hm-main{
     flex-direction:row;
     padding:24px 28px 24px 28px;
