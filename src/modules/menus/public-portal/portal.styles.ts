@@ -952,12 +952,12 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 /* ── HERO ─────────────────────────────────────────────────────────────── */
 .hm-hero{
   flex-shrink:0;position:relative;overflow:hidden;
-  background:var(--primary);
+  background:var(--primary) url('/assets/banner.png') center/cover no-repeat;
   padding:22px 20px 20px
 }
 .hm-hero::before{
   content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(0,0,0,.18) 0%,rgba(0,0,0,.08) 100%);
+  background:linear-gradient(135deg,rgba(0,0,0,.52) 0%,rgba(0,0,0,.32) 100%);
   pointer-events:none
 }
 .hm-hero::after{
