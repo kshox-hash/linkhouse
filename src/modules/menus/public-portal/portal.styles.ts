@@ -1023,6 +1023,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   box-shadow:0 6px 24px rgba(43,98,217,.28);
   flex-shrink:0
 }
+.hm-cta-img{width:110px;flex-shrink:0;align-self:stretch;object-fit:cover;object-position:center}
 .hm-cta-body{flex:1;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px}
 .hm-cta-title{font-size:14px;font-weight:800;color:#fff;line-height:1.35;letter-spacing:-.02em;flex:1}
 .hm-cta-btn{
