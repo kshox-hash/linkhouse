@@ -408,13 +408,43 @@ function loadServices(){
 }
 
 function applyServices(svcs){
-  renderSvcCards('homeServiceGrid', svcs.slice(0,4));
+  renderSvcHomeList('homeServiceGrid', svcs.slice(0,4));
   renderSvcGrid('svcGrid', svcs);
   renderSvcRows('mobileServiceList', svcs);
   var statEl=document.getElementById('prStatSvcs');
   if(statEl) statEl.textContent=String(svcs.length);
   var hmSvcs=document.getElementById('hmStatSvcs');
   if(hmSvcs) hmSvcs.textContent=String(svcs.length);
+}
+
+function renderSvcHomeList(id,svcs){
+  var el=document.getElementById(id);if(!el) return;
+  if(!svcs.length){
+    el.innerHTML='<div style="padding:20px 16px;text-align:center;font-size:12px;color:var(--dim)">Sin servicios configurados aún.</div>';
+    return;
+  }
+  var SVC_DOTS=['#3B76ED','#D97706','#22C55E','#8B5CF6','#EC4899','#14B8A6'];
+  var html='';
+  svcs.forEach(function(s,i){
+    var dot=SVC_DOTS[i%SVC_DOTS.length];
+    var price=s.price!=null&&Number(s.price)>0?fmtPrice(Number(s.price)):'Consultar';
+    var cat=escH(s.category||s.type||'Servicio');
+    html+='<div class="hm-svc-row" data-hm-svc="'+i+'">'
+      +'<span class="hm-svc-dot" style="background:'+dot+'"></span>'
+      +'<div class="hm-svc-row-body">'
+      +'<div class="hm-svc-row-name">'+escH(s.name)+'</div>'
+      +'<div class="hm-svc-row-cat">'+cat+'</div>'
+      +'</div>'
+      +'<div class="hm-svc-row-right">'
+      +'<span class="hm-svc-row-price">'+price+'</span>'
+      +'<svg class="hm-svc-row-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>'
+      +'</div>'
+      +'</div>';
+  });
+  el.innerHTML=html;
+  el.querySelectorAll('.hm-svc-row').forEach(function(row){
+    row.addEventListener('click',function(){ showTab('reservas'); });
+  });
 }
 
 function updateHomeDashStats(){
@@ -995,12 +1025,39 @@ function renderHomeInbox(data){
   renderInboxCard('homeInboxMobile',data);
   // update home dashboard stats
   var summary=(data&&data.summary)||{};
+  var reviews2=(data&&data.reviews)||[];
   var avg=parseFloat(summary.average||'0');
   var total=parseInt(summary.total||'0',10);
+  // stat cards
   var hmRating=document.getElementById('hmStatRating');
-  if(hmRating) hmRating.textContent=avg>0?avg.toFixed(1)+' ★':'—';
+  if(hmRating) hmRating.textContent=avg>0?avg.toFixed(1):total?'—':'—';
   var hmRev=document.getElementById('hmStatReviews');
-  if(hmRev) hmRev.textContent=total>0?String(total):'0';
+  if(hmRev) hmRev.textContent=String(total);
+  // reviews panel: big avg + count
+  var hmRatingBig=document.getElementById('hmStatRatingBig');
+  if(hmRatingBig) hmRatingBig.textContent=avg>0?avg.toFixed(1):'—';
+  var hmRevBig=document.getElementById('hmStatReviewsBig');
+  if(hmRevBig) hmRevBig.textContent=String(total);
+  // bar chart distribution
+  var dist={5:0,4:0,3:0,2:0,1:0};
+  reviews2.forEach(function(r){
+    var s=Math.round(parseFloat(r.rating||r.score||'0'));
+    if(s>=1&&s<=5) dist[s]++;
+  });
+  var maxD=Math.max(dist[5],dist[4],dist[3],dist[2],dist[1],1);
+  var barsEl=document.getElementById('hmReviewBars');
+  if(barsEl){
+    var bHtml='';
+    [5,4,3,2,1].forEach(function(s){
+      var w=Math.round(dist[s]/maxD*100);
+      bHtml+='<div class="rv-bar-row">'
+        +'<span class="rv-bar-star">'+s+'★</span>'
+        +'<div class="rv-bar-track"><div class="rv-bar-fill" style="width:'+w+'%"></div></div>'
+        +'<span class="rv-bar-count">'+dist[s]+'</span>'
+        +'</div>';
+    });
+    barsEl.innerHTML=bHtml;
+  }
 }
 function renderInboxCard(id,data,maxItems){
   var el=document.getElementById(id); if(!el) return;
@@ -1191,11 +1248,25 @@ function submitReview(){
 }
 
 // ── init ─────────────────────────────────────────────────────────────────────
+function initUpcoming(){
+  var el=document.getElementById('hmUpcoming');if(!el) return;
+  el.innerHTML='<div style="padding:20px 16px;text-align:center">'
+    +'<div style="font-size:11.5px;color:var(--dim);margin-bottom:10px">Reservá un turno para verlo aquí</div>'
+    +'<button class="hm-svc-cot-btn" type="button" data-action="reservas" style="max-width:200px;margin:0 auto">'
+    +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:13px;height:13px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'
+    +' Ver disponibilidad</button>'
+    +'</div>';
+  el.querySelectorAll('[data-action="reservas"]').forEach(function(btn){
+    btn.addEventListener('click',function(){ showTab('reservas'); });
+  });
+}
+
 (function init(){
   loadServices();
   loadProviders();
   loadCalendar();
   ensureReviews();
+  initUpcoming();
 })();
 `;
 }

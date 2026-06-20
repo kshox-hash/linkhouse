@@ -844,141 +844,266 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   -webkit-tap-highlight-color:transparent;
 }
 
-/* ════════════════════════════════════════════════════════════════════════
-   HOME DASHBOARD — todos los estilos del panel de inicio
-   ════════════════════════════════════════════════════════════════════════
+/* ── SIDEBAR PROMO CARD ──────────────────────────────────────────────── */
+.ir-promo-card{
+  margin:auto 12px 12px;border-radius:16px;
+  background:#2B62D9;overflow:hidden;
+  display:flex;flex-direction:column;flex-shrink:0
+}
+.ir-promo-art{height:48px;background:#1A4FB0}
+.ir-promo-body{padding:12px 14px 14px}
+.ir-promo-title{
+  font-size:12px;font-weight:800;color:#fff;
+  line-height:1.35;margin-bottom:10px
+}
+.ir-promo-btn{
+  display:block;width:100%;padding:7px 12px;border-radius:10px;
+  border:1.5px solid rgba(255,255,255,.45);
+  background:transparent;color:#fff;
+  font-size:11px;font-weight:700;font-family:inherit;
+  cursor:pointer;transition:background .15s;text-align:center
+}
+.ir-promo-btn:hover{background:rgba(255,255,255,.12)}
 
-   SECCIONES:
-   1. .hm-panel          → contenedor principal (grid en desktop)
-   2. .hm-row-greeting   → fila saludo + botones
-   3. .hm-stats          → 4 tarjetas de resumen (servicios, rating, turno, reseñas)
-   4. .hm-main           → área principal (flex-row en desktop)
-   5. .hm-card           → tarjeta genérica (calendario, servicios, reseñas)
-   6. .hm-card-left      → tarjeta izquierda = CALENDARIO (flex:13)
-   7. .hm-right-col      → columna derecha = SERVICIOS + RESEÑAS (flex:7)
-   8. .hm-card-foot      → pie de tarjeta (botón cotizar / escribir reseña)
+/* ════════════════════════════════════════════════════════════════════════
+   HOME DASHBOARD
    ════════════════════════════════════════════════════════════════════════ */
 
-.hm-panel{overflow-y:auto!important}
-
-/* 2 — Saludo */
-.hm-row-greeting{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:22px 20px 0}
-.hm-greet-hi{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.05em}
-.hm-greet-sub{font-size:12px;color:var(--dim);margin-top:2px}
-.hm-greet-actions{display:flex;gap:8px;flex-shrink:0}
-.hm-action-btn{display:flex;align-items:center;gap:6px;padding:9px 16px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;text-decoration:none;border:none;transition:opacity .15s}
-.hm-action-btn svg{width:14px;height:14px;flex-shrink:0;stroke-width:2}
-.hm-action-primary{background:var(--primary);color:#fff}
-.hm-action-primary svg{stroke:#fff}
-.hm-action-wa{background:#22c55e;color:#fff}
-.hm-action-wa svg{stroke:#fff}
-
-/* Bienvenida */
-.hm-welcome{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px 4px}
-.hm-welcome-title{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.04em;line-height:1.2}
-.hm-welcome-title span{color:var(--nav-act)}
-.hm-welcome-sub{font-size:12.5px;color:var(--soft);margin-top:3px}
-.hm-welcome-cta{
-  flex-shrink:0;padding:9px 18px;border-radius:12px;border:none;cursor:pointer;
-  background:var(--nav-act);color:#fff;font-size:13px;font-weight:700;
-  font-family:inherit;transition:opacity .15s;white-space:nowrap
+/* ── TOP BAR ─────────────────────────────────────────────────────────── */
+.hm-topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:20px 20px 4px;flex-shrink:0
 }
-.hm-welcome-cta:hover{opacity:.88}
+.hm-topbar-left{}
+.hm-topbar-greet{font-size:22px;font-weight:800;color:var(--text);letter-spacing:-.05em;line-height:1.15}
+.hm-topbar-sub{font-size:12px;color:var(--soft);margin-top:3px;font-weight:500}
+.hm-topbar-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.hm-topbar-search{
+  display:none;align-items:center;gap:8px;
+  background:#F4F7FC;border-radius:12px;padding:8px 14px;
+  font-size:12.5px;color:var(--dim);cursor:default;white-space:nowrap
+}
+.hm-topbar-search svg{width:14px;height:14px;flex-shrink:0;stroke:var(--dim)}
+.hm-topbar-icon-btn{
+  width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;
+  background:#F4F7FC;display:flex;align-items:center;justify-content:center;
+  color:var(--soft);transition:background .15s;flex-shrink:0
+}
+.hm-topbar-icon-btn svg{width:17px;height:17px;stroke-width:1.8}
+.hm-topbar-icon-btn:hover{background:var(--primary-dim);color:var(--nav-act)}
+.hm-nueva-reserva{
+  display:flex;align-items:center;gap:7px;
+  padding:9px 16px;border-radius:12px;border:none;cursor:pointer;
+  background:var(--nav-act);color:#fff;
+  font-size:13px;font-weight:700;font-family:inherit;
+  white-space:nowrap;transition:opacity .15s
+}
+.hm-nueva-reserva:hover{opacity:.88}
+.hm-nueva-reserva svg{width:14px;height:14px;stroke-width:2;stroke:#fff;flex-shrink:0}
 
-/* 3 — Stats: ícono circular 48px, label arriba, número 26px, sparkline derecha */
-.hm-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:16px 20px 12px}
-.hm-stat{border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:14px}
-.hm-stat-icon{width:48px;height:48px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.hm-stat-icon svg{width:22px;height:22px;stroke-width:2}
+/* ── STATS ────────────────────────────────────────────────────────────── */
+.hm-stats{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+  padding:10px 16px 8px;flex-shrink:0
+}
+.hm-stat{
+  background:#fff;border-radius:18px;
+  padding:14px 14px 18px;
+  display:flex;align-items:center;gap:12px;
+  box-shadow:var(--shadow-s);
+  position:relative;overflow:hidden
+}
+.hm-stat::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;
+  height:3px;border-radius:0 0 18px 18px;
+  background:var(--sc,#3B76ED)
+}
+.hm-stat-icon{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center
+}
+.hm-stat-icon svg{width:20px;height:20px;stroke-width:2}
 .hm-stat-body{flex:1;min-width:0}
-.hm-stat-lbl{font-size:12px;color:var(--soft);font-weight:500;margin-bottom:3px}
-.hm-stat-val{font-size:26px;font-weight:800;color:var(--text);letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums}
-.hm-stat-spark{flex-shrink:0}
+.hm-stat-val{font-size:24px;font-weight:800;color:var(--text);letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums}
+.hm-stat-lbl{font-size:11px;color:var(--soft);font-weight:500;margin-top:3px;line-height:1.2}
+.hm-stat-spark{flex-shrink:0;opacity:.85}
 
-/* 4 — Área principal */
-.hm-main{display:flex;flex-direction:column;gap:12px;padding:0 20px 20px}
+/* ── LAYOUT ───────────────────────────────────────────────────────────── */
+.hm-panel{display:flex;flex-direction:column;overflow-y:auto}
+.hm-main{display:flex;flex-direction:column;gap:10px;padding:0 16px 20px}
+.hm-left-col{display:flex;flex-direction:column;gap:10px}
+.hm-right-col{display:flex;flex-direction:column;gap:10px}
 
-/* 5 — Tarjeta genérica */
-.hm-card{background:#fff;border-radius:18px;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-s)}
-.hm-card-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;flex-shrink:0;border-bottom:1px solid var(--border-inner)}
+/* ── CARDS ────────────────────────────────────────────────────────────── */
+.hm-card{
+  background:#fff;border-radius:18px;
+  display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:var(--shadow-s)
+}
+.hm-card-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 16px;flex-shrink:0;
+  border-bottom:1px solid var(--border-inner)
+}
 .hm-card-title{font-size:13.5px;font-weight:700;color:var(--text)}
+.hm-card-title-row{display:flex;align-items:center;gap:7px}
+.hm-card-title-icon{display:flex;align-items:center}
+.hm-card-title-icon svg{width:15px;height:15px;stroke-width:2}
 
-/* Listas dentro de cards */
-.hm-svc-list{padding:6px 16px 4px}
-#homeInbox{padding:4px 16px}
-
-/* ── SERVICE PROJECT CARDS (home tab) ──────────────────────────────────── */
-.svc-proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 14px 14px}
-.svc-proj-card{
-  border-radius:18px;padding:13px;cursor:pointer;
-  display:flex;flex-direction:column;gap:7px;overflow:hidden;
-  transition:transform .2s,box-shadow .2s;-webkit-tap-highlight-color:transparent
+/* ── SERVICIOS LISTA (home) ───────────────────────────────────────────── */
+.hm-svc-list-home{overflow-y:auto}
+.hm-svc-row{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 16px;cursor:pointer;
+  border-bottom:1px solid var(--border-inner);
+  transition:background .12s;-webkit-tap-highlight-color:transparent
 }
-.svc-proj-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(15,23,42,.13)}
-.svc-proj-card:active{transform:scale(.97)}
-.svc-proj-top{display:flex;align-items:center;justify-content:space-between}
-.svc-proj-price-lbl{font-size:11.5px;font-weight:700;color:rgba(0,0,0,.5);font-variant-numeric:tabular-nums}
-.svc-proj-name{font-size:13.5px;font-weight:700;color:rgba(0,0,0,.75);line-height:1.3}
-.svc-proj-tags{display:flex;gap:5px;flex-wrap:wrap}
-.svc-tag{font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:20px;background:rgba(0,0,0,.12);color:rgba(0,0,0,.6)}
-.svc-proj-foot{display:flex;align-items:center;margin-top:auto;padding-top:2px}
+.hm-svc-row:last-child{border-bottom:none}
+.hm-svc-row:hover{background:#F8FAFF}
+.hm-svc-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.hm-svc-row-body{flex:1;min-width:0}
+.hm-svc-row-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hm-svc-row-cat{font-size:11px;color:var(--dim);margin-top:2px}
+.hm-svc-row-right{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.hm-svc-row-price{font-size:12.5px;font-weight:700;color:var(--text);white-space:nowrap;font-variant-numeric:tabular-nums}
+.hm-svc-row-arr{width:14px;height:14px;stroke:var(--dim);flex-shrink:0}
+.hm-svc-cot-row{padding:10px 14px;border-top:1px solid var(--border-inner);flex-shrink:0}
+.hm-svc-cot-btn{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  width:100%;padding:9px 14px;border-radius:12px;cursor:pointer;
+  background:var(--bg);color:var(--soft);
+  font-size:12.5px;font-weight:600;font-family:inherit;
+  border:1px solid var(--border);transition:background .15s,color .15s
+}
+.hm-svc-cot-btn svg{width:13px;height:13px;stroke-width:2;stroke:currentColor;flex-shrink:0}
+.hm-svc-cot-btn:hover{background:var(--primary-dim);color:var(--nav-act);border-color:var(--primary-glow)}
 
-/* Calendario en home: llena todo el espacio disponible */
+/* ── PRÓXIMAS RESERVAS ────────────────────────────────────────────────── */
+.hm-upcoming-list{}
+.hm-upc-row{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 16px;border-bottom:1px solid var(--border-inner);
+  cursor:pointer;transition:background .12s
+}
+.hm-upc-row:last-child{border-bottom:none}
+.hm-upc-row:hover{background:#F8FAFF}
+.hm-upc-av{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  background:var(--primary-dim);color:var(--nav-act);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;letter-spacing:-.02em
+}
+.hm-upc-body{flex:1;min-width:0}
+.hm-upc-name{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hm-upc-date{font-size:11px;color:var(--dim);margin-top:2px}
+.hm-upc-badge{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;flex-shrink:0;white-space:nowrap}
+.hm-upc-badge.conf{background:rgba(34,197,94,.12);color:#059669}
+.hm-upc-badge.pend{background:rgba(245,158,11,.12);color:#D97706}
+
+/* ── OPINIONES ────────────────────────────────────────────────────────── */
+.hm-reviews-panel{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;flex:1;min-height:0;overflow:hidden
+}
+.hm-reviews-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.hm-reviews-avg{font-size:34px;font-weight:800;color:var(--text);letter-spacing:-.06em;line-height:1}
+.hm-reviews-stars{font-size:14px;letter-spacing:1px;margin-top:2px}
+.hm-reviews-count{font-size:11px;color:var(--dim);margin-top:3px}
+.hm-reviews-chat-icon{flex-shrink:0}
+.hm-reviews-chat-icon svg{width:28px;height:28px;stroke-width:1.6}
+.hm-reviews-bars{flex:1;display:flex;flex-direction:column;gap:5px;min-width:0}
+.rv-bar-row{display:flex;align-items:center;gap:7px}
+.rv-bar-star{font-size:10.5px;color:var(--dim);width:18px;flex-shrink:0;text-align:right}
+.rv-bar-track{flex:1;height:6px;border-radius:3px;background:#F0F4F8;overflow:hidden}
+.rv-bar-fill{height:100%;border-radius:3px;background:#F59E0B;transition:width .4s ease}
+.rv-bar-count{font-size:10.5px;color:var(--dim);width:20px;flex-shrink:0;font-variant-numeric:tabular-nums}
+
+/* ── CTA AZUL ─────────────────────────────────────────────────────────── */
+.hm-cta-card{
+  border-radius:18px;background:#2B62D9;
+  display:flex;align-items:center;overflow:hidden;
+  box-shadow:0 6px 24px rgba(43,98,217,.28);
+  min-height:96px;flex-shrink:0
+}
+.hm-cta-body{flex:1;padding:18px 16px}
+.hm-cta-title{font-size:14px;font-weight:800;color:#fff;line-height:1.35;letter-spacing:-.02em}
+.hm-cta-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  margin-top:12px;padding:7px 14px;border-radius:10px;
+  border:1.5px solid rgba(255,255,255,.5);
+  background:transparent;color:#fff;
+  font-size:12px;font-weight:700;font-family:inherit;
+  cursor:pointer;transition:background .15s
+}
+.hm-cta-btn:hover{background:rgba(255,255,255,.12)}
+.hm-cta-art{width:80px;flex-shrink:0;align-self:stretch;background:#1A4FB0}
+
+/* ── CALENDAR WIDGET INSIDE HOME ──────────────────────────────────────── */
 .hm-cal-inner{
+  flex:1;min-height:0;
   background:#F4F7FC!important;border:none!important;border-radius:0!important;
-  box-shadow:none!important;padding:12px 16px!important;margin:0!important;
-  display:flex!important;flex-direction:column!important;
+  box-shadow:none!important;padding:10px 14px!important;margin:0!important;
+  display:flex!important;flex-direction:column!important
 }
-.hm-cal-inner .cal-hdr{flex-shrink:0;margin-bottom:8px!important}
+.hm-cal-inner .cal-hdr{flex-shrink:0;margin-bottom:6px!important}
 .hm-cal-inner .cal-grid{flex:1;min-height:0;align-content:stretch!important;grid-auto-rows:1fr!important}
-.hm-cal-inner .cal-cell{aspect-ratio:unset!important;height:auto!important;min-height:28px;font-size:12px!important}
+.hm-cal-inner .cal-cell{
+  aspect-ratio:unset!important;height:auto!important;min-height:28px;
+  font-size:12px!important;background:transparent!important
+}
+.hm-cal-inner .cal-cell.cal-today{background:var(--nav-act)!important;color:#fff!important;border-radius:50%!important}
+.hm-cal-inner .cal-cell.cal-avail{background:transparent!important;color:var(--text)!important}
+.hm-cal-inner .cal-cell.cal-taken{background:transparent!important;color:var(--text)!important}
+.hm-cal-inner .cal-cell.cal-past{background:transparent!important}
+.hm-cal-inner .cal-cell.cal-avail::after{
+  content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
+  width:5px;height:5px;border-radius:50%;background:#22C55E
+}
+.hm-cal-inner .cal-cell.cal-taken::after{
+  content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
+  width:5px;height:5px;border-radius:50%;background:#F59E0B
+}
 .hm-cal-inner .cal-day-name{padding:2px 0 5px!important;font-size:8.5px!important}
 .hm-cal-inner .cal-legend{display:none!important}
 
-/* 8 — Pie de tarjeta */
+/* keepcompat */
 .hm-card-foot{padding:0 16px 14px;flex-shrink:0}
-
-/* Próximo turno strip dentro del card de calendario */
-.cal-next-strip{
-  display:flex;align-items:center;gap:7px;
-  padding:8px 16px;font-size:12px;color:var(--soft);
-  border-bottom:1px solid var(--border-inner);flex-shrink:0
-}
-.cal-next-strip svg{width:13px;height:13px;flex-shrink:0;stroke:var(--nav-act)}
-.cal-next-strip strong{color:var(--text);font-weight:700}
-
-/* Reviews summary */
-.reviews-summary{
-  display:flex;align-items:center;gap:14px;
-  padding:12px 16px;border-bottom:1px solid var(--border-inner);flex-shrink:0
-}
-.reviews-score{display:flex;flex-direction:column;align-items:center;gap:2px}
-.reviews-score-val{font-size:32px;font-weight:800;color:var(--text);letter-spacing:-.05em;line-height:1}
-.reviews-stars-row{font-size:13px;letter-spacing:1px}
-.reviews-count{font-size:11px;color:var(--dim);font-weight:500}
-.reviews-list{flex:1;min-height:0;overflow-y:auto}
 .hm-foot-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:9px;border-radius:11px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;border:1px solid var(--border);background:var(--bg);color:var(--soft);transition:background .15s,color .15s}
-.hm-foot-btn:hover{background:var(--primary-dim);color:var(--primary);border-color:var(--primary-glow)}
-.hm-foot-btn svg{width:13px;height:13px;stroke:currentColor;flex-shrink:0}
+.reviews-list{flex:1;min-height:0;overflow-y:auto}
 
-/* 7 — Columna derecha */
-.hm-right-col{display:flex;flex-direction:column;gap:12px}
-
-/* ── DESKTOP ── */
+/* ── DESKTOP ──────────────────────────────────────────────────────────── */
 @media(min-width:800px){
-  .hm-panel{display:grid!important;overflow:hidden!important;grid-template-rows:auto 1fr;padding:0;gap:0}
-  .hm-welcome{padding:18px 24px 0;flex-shrink:0}
-  .hm-main{flex-direction:row;padding:12px 20px 20px;gap:14px;overflow:hidden;min-height:0}
-
-  /* Calendario: columna izquierda */
-  .hm-card-left{flex:12;display:flex;flex-direction:column;overflow:hidden}
-  .hm-card-left .hm-cal-inner{flex:1;min-height:0;overflow:hidden}
-  .hm-card-left .hm-card-hdr{flex-shrink:0}
-
-  /* Columna derecha */
-  .hm-right-col{flex:8;display:flex;flex-direction:column;gap:12px;overflow:hidden}
-  .hm-card-svc{flex:2;min-height:0;overflow:hidden}
-  .hm-card-reviews{flex:3;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+  .hm-panel{
+    display:grid!important;overflow:hidden!important;
+    grid-template-rows:auto auto 1fr;
+    padding:0;gap:0
+  }
+  .hm-topbar{padding:20px 24px 4px}
+  .hm-topbar-search{display:flex}
+  .hm-stats{
+    grid-template-columns:repeat(4,1fr);
+    padding:12px 24px 8px;gap:12px
+  }
+  .hm-main{
+    flex-direction:row;
+    padding:8px 24px 20px;
+    gap:14px;overflow:hidden;min-height:0
+  }
+  .hm-left-col{
+    flex:12;display:flex;flex-direction:column;
+    gap:12px;overflow:hidden;min-height:0
+  }
+  .hm-card-cal{
+    flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden
+  }
+  .hm-card-cal .hm-cal-inner{flex:1;min-height:0;overflow:hidden}
+  .hm-right-col{
+    flex:8;display:flex;flex-direction:column;
+    gap:12px;overflow:hidden;min-height:0
+  }
+  .hm-card-svc{overflow:hidden;display:flex;flex-direction:column}
+  .hm-card-reviews{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+  .hm-reviews-panel{flex:1;min-height:0;overflow:hidden}
 }
 `;
 }

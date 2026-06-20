@@ -133,6 +133,15 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
     <button class="ir-btn" data-tab="resenas" type="button">${S_STAR}<span class="ir-lbl">Reseñas</span></button>
   </div>
 
+  <!-- Promo card -->
+  <div class="ir-promo-card">
+    <div class="ir-promo-art"></div>
+    <div class="ir-promo-body">
+      <div class="ir-promo-title">Conecta más, reserva más.</div>
+      <button class="ir-promo-btn" type="button" data-tab="reservas">Ver disponibilidad</button>
+    </div>
+  </div>
+
   <!-- User chip -->
   ${portalUser ? `
   <div class="ir-user-chip">
