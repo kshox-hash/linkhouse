@@ -926,7 +926,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .hm-stat-spark{flex-shrink:0;opacity:.85}
 
 /* ── LAYOUT ───────────────────────────────────────────────────────────── */
-.hm-panel{display:flex;flex-direction:column;overflow-y:auto;background:url('/assets/pattern.jpg') repeat center/auto}
+.hm-panel{display:flex;flex-direction:column;overflow-y:auto;background-color:#EBF0F8;background-image:linear-gradient(rgba(99,130,190,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(99,130,190,.12) 1px,transparent 1px);background-size:28px 28px}
 .hm-main{display:flex;flex-direction:column;gap:10px;padding:0 16px 20px}
 .hm-left-col{display:flex;flex-direction:column;gap:10px}
 .hm-right-col{display:flex;flex-direction:column;gap:10px}
@@ -1073,8 +1073,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   .hm-welcome-desk span{color:var(--nav-act)}
   .hm-main{
     flex-direction:row;
-    padding:12px 24px 20px;
-    gap:14px;overflow:hidden;min-height:0
+    padding:12px 28px 20px 28px;
+    gap:16px;overflow:hidden;min-height:0
   }
   .hm-left-col{
     flex:12;display:flex;flex-direction:column;
