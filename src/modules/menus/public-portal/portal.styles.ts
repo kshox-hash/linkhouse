@@ -506,100 +506,97 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 
 /* ── RESERVAS DASHBOARD ──────────────────────────────────────────────── */
 
-/* Calendar card container */
-.rdash-cal-card{
-  background:#EEF4FB;border:1px solid #C8D9EC;border-radius:20px;
-  padding:18px 16px 0;margin-bottom:14px
+/* Header */
+.rdash-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px
 }
-
-/* Card header */
-.rdash-cal-hdr{
-  display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px
-}
-.rdash-title{font-size:17px;font-weight:800;color:var(--text);letter-spacing:-.04em;line-height:1}
-.rdash-sub{font-size:11px;color:var(--dim);margin-top:3px}
+.rdash-title{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.05em}
 
 /* Month nav */
-.rdash-mnav{display:flex;align-items:center;gap:4px}
+.rdash-mnav{display:flex;align-items:center;gap:2px}
 .rdash-month-lbl{
-  font-size:12px;font-weight:700;color:var(--text);
-  min-width:80px;text-align:center;letter-spacing:-.02em
+  font-size:13px;font-weight:600;color:var(--text);
+  min-width:90px;text-align:center;letter-spacing:-.02em
 }
 .rdash-mnav-btn{
-  width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.7);
-  border:1px solid #C8D9EC;cursor:pointer;
+  width:30px;height:30px;border-radius:8px;
+  background:transparent;border:none;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   transition:background .15s;-webkit-tap-highlight-color:transparent
 }
-.rdash-mnav-btn:hover{background:#fff;border-color:var(--primary-glow)}
-.rdash-mnav-btn svg{width:13px;height:13px;stroke-width:2.5;stroke:var(--soft)}
-.rdash-mnav-btn:disabled{opacity:.3;cursor:default}
+.rdash-mnav-btn:hover{background:var(--primary-dim)}
+.rdash-mnav-btn svg{width:16px;height:16px;stroke-width:2;stroke:var(--soft)}
+.rdash-mnav-btn:disabled{opacity:.25;cursor:default}
 
-/* Calendar grid */
+/* Calendar outer — constrains width so cells never distort */
+.mc-outer{max-width:320px;margin:0 auto 20px}
 .month-cal-grid{width:100%}
 .mc-hdr-row{
   display:grid;grid-template-columns:repeat(7,1fr);
-  margin-bottom:4px
+  margin-bottom:2px
 }
 .mc-hdr-cell{
-  text-align:center;font-size:9.5px;font-weight:700;
-  color:var(--dim);letter-spacing:.03em;text-transform:uppercase;
-  padding:0 0 6px
+  text-align:center;font-size:10px;font-weight:600;
+  color:var(--dim);letter-spacing:.02em;
+  padding-bottom:8px
 }
-.mc-body{display:grid;grid-template-columns:repeat(7,1fr)}
+.mc-body{display:grid;grid-template-columns:repeat(7,1fr);gap:2px 0}
 .mc-cell{
-  height:44px;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:3px;
+  height:40px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;
   cursor:default;-webkit-tap-highlight-color:transparent
 }
 .mc-ring{
-  width:32px;height:32px;border-radius:50%;
+  width:34px;height:34px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  transition:background .15s,border-color .15s
+  transition:background .15s
 }
-.mc-num{font-size:13px;font-weight:500;color:#94A3B8;line-height:1}
+.mc-num{font-size:13px;font-weight:400;color:#CBD5E1;line-height:1}
 .mc-dot{
   width:4px;height:4px;border-radius:50%;
-  background:var(--primary);opacity:0;
-  transition:opacity .2s
+  background:var(--primary);opacity:0;flex-shrink:0
 }
-.mc-empty .mc-ring{display:none}
+.mc-empty .mc-ring{visibility:hidden}
 
 /* Past */
-.mc-past .mc-num{color:#CBD5E1;font-weight:400}
+.mc-past .mc-num{color:#D1D5DB}
 
-/* Available (future, has slots) */
+/* No slots, future */
+.mc-day .mc-num{color:#9CA3AF;font-weight:500}
+
+/* Available */
 .mc-avail{cursor:pointer}
-.mc-avail .mc-ring{background:rgba(37,99,235,.07)}
 .mc-avail .mc-num{color:var(--text);font-weight:600}
 .mc-avail .mc-dot{opacity:1}
-.mc-avail:hover .mc-ring{background:rgba(37,99,235,.15)}
-.mc-avail:hover .mc-num{color:var(--primary)}
-.mc-avail:active .mc-ring{transform:scale(.88)}
+.mc-avail:hover .mc-ring{background:var(--primary-dim)}
+.mc-avail:active .mc-ring{transform:scale(.87)}
 
 /* Today */
-.mc-today .mc-ring{border:2px solid var(--primary)}
+.mc-today .mc-ring{background:var(--primary-dim)}
 .mc-today .mc-num{color:var(--primary);font-weight:700}
-.mc-today.mc-avail .mc-ring{border-color:var(--primary);background:rgba(37,99,235,.07)}
-.mc-today.mc-avail:hover .mc-ring{background:rgba(37,99,235,.15)}
 
 /* Selected */
-.mc-sel .mc-ring{background:var(--primary)!important;border:none!important}
-.mc-sel .mc-num{color:#fff!important;font-weight:700}
-.mc-sel .mc-dot{background:#fff;opacity:1}
-.mc-sel{cursor:pointer}
+.mc-sel .mc-ring{background:var(--primary)}
+.mc-sel .mc-num{color:#fff;font-weight:700}
+.mc-sel .mc-dot{background:rgba(255,255,255,.7)}
+.mc-sel:hover .mc-ring{background:var(--primary)}
 
-/* Stat footer row */
-.rdash-stat-row{
-  display:flex;align-items:center;justify-content:space-around;
-  border-top:1px solid #C8D9EC;margin:10px -16px 0;
-  padding:12px 16px
+/* Stats row */
+.rdash-stats-row{
+  display:flex;align-items:center;
+  background:#EEF4FB;border:1px solid #C8D9EC;
+  border-radius:14px;padding:14px 0;
+  margin-bottom:24px
 }
-.rsr-item{display:flex;align-items:baseline;gap:4px}
-.rsr-val{font-size:14px;font-weight:800;color:var(--text);letter-spacing:-.04em}
-.rsr-lbl{font-size:11px;color:var(--dim);font-weight:500}
-.rsr-next-val{font-size:12px}
-.rsr-sep{width:1px;height:22px;background:#C8D9EC}
+.rds-item{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;gap:3px
+}
+.rds-val{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.05em;line-height:1}
+.rds-next{font-size:13px;font-weight:700}
+.rds-lbl{font-size:10px;color:var(--dim);font-weight:500;letter-spacing:.01em}
+.rds-divider{width:1px;height:32px;background:#C8D9EC;flex-shrink:0}
 
 /* Slots area */
 .slots-area{
