@@ -828,8 +828,8 @@ function renderMonthCal(today,todayStr,tYear,tMonth){
     else if(hasSlots)   cls+=' mc-avail';
 
     html+='<div class="'+cls+'" data-date="'+dStr+'">'
-      +'<span class="mc-num">'+d+'</span>'
-      +(hasSlots&&!isPast?'<span class="mc-dot"></span>':'')
+      +'<div class="mc-ring"><span class="mc-num">'+d+'</span></div>'
+      +(hasSlots&&!isPast?'<div class="mc-dot"></div>':'')
       +'</div>';
   }
   html+='</div>';

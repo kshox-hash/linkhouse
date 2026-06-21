@@ -505,92 +505,101 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 .svc-empty{text-align:center;padding:40px 20px;color:var(--soft);font-size:14px;line-height:1.7;background:var(--panel);border-radius:var(--r);border:1px solid var(--border)}
 
 /* ── RESERVAS DASHBOARD ──────────────────────────────────────────────── */
-.rdash-hdr{
-  display:flex;align-items:center;justify-content:space-between;margin-bottom:18px
+
+/* Calendar card container */
+.rdash-cal-card{
+  background:#EEF4FB;border:1px solid #C8D9EC;border-radius:20px;
+  padding:18px 16px 0;margin-bottom:14px
 }
-.rdash-title{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.05em}
-.rdash-sub{font-size:12px;color:var(--dim);font-weight:500;margin-top:2px}
-.rdash-nav{display:flex;gap:6px}
-.rdash-nav-btn{
-  width:32px;height:32px;border-radius:10px;background:var(--panel);
-  border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;
+
+/* Card header */
+.rdash-cal-hdr{
+  display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px
+}
+.rdash-title{font-size:17px;font-weight:800;color:var(--text);letter-spacing:-.04em;line-height:1}
+.rdash-sub{font-size:11px;color:var(--dim);margin-top:3px}
+
+/* Month nav */
+.rdash-mnav{display:flex;align-items:center;gap:4px}
+.rdash-month-lbl{
+  font-size:12px;font-weight:700;color:var(--text);
+  min-width:80px;text-align:center;letter-spacing:-.02em
+}
+.rdash-mnav-btn{
+  width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.7);
+  border:1px solid #C8D9EC;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
   transition:background .15s;-webkit-tap-highlight-color:transparent
 }
-.rdash-nav-btn:hover{background:var(--primary-dim);border-color:var(--primary-glow)}
-.rdash-nav-btn svg{width:14px;height:14px;stroke-width:2.2;stroke:var(--soft)}
-.rdash-nav-btn:disabled{opacity:.3;cursor:default}
+.rdash-mnav-btn:hover{background:#fff;border-color:var(--primary-glow)}
+.rdash-mnav-btn svg{width:13px;height:13px;stroke-width:2.5;stroke:var(--soft)}
+.rdash-mnav-btn:disabled{opacity:.3;cursor:default}
 
-/* Stat cards */
-.rdash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
-.rstat-card{
-  background:var(--panel);border:1px solid var(--border);border-radius:18px;
-  padding:16px 12px;text-align:center;
-  box-shadow:var(--shadow-s)
-}
-.rstat-icon{
-  width:38px;height:38px;border-radius:12px;
-  display:flex;align-items:center;justify-content:center;margin:0 auto 10px
-}
-.rstat-icon svg{width:17px;height:17px}
-.rstat-val{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.05em;line-height:1}
-.rstat-lbl{font-size:10px;color:var(--dim);font-weight:500;margin-top:5px;line-height:1.3}
-
-/* Monthly calendar grid */
-.month-cal-wrap{margin:0 0 6px}
+/* Calendar grid */
 .month-cal-grid{width:100%}
 .mc-hdr-row{
   display:grid;grid-template-columns:repeat(7,1fr);
-  margin-bottom:2px
+  margin-bottom:4px
 }
 .mc-hdr-cell{
-  text-align:center;font-size:9px;font-weight:700;
-  color:var(--dim);letter-spacing:.04em;text-transform:uppercase;
-  padding:2px 0 6px
+  text-align:center;font-size:9.5px;font-weight:700;
+  color:var(--dim);letter-spacing:.03em;text-transform:uppercase;
+  padding:0 0 6px
 }
-.mc-body{
-  display:grid;grid-template-columns:repeat(7,1fr);
-  gap:2px
-}
+.mc-body{display:grid;grid-template-columns:repeat(7,1fr)}
 .mc-cell{
-  height:36px;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  border-radius:8px;position:relative;
-  -webkit-tap-highlight-color:transparent
+  height:44px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;
+  cursor:default;-webkit-tap-highlight-color:transparent
 }
-.mc-empty{background:transparent}
-.mc-day{cursor:default}
-.mc-num{
-  font-size:12px;font-weight:600;color:var(--soft);
-  line-height:1;z-index:1
+.mc-ring{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s,border-color .15s
 }
+.mc-num{font-size:13px;font-weight:500;color:#94A3B8;line-height:1}
 .mc-dot{
-  width:3px;height:3px;border-radius:50%;
-  background:var(--primary);margin-top:2px;
-  opacity:0;transition:opacity .2s
+  width:4px;height:4px;border-radius:50%;
+  background:var(--primary);opacity:0;
+  transition:opacity .2s
 }
-/* Past days */
-.mc-past .mc-num{color:var(--border);font-weight:400}
-/* Today */
-.mc-today .mc-num{color:var(--primary);font-weight:800}
-.mc-today::before{
-  content:'';position:absolute;inset:3px;
-  border:1.5px solid var(--primary);border-radius:6px;opacity:.45
-}
-/* Available */
+.mc-empty .mc-ring{display:none}
+
+/* Past */
+.mc-past .mc-num{color:#CBD5E1;font-weight:400}
+
+/* Available (future, has slots) */
 .mc-avail{cursor:pointer}
-.mc-avail .mc-num{color:var(--text);font-weight:700}
+.mc-avail .mc-ring{background:rgba(37,99,235,.07)}
+.mc-avail .mc-num{color:var(--text);font-weight:600}
 .mc-avail .mc-dot{opacity:1}
-.mc-avail:hover{background:var(--primary-dim)}
+.mc-avail:hover .mc-ring{background:rgba(37,99,235,.15)}
 .mc-avail:hover .mc-num{color:var(--primary)}
-.mc-avail:active{transform:scale(.9)}
+.mc-avail:active .mc-ring{transform:scale(.88)}
+
+/* Today */
+.mc-today .mc-ring{border:2px solid var(--primary)}
+.mc-today .mc-num{color:var(--primary);font-weight:700}
+.mc-today.mc-avail .mc-ring{border-color:var(--primary);background:rgba(37,99,235,.07)}
+.mc-today.mc-avail:hover .mc-ring{background:rgba(37,99,235,.15)}
+
 /* Selected */
-.mc-sel{cursor:pointer;background:var(--primary)}
-.mc-sel .mc-num{color:#fff;font-weight:800}
+.mc-sel .mc-ring{background:var(--primary)!important;border:none!important}
+.mc-sel .mc-num{color:#fff!important;font-weight:700}
 .mc-sel .mc-dot{background:#fff;opacity:1}
-.mc-sel::before{display:none}
-/* Today + avail */
-.mc-today.mc-avail::before{opacity:0}
-.mc-today.mc-avail:hover{background:var(--primary-dim)}
+.mc-sel{cursor:pointer}
+
+/* Stat footer row */
+.rdash-stat-row{
+  display:flex;align-items:center;justify-content:space-around;
+  border-top:1px solid #C8D9EC;margin:10px -16px 0;
+  padding:12px 16px
+}
+.rsr-item{display:flex;align-items:baseline;gap:4px}
+.rsr-val{font-size:14px;font-weight:800;color:var(--text);letter-spacing:-.04em}
+.rsr-lbl{font-size:11px;color:var(--dim);font-weight:500}
+.rsr-next-val{font-size:12px}
+.rsr-sep{width:1px;height:22px;background:#C8D9EC}
 
 /* Slots area */
 .slots-area{
