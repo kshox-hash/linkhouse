@@ -44,9 +44,9 @@ export function reservasTabHtml(): string {
         </div>
       </div>
 
-      <!-- Day strip -->
-      <div class="rdash-strip-wrap">
-        <div class="day-strip" id="dayStrip"></div>
+      <!-- Monthly calendar grid -->
+      <div class="month-cal-wrap">
+        <div class="month-cal-grid" id="monthCal"></div>
       </div>
 
       <!-- Slots area (hidden until day selected) -->

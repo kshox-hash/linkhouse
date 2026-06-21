@@ -535,37 +535,65 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 .rstat-val{font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.05em;line-height:1}
 .rstat-lbl{font-size:10px;color:var(--dim);font-weight:500;margin-top:5px;line-height:1.3}
 
-/* Day strip */
-.rdash-strip-wrap{
-  overflow-x:auto;margin:0 -20px;padding:0 20px 4px;
-  scrollbar-width:none;-webkit-overflow-scrolling:touch
+/* Monthly calendar grid */
+.month-cal-wrap{margin:0 0 6px}
+.month-cal-grid{width:100%}
+.mc-hdr-row{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  margin-bottom:6px
 }
-.rdash-strip-wrap::-webkit-scrollbar{display:none}
-.day-strip{display:flex;gap:8px;padding-bottom:4px;width:max-content}
-.day-card{
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  min-width:52px;padding:10px 6px 12px;border-radius:16px;cursor:default;
-  background:#F3F4F6;border:1.5px solid transparent;
-  transition:transform .15s,background .15s,box-shadow .15s;-webkit-tap-highlight-color:transparent;
-  position:relative
+.mc-hdr-cell{
+  text-align:center;font-size:10.5px;font-weight:700;
+  color:var(--dim);letter-spacing:.04em;text-transform:uppercase;
+  padding:4px 0 8px
 }
-.day-card.avail{cursor:pointer;background:rgba(22,163,74,.1);border-color:rgba(22,163,74,.25)}
-.day-card.avail .day-wd,.day-card.avail .day-num{color:#166534}
-.day-card.avail:hover{background:rgba(34,197,94,.28);transform:translateY(-2px)}
-.day-card.avail:active{transform:scale(.97)}
-.day-card.today{background:var(--nav-act);border-color:transparent}
-.day-card.today .day-wd,.day-card.today .day-num{color:#fff}
-.day-card.selected{background:var(--nav-act);border-color:transparent}
-.day-card.selected .day-wd,.day-card.selected .day-num{color:#fff}
-.day-card.past{opacity:.3;background:rgba(15,23,42,.03)}
-.day-wd{font-size:9.5px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.05em}
-.day-num{font-size:17px;font-weight:800;color:var(--text);letter-spacing:-.04em;line-height:1}
-.day-dot{
-  width:5px;height:5px;border-radius:50%;margin-top:2px;
-  background:var(--green);opacity:0;transition:opacity .2s
+.mc-body{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  gap:3px
 }
-.day-card.avail .day-dot{opacity:1}
-.day-card.selected .day-dot{background:#fff}
+.mc-cell{
+  aspect-ratio:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  border-radius:10px;position:relative;
+  -webkit-tap-highlight-color:transparent
+}
+.mc-empty{background:transparent}
+.mc-day{cursor:default}
+.mc-num{
+  font-size:13px;font-weight:600;color:var(--soft);
+  line-height:1;z-index:1
+}
+.mc-dot{
+  width:4px;height:4px;border-radius:50%;
+  background:var(--primary);margin-top:3px;
+  opacity:0;transition:opacity .2s
+}
+/* Past days */
+.mc-past .mc-num{color:var(--border);font-weight:400}
+/* Today */
+.mc-today .mc-num{
+  color:var(--primary);font-weight:800
+}
+.mc-today::before{
+  content:'';position:absolute;inset:4px;
+  border:1.5px solid var(--primary);border-radius:8px;
+  opacity:.5
+}
+/* Available */
+.mc-avail{cursor:pointer}
+.mc-avail .mc-num{color:var(--text);font-weight:700}
+.mc-avail .mc-dot{opacity:1}
+.mc-avail:hover{background:var(--primary-dim)}
+.mc-avail:hover .mc-num{color:var(--primary)}
+.mc-avail:active{transform:scale(.9)}
+/* Selected */
+.mc-sel{cursor:pointer;background:var(--primary)}
+.mc-sel .mc-num{color:#fff;font-weight:800}
+.mc-sel .mc-dot{background:#fff;opacity:1}
+.mc-sel::before{display:none}
+/* Today + avail overrides */
+.mc-today.mc-avail::before{opacity:0}
+.mc-today.mc-avail:hover{background:var(--primary-dim)}
 
 /* Slots area */
 .slots-area{

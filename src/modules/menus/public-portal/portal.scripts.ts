@@ -574,9 +574,9 @@ function renderSvcGrid(id,svcs){
       // highlight selected service
       el.querySelectorAll('.svc-grid-item').forEach(function(c){c.style.outline='';});
       item.style.outline='2px solid var(--primary)';
-      // scroll to day strip with a nudge
-      var strip=document.getElementById('dayStrip');
-      if(strip) strip.scrollIntoView({behavior:'smooth',block:'nearest'});
+      // scroll to calendar
+      var cal=document.getElementById('monthCal');
+      if(cal) cal.scrollIntoView({behavior:'smooth',block:'nearest'});
       // show prompt
       var lbl=document.getElementById('rdashMonthLbl');
       if(lbl){lbl.textContent='Elegí un día disponible ↑';lbl.style.color='var(--primary)';}
@@ -740,85 +740,101 @@ function renderAllCals(){
 }
 
 // ── Reservas Dashboard ────────────────────────────────────────────────────────
-var dashStripOffset=0; // week offset (0 = starts today)
+var dashMonthOffset=0; // 0 = current month, 1 = next, etc.
 var dashSelectedDate=null;
 
 function renderReservasDash(){
   var today=new Date();
   var todayStr=today.getFullYear()+'-'+pad2(today.getMonth()+1)+'-'+pad2(today.getDate());
 
-  // Stats
-  var availDates=Object.keys(calSlots).filter(function(d){return d>=todayStr&&calSlots[d]&&calSlots[d].length>0;}).sort();
-  var totalSlots=availDates.reduce(function(acc,d){return acc+(calSlots[d]?calSlots[d].length:0);},0);
-  var nextDate=availDates[0]||null;
+  // Target month
+  var target=new Date(today.getFullYear(),today.getMonth()+dashMonthOffset,1);
+  var tYear=target.getFullYear();
+  var tMonth=target.getMonth();
+  var tMonthStr=tYear+'-'+pad2(tMonth+1);
+
+  // Stats — current displayed month
+  var availDatesMonth=Object.keys(calSlots).filter(function(d){
+    return d>=todayStr&&calSlots[d]&&calSlots[d].length>0&&d.slice(0,7)===tMonthStr;
+  }).sort();
+  var totalSlotsMonth=availDatesMonth.reduce(function(acc,d){return acc+(calSlots[d]?calSlots[d].length:0);},0);
+  var allFuture=Object.keys(calSlots).filter(function(d){return d>=todayStr&&calSlots[d]&&calSlots[d].length>0;}).sort();
+  var nextDate=allFuture[0]||null;
 
   var el=document.getElementById('rstatDays');
-  if(el) el.textContent=String(availDates.length);
+  if(el) el.textContent=String(availDatesMonth.length);
   el=document.getElementById('rstatSlots');
-  if(el) el.textContent=String(totalSlots);
+  if(el) el.textContent=String(totalSlotsMonth);
   el=document.getElementById('rstatNext');
   if(el) el.textContent=nextDate?fmtDateShort(nextDate):'—';
 
   // Month label
   var labelEl=document.getElementById('rdashMonthLbl');
-  if(labelEl){
-    // Show month range of the strip
-    var stripStart=new Date(today);
-    stripStart.setDate(stripStart.getDate()+dashStripOffset*14);
-    labelEl.textContent=MONTHS[stripStart.getMonth()]+' '+stripStart.getFullYear();
-  }
+  if(labelEl) labelEl.textContent=MONTHS[tMonth]+' '+tYear;
 
-  // Day strip (14 days starting from offset)
-  renderDayStrip(today,todayStr);
+  // Calendar grid
+  renderMonthCal(today,todayStr,tYear,tMonth);
 
-  // Prev/next strip nav
+  // Prev/next nav
   var prev=document.getElementById('rdashPrev');
   var next=document.getElementById('rdashNext');
   if(prev){
-    prev.disabled=(dashStripOffset<=0);
-    prev.onclick=function(){if(dashStripOffset>0){dashStripOffset--;dashSelectedDate=null;renderReservasDash();}};
+    prev.disabled=(dashMonthOffset<=0);
+    prev.onclick=function(){if(dashMonthOffset>0){dashMonthOffset--;dashSelectedDate=null;renderReservasDash();}};
   }
   if(next){
-    next.onclick=function(){dashStripOffset++;dashSelectedDate=null;renderReservasDash();};
+    next.onclick=function(){dashMonthOffset++;dashSelectedDate=null;renderReservasDash();};
   }
 
-  // Restore slot view if a date was selected
   if(dashSelectedDate) showDaySlots(dashSelectedDate,todayStr);
   else hideSlots();
 }
 
-function renderDayStrip(today,todayStr){
-  var strip=document.getElementById('dayStrip');
-  if(!strip) return;
-  var DAYS_LABEL=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-  var html='';
-  for(var i=0;i<14;i++){
-    var d=new Date(today);
-    d.setDate(d.getDate()+dashStripOffset*14+i);
-    var dStr=d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate());
+function renderMonthCal(today,todayStr,tYear,tMonth){
+  var el=document.getElementById('monthCal');
+  if(!el) return;
+
+  var DAY_HDRS=['Lu','Ma','Mi','Ju','Vi','Sa','Do'];
+  var firstDay=new Date(tYear,tMonth,1);
+  var daysInMonth=new Date(tYear,tMonth+1,0).getDate();
+  // Monday-start: 0=Mon…6=Sun
+  var startOffset=(firstDay.getDay()+6)%7;
+
+  var html='<div class="mc-hdr-row">';
+  DAY_HDRS.forEach(function(h){html+='<div class="mc-hdr-cell">'+h+'</div>';});
+  html+='</div><div class="mc-body">';
+
+  // Empty leading cells
+  for(var e=0;e<startOffset;e++) html+='<div class="mc-cell mc-empty"></div>';
+
+  for(var d=1;d<=daysInMonth;d++){
+    var dStr=tYear+'-'+pad2(tMonth+1)+'-'+pad2(d);
     var isPast=dStr<todayStr;
     var isToday=dStr===todayStr;
     var hasSlots=!!(calSlots[dStr]&&calSlots[dStr].length);
     var isSelected=dStr===dashSelectedDate;
-    var cls='day-card';
-    if(isPast) cls+=' past';
-    else if(isSelected) cls+=' selected';
-    else if(isToday&&hasSlots) cls+=' avail today';
-    else if(isToday) cls+=' today';
-    else if(hasSlots) cls+=' avail';
-    html+='<div class="'+cls+'" data-day-date="'+dStr+'">'
-      +'<div class="day-wd">'+DAYS_LABEL[d.getDay()]+'</div>'
-      +'<div class="day-num">'+d.getDate()+'</div>'
-      +'<div class="day-dot"></div>'
+
+    var cls='mc-cell mc-day';
+    if(isSelected)      cls+=' mc-sel';
+    else if(isToday&&hasSlots) cls+=' mc-today mc-avail';
+    else if(isToday)    cls+=' mc-today';
+    else if(isPast)     cls+=' mc-past';
+    else if(hasSlots)   cls+=' mc-avail';
+
+    html+='<div class="'+cls+'" data-date="'+dStr+'">'
+      +'<span class="mc-num">'+d+'</span>'
+      +(hasSlots&&!isPast?'<span class="mc-dot"></span>':'')
       +'</div>';
   }
-  strip.innerHTML=html;
-  strip.querySelectorAll('.day-card.avail,.day-card.today.avail').forEach(function(card){
-    card.addEventListener('click',function(){
-      var dateStr=card.getAttribute('data-day-date');
+  html+='</div>';
+  el.innerHTML=html;
+
+  el.querySelectorAll('.mc-avail,.mc-today.mc-avail').forEach(function(cell){
+    cell.addEventListener('click',function(){
+      var dateStr=cell.getAttribute('data-date');
       if(!dateStr) return;
       dashSelectedDate=dateStr;
-      renderDayStrip(today,todayStr);
+      renderMonthCal(today,todayStr,tYear,tMonth);
       showDaySlots(dateStr,todayStr);
     });
   });
