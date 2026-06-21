@@ -540,44 +540,41 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 .month-cal-grid{width:100%}
 .mc-hdr-row{
   display:grid;grid-template-columns:repeat(7,1fr);
-  margin-bottom:6px
+  margin-bottom:2px
 }
 .mc-hdr-cell{
-  text-align:center;font-size:10.5px;font-weight:700;
+  text-align:center;font-size:9px;font-weight:700;
   color:var(--dim);letter-spacing:.04em;text-transform:uppercase;
-  padding:4px 0 8px
+  padding:2px 0 6px
 }
 .mc-body{
   display:grid;grid-template-columns:repeat(7,1fr);
-  gap:3px
+  gap:2px
 }
 .mc-cell{
-  aspect-ratio:1;display:flex;flex-direction:column;
+  height:36px;display:flex;flex-direction:column;
   align-items:center;justify-content:center;
-  border-radius:10px;position:relative;
+  border-radius:8px;position:relative;
   -webkit-tap-highlight-color:transparent
 }
 .mc-empty{background:transparent}
 .mc-day{cursor:default}
 .mc-num{
-  font-size:13px;font-weight:600;color:var(--soft);
+  font-size:12px;font-weight:600;color:var(--soft);
   line-height:1;z-index:1
 }
 .mc-dot{
-  width:4px;height:4px;border-radius:50%;
-  background:var(--primary);margin-top:3px;
+  width:3px;height:3px;border-radius:50%;
+  background:var(--primary);margin-top:2px;
   opacity:0;transition:opacity .2s
 }
 /* Past days */
 .mc-past .mc-num{color:var(--border);font-weight:400}
 /* Today */
-.mc-today .mc-num{
-  color:var(--primary);font-weight:800
-}
+.mc-today .mc-num{color:var(--primary);font-weight:800}
 .mc-today::before{
-  content:'';position:absolute;inset:4px;
-  border:1.5px solid var(--primary);border-radius:8px;
-  opacity:.5
+  content:'';position:absolute;inset:3px;
+  border:1.5px solid var(--primary);border-radius:6px;opacity:.45
 }
 /* Available */
 .mc-avail{cursor:pointer}
@@ -591,7 +588,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 .mc-sel .mc-num{color:#fff;font-weight:800}
 .mc-sel .mc-dot{background:#fff;opacity:1}
 .mc-sel::before{display:none}
-/* Today + avail overrides */
+/* Today + avail */
 .mc-today.mc-avail::before{opacity:0}
 .mc-today.mc-avail:hover{background:var(--primary-dim)}
 
