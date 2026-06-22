@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { getSlugByValueService } from "../../slug/slug.service";
 import { quoteHtml } from "../../quotes/quote-html";
-import { getProductsRepository, getActiveProductsRepository } from "../../quotes/products/products.repository";
+import { getActiveServicesByUserId } from "../../appointments/calendar-services.repository";
 import { companyProfileRepository } from "../../profiles/company_profile_repository";
 import { findEnabledModulesByUserId } from "../user-modules.repository";
 import { renderPortalHtml } from "./portal.screen";
@@ -73,7 +73,7 @@ export const publicPortalController = {
       }
 
 
-      const products = await getProductsRepository(slug.user_id);
+      const products = await getActiveServicesByUserId(slug.user_id);
 
         const html = quoteHtml({
           brand: slug.business_name,
@@ -124,7 +124,7 @@ export const publicPortalController = {
       }
 
       const [products, profile, enabledModules] = await Promise.all([
-        getActiveProductsRepository(slug.user_id),
+        getActiveServicesByUserId(slug.user_id),
         companyProfileRepository.getByUserId(slug.user_id),
         findEnabledModulesByUserId(slug.user_id),
       ]);
