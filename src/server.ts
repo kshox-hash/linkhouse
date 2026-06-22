@@ -9,7 +9,6 @@ import rateLimit from "express-rate-limit";
 import mpWebhookRouter from "./modules/webhook/mp-webhook.router";
 import mpConnectRouter from "./modules/mp-connect/mp-connect.router";
 import adminRouter from "./modules/admin/admin.router";
-import servicesRouter from "./modules/services/services.router";
 import clientsRouter from "./modules/clients/clients.router";
 import blocksRouter from "./modules/blocks/blocks.router";
 import { startReminderCron } from "./modules/reminders/reminder.cron";
@@ -34,7 +33,6 @@ import { portalSessionMiddleware } from "./modules/menus/public-portal/portal-se
 import productsRouter from "./modules/quotes/quotes.router";
 import statisticsRouter from "./modules/stadistics/stadistics.router";
 import quotesExtendedRouter from "./modules/quotes/quotes-extended.routes";
-import { initQuoteServicesTable } from "./modules/quotes/quote-services/quote-services.repository";
 import { initQuoteHistoryTable } from "./modules/quotes/quote-history/quote-history.repository";
 import { initCalendarBookingPriceColumn } from "./modules/appointments/appointments-admin.repository";
 import { initCalendarServicesTable } from "./modules/appointments/calendar-services.repository";
@@ -127,7 +125,6 @@ app.use(publicPortalRouter);
 app.use("/products", productsRouter);
 app.use("/api", statisticsRouter);
 app.use("/api", quotesExtendedRouter);
-app.use("/api", servicesRouter);
 app.use("/api", clientsRouter);
 app.use("/api", blocksRouter);
 app.use(errorMiddleware);
@@ -137,7 +134,6 @@ const server = app.listen(PORT, async () => {
   console.log(`[server] Escuchando en puerto ${PORT}`);
   startReminderCron();
   await Promise.all([
-    initQuoteServicesTable().catch((e) => console.error("[init] quote_services:", e)),
     initQuoteHistoryTable().catch((e) => console.error("[init] quote_history:", e)),
     initCalendarBookingPriceColumn().catch((e) => console.error("[init] calendar_booking_price:", e)),
     initCalendarServicesTable().catch((e) => console.error("[init] calendar_services:", e)),

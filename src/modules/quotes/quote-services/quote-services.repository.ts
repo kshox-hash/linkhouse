@@ -1,28 +1,12 @@
 import DB from "../../../db/db_configuration";
 
-export async function initQuoteServicesTable(): Promise<void> {
-  await DB.getPool().query(`
-    CREATE TABLE IF NOT EXISTS quote_services (
-      id          UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
-      user_id     TEXT          NOT NULL,
-      name        TEXT          NOT NULL,
-      description TEXT,
-      unit        TEXT          NOT NULL DEFAULT 'unidad',
-      price       NUMERIC(12,2) NOT NULL DEFAULT 0,
-      is_active   BOOLEAN       NOT NULL DEFAULT true,
-      created_at  TIMESTAMPTZ   DEFAULT NOW(),
-      updated_at  TIMESTAMPTZ   DEFAULT NOW()
-    );
-    CREATE INDEX IF NOT EXISTS idx_quote_services_user_id ON quote_services(user_id);
-  `);
-}
-
 export async function listQuoteServices(userId: string) {
   const res = await DB.getPool().query(
-    `SELECT id, name, description, unit, price, is_active, created_at
-     FROM quote_services
+    `SELECT id::text, name, description, COALESCE(unit, 'unidad') AS unit,
+            price, is_active, created_at
+     FROM calendar_services
      WHERE user_id = $1
-     ORDER BY created_at ASC`,
+     ORDER BY sort_order ASC, name ASC`,
     [userId]
   );
   return res.rows;
@@ -33,9 +17,10 @@ export async function createQuoteService(
   params: { name: string; description?: string; unit: string; price: number }
 ) {
   const res = await DB.getPool().query(
-    `INSERT INTO quote_services (user_id, name, description, unit, price)
+    `INSERT INTO calendar_services (user_id, name, description, unit, price)
      VALUES ($1, $2, $3, $4, $5)
-     RETURNING *`,
+     RETURNING id::text, name, description, COALESCE(unit, 'unidad') AS unit,
+               price, is_active, created_at`,
     [userId, params.name, params.description || null, params.unit, params.price]
   );
   return res.rows[0];
@@ -53,7 +38,7 @@ export async function updateQuoteService(
   }
 ) {
   const fields: string[] = [];
-  const values: any[] = [];
+  const values: unknown[] = [];
   let i = 1;
 
   if (params.name        !== undefined) { fields.push(`name = $${i++}`);        values.push(params.name); }
@@ -63,13 +48,13 @@ export async function updateQuoteService(
   if (params.isActive    !== undefined) { fields.push(`is_active = $${i++}`);   values.push(params.isActive); }
 
   if (fields.length === 0) return null;
-  fields.push(`updated_at = now()`);
   values.push(serviceId, userId);
 
   const res = await DB.getPool().query(
-    `UPDATE quote_services SET ${fields.join(", ")}
+    `UPDATE calendar_services SET ${fields.join(", ")}
      WHERE id = $${i++} AND user_id = $${i++}
-     RETURNING *`,
+     RETURNING id::text, name, description, COALESCE(unit, 'unidad') AS unit,
+               price, is_active, created_at`,
     values
   );
   return res.rows[0] || null;
@@ -77,7 +62,7 @@ export async function updateQuoteService(
 
 export async function deleteQuoteService(userId: string, serviceId: string) {
   const res = await DB.getPool().query(
-    `DELETE FROM quote_services WHERE id = $1 AND user_id = $2 RETURNING id`,
+    `DELETE FROM calendar_services WHERE id = $1 AND user_id = $2 RETURNING id`,
     [serviceId, userId]
   );
   return res.rows[0] || null;

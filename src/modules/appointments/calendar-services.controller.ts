@@ -40,15 +40,17 @@ export const calendarServicesController = {
     try {
       const userId = String(req.user?.userId ?? "").trim();
       const body   = req.body || {};
-      const name   = String(body.name  || "").trim();
-      const price  = Number(body.price ?? 0);
-      const color  = String(body.color || "#63ACF1").trim();
+      const name        = String(body.name  || "").trim();
+      const description = body.description != null ? String(body.description).trim() || null : null;
+      const unit        = String(body.unit  || "unidad").trim();
+      const price       = Number(body.price ?? 0);
+      const color       = String(body.color || "#63ACF1").trim();
       const durationMinutes = body.durationMinutes != null ? Number(body.durationMinutes) : null;
 
       if (!name) return res.status(400).json({ ok: false, message: "El nombre es obligatorio." });
       if (price < 0) return res.status(400).json({ ok: false, message: "El precio no puede ser negativo." });
 
-      const service = await createService({ userId, name, price, durationMinutes, color });
+      const service = await createService({ userId, name, description, unit, price, durationMinutes, color });
       return res.status(201).json({ ok: true, service });
     } catch (err) {
       console.error("[calendar-services] create:", err);
