@@ -626,15 +626,17 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 .svc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .svc-grid-item{
   background:var(--panel);border:1px solid var(--border);border-radius:18px;
-  padding:16px 14px;cursor:pointer;
+  padding:14px;cursor:pointer;
   transition:border-color .18s,background .18s;-webkit-tap-highlight-color:transparent;
-  display:flex;flex-direction:column;gap:6px
+  display:flex;flex-direction:row;align-items:center;gap:12px
 }
 .svc-grid-item:hover{border-color:var(--primary);background:var(--primary-dim)}
-.svc-grid-dot{width:10px;height:10px;border-radius:50%;margin-bottom:2px}
+.svc-grid-img{width:54px;height:54px;border-radius:12px;object-fit:cover;flex-shrink:0;border:1px solid var(--border)}
+.svc-grid-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.svc-grid-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
 .svc-grid-name{font-size:13px;font-weight:700;color:var(--text);letter-spacing:-.03em;line-height:1.3}
 .svc-grid-dur{font-size:11px;color:var(--dim)}
-.svc-grid-price{font-size:14px;font-weight:800;color:var(--primary);margin-top:auto;padding-top:6px;font-variant-numeric:tabular-nums}
+.svc-grid-price{font-size:14px;font-weight:800;color:var(--primary);flex-shrink:0;font-variant-numeric:tabular-nums}
 
 /* Loader */
 .loader-row{display:flex;align-items:center;gap:10px;padding:32px 0;color:var(--dim);font-size:13.5px;justify-content:center}
