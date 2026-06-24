@@ -193,7 +193,9 @@ export const publicPortalController = {
 
       return res.json({ ok: true });
     } catch (e: any) {
-      return res.status(500).json({ ok: false, message: e.message });
+      const msg: string = e?.message || String(e) || "Error interno";
+      console.error("[submitReview]", msg, e);
+      return res.status(500).json({ ok: false, message: msg });
     }
   },
 };
