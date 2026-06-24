@@ -90,7 +90,9 @@ function closePanel(id){
 function openQuotePanel(){renderQPStep1();openPanel('quotePanel');}
 
 // ── Booking flow state ────────────────────────────────────────────────────────
-var bk={date:null,svc:null,time:null,step:null,provider:null};
+var bk={date:null,svc:null,time:null,step:null,provider:null,entry:null};
+var bkCalYear=new Date().getFullYear();
+var bkCalMonth=new Date().getMonth();
 
 // ── Providers (team members) ──────────────────────────────────────────────────
 var providersCache=[];
@@ -117,29 +119,93 @@ function setBkHeader(title,showBack){
 // Entry: click on a calendar day (time unknown)
 function openBookingFromDay(dateStr){
   hideCalTip();
-  bk.date=dateStr; bk.time=null; bk.provider=null;
+  bk.date=dateStr; bk.time=null; bk.provider=null; bk.svc=null; bk.entry='calendar';
   openPanel('bookingPanel');
-  if(bk.svc){
-    if(providersCache.length>0) renderBkProviderStep();
-    else renderBkTimeStep();
-  } else {
-    bk.step='svc';
-    renderBkSvcStep();
-  }
+  renderBkSvcStep();
 }
 
 // Entry: click on a time slot chip (day + time known)
 function openBookingFromSlot(dateStr,time){
   hideCalTip();
-  bk.date=dateStr; bk.time=time; bk.provider=null;
+  bk.date=dateStr; bk.time=time; bk.provider=null; bk.svc=null; bk.entry='calendar';
   openPanel('bookingPanel');
-  if(bk.svc){
-    if(providersCache.length>0) renderBkProviderStep();
-    else renderBkFormStep();
-  } else {
-    bk.step='svc';
-    renderBkSvcStep();
+  renderBkSvcStep();
+}
+
+// Entry: click "Reservar" from a service card
+function openBookingFromService(svc){
+  if(!svc) return;
+  bk.svc=svc; bk.date=null; bk.time=null; bk.provider=null; bk.entry='service';
+  bkCalYear=calYear; bkCalMonth=calMonth;
+  closePanel('svcDetailPanel');
+  renderBkDateStep();
+  openPanel('bookingPanel');
+}
+
+function renderBkDateStep(){
+  bk.step='date';
+  setBkHeader(bk.svc?escH(bk.svc.name):'Elegí una fecha',true);
+  var body=document.getElementById('bkBody'); if(!body) return;
+  var today=new Date();
+  var todayStr=today.getFullYear()+'-'+pad2(today.getMonth()+1)+'-'+pad2(today.getDate());
+  var year=bkCalYear; var month=bkCalMonth;
+  var MONTHS_LBL=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var firstDay=new Date(year,month,1);
+  var daysInMonth=new Date(year,month+1,0).getDate();
+  var startDow=firstDay.getDay();
+  var dayNames=DAYS_SHORT.map(function(d){return '<div class="cal-day-name">'+d+'</div>';}).join('');
+  var cells='';
+  for(var i=0;i<startDow;i++) cells+='<div class="cal-cell cal-empty"></div>';
+  for(var d=1;d<=daysInMonth;d++){
+    var dStr=year+'-'+pad2(month+1)+'-'+pad2(d);
+    var dd=new Date(year,month,d);
+    var isPast=dd<new Date(today.getFullYear(),today.getMonth(),today.getDate());
+    var isToday=dStr===todayStr;
+    var hasSlots=!!(calSlots[dStr]&&calSlots[dStr].length);
+    var cls='cal-cell';
+    if(isToday)       cls+=' cal-today';
+    else if(isPast)   cls+=' cal-past';
+    else if(hasSlots) cls+=' cal-avail';
+    else              cls+=' cal-taken';
+    cells+='<div class="'+cls+'" data-bk-date="'+dStr+'">'+d+'</div>';
   }
+  var isPrevDisabled=(year===today.getFullYear()&&month<=today.getMonth());
+  var navArrowL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>';
+  var navArrowR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg>';
+  body.innerHTML='<div class="bk-scroll">'
+    +'<div class="bk-cal-nav-row">'
+    +'<button class="bk-cal-nav-btn" id="bkDatePrev"'+(isPrevDisabled?' disabled':'')+'>'+navArrowL+'</button>'
+    +'<span class="bk-cal-month-lbl">'+MONTHS_LBL[month]+' '+year+'</span>'
+    +'<button class="bk-cal-nav-btn" id="bkDateNext">'+navArrowR+'</button>'
+    +'</div>'
+    +'<div class="cal-grid" style="margin-bottom:14px">'+dayNames+cells+'</div>'
+    +'<div class="cal-legend">'
+    +'<span class="cal-leg-item"><span class="cal-leg-dot" style="background:var(--primary)"></span>Disponible</span>'
+    +'<span class="cal-leg-item"><span class="cal-leg-dot" style="background:var(--border)"></span>Sin turnos</span>'
+    +'</div>'
+    +'</div>';
+  body.querySelectorAll('.cal-cell[data-bk-date]').forEach(function(cell){
+    if(!cell.classList.contains('cal-avail')&&!cell.classList.contains('cal-today')) return;
+    cell.style.cursor='pointer';
+    cell.addEventListener('click',function(){
+      var dateStr=cell.getAttribute('data-bk-date');
+      if(!dateStr||!(calSlots[dateStr]&&calSlots[dateStr].length)) return;
+      bk.date=dateStr; bk.time=null;
+      if(providersCache.length>0) renderBkProviderStep();
+      else renderBkTimeStep();
+    });
+  });
+  var prev=body.querySelector('#bkDatePrev');
+  var next=body.querySelector('#bkDateNext');
+  if(prev) prev.addEventListener('click',function(){
+    if(prev.hasAttribute('disabled')) return;
+    bkCalMonth--;if(bkCalMonth<0){bkCalMonth=11;bkCalYear--;}
+    renderBkDateStep();
+  });
+  if(next) next.addEventListener('click',function(){
+    bkCalMonth++;if(bkCalMonth>11){bkCalMonth=0;bkCalYear++;}
+    renderBkDateStep();
+  });
 }
 
 function renderBkProviderStep(){
@@ -234,6 +300,7 @@ function renderBkTimeStep(){
 }
 
 function renderBkFormStep(){
+  if(!bk.svc){ renderBkSvcStep(); return; }
   bk.step='form';
   setBkHeader('Tus datos',true);
   var body=document.getElementById('bkBody'); if(!body) return;
@@ -307,7 +374,10 @@ function renderBkSuccess(checkoutUrl){
     +'<button class="btn-primary" type="button" id="bkDone" style="width:100%;margin-top:28px">Listo</button>'
     +'</div>';
   var done=document.getElementById('bkDone');
-  if(done) done.addEventListener('click',function(){closePanel('bookingPanel');});
+  if(done) done.addEventListener('click',function(){
+    closePanel('bookingPanel');
+    bk.svc=null;bk.date=null;bk.time=null;bk.provider=null;bk.entry=null;
+  });
 }
 
 function fmtDateLabel(dateStr){
@@ -362,19 +432,26 @@ document.addEventListener('click',function(e){
   // close / back booking panel
   if(t.closest('#closeBooking')){ closePanel('bookingPanel'); return; }
   if(t.closest('#bkBack')){
-    if(bk.step==='provider') renderBkSvcStep();
-    else if(bk.step==='time'){ if(providersCache.length>0) renderBkProviderStep(); else renderBkSvcStep(); }
+    if(bk.step==='svc')      closePanel('bookingPanel');
+    else if(bk.step==='date') renderBkSvcStep();
+    else if(bk.step==='provider'){
+      if(bk.entry==='service') renderBkDateStep(); else renderBkSvcStep();
+    }
+    else if(bk.step==='time'){
+      if(providersCache.length>0) renderBkProviderStep();
+      else if(bk.entry==='service') renderBkDateStep();
+      else renderBkSvcStep();
+    }
     else if(bk.step==='form') renderBkTimeStep();
     else closePanel('bookingPanel');
     return;
   }
 
-  // home service card → booking
+  // home service card / grid → booking
   var homeSvcCard=t.closest('[data-bk-svc-home]');
   if(homeSvcCard){
     var hidx=parseInt(homeSvcCard.getAttribute('data-bk-svc-home')||'0',10);
-    bk.date=null;bk.svc=svcsCache[hidx]||null;bk.time=null;bk.provider=null;
-    showTab('reservas');
+    openBookingFromService(svcsCache[hidx]||null);
     return;
   }
 
@@ -383,7 +460,10 @@ document.addEventListener('click',function(e){
   if(svcItem){
     var idx=parseInt(svcItem.getAttribute('data-bk-svc-i')||'0',10);
     bk.svc=svcsCache[idx]||null;
-    if(providersCache.length>0) renderBkProviderStep();
+    if(!bk.date){
+      bk.entry='service'; bkCalYear=calYear; bkCalMonth=calMonth;
+      renderBkDateStep();
+    } else if(providersCache.length>0) renderBkProviderStep();
     else if(bk.time) renderBkFormStep();
     else renderBkTimeStep();
     return;
@@ -514,16 +594,12 @@ function openSvcDetailPanel(svc,color){
   }
 
   html+='<div class="ddp-cta">'
-    +'<button class="btn-primary ddp-book-btn" id="sdpBookBtn">Reservar este servicio</button>'
+    +'<button class="btn-primary ddp-book-btn" id="sdpBookBtn">Reservar</button>'
     +'</div>';
 
   body.innerHTML=html;
   var bookBtn=body.querySelector('#sdpBookBtn');
-  if(bookBtn) bookBtn.addEventListener('click',function(){
-    bk.svc=svc;bk.date=null;bk.time=null;bk.provider=null;
-    closePanel('svcDetailPanel');
-    showTab('reservas');
-  });
+  if(bookBtn) bookBtn.addEventListener('click',function(){ openBookingFromService(svc); });
   openPanel('svcDetailPanel');
 }
 
@@ -606,16 +682,7 @@ function renderSvcGrid(id,svcs){
       var idx=parseInt(item.getAttribute('data-bk-svc')||'0',10);
       var svc=svcsCache[idx];
       if(!svc) return;
-      bk.svc=svc; bk.date=null; bk.time=null; bk.provider=null;
-      // highlight selected service
-      el.querySelectorAll('.svc-grid-item').forEach(function(c){c.style.outline='';});
-      item.style.outline='2px solid var(--primary)';
-      // scroll to calendar
-      var cal=document.getElementById('monthCal');
-      if(cal) cal.scrollIntoView({behavior:'smooth',block:'nearest'});
-      // show prompt
-      var lbl=document.getElementById('rdashMonthLbl');
-      if(lbl){lbl.textContent='Elegí un día disponible ↑';lbl.style.color='var(--primary)';}
+      openBookingFromService(svc);
     });
   });
 }

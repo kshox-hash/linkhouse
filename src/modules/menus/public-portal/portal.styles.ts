@@ -821,6 +821,16 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 .sp-back:hover{background:var(--primary-dim)}
 .sp-back svg{width:14px;height:14px;stroke:var(--soft);stroke-width:2.2}
 .bk-scroll{padding:16px 20px;overflow-y:auto;flex:1}
+.bk-cal-nav-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.bk-cal-month-lbl{font-size:14px;font-weight:700;color:var(--text)}
+.bk-cal-nav-btn{
+  width:32px;height:32px;border-radius:8px;background:var(--bg);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);
+  transition:background .15s,border-color .15s;-webkit-tap-highlight-color:transparent
+}
+.bk-cal-nav-btn:hover:not([disabled]){background:var(--primary-dim);border-color:var(--primary)}
+.bk-cal-nav-btn[disabled]{opacity:.35;cursor:default}
+.bk-cal-nav-btn svg{width:14px;height:14px}
 .bk-date-badge{
   display:inline-flex;align-items:center;gap:6px;background:var(--primary-dim);
   color:var(--primary);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;
