@@ -88,13 +88,32 @@ app.use(
 app.use(cookieParser());
 app.use(express.json({ limit: "1mb" }));
 
-// ─── Rate limiting en rutas de auth ──────────────────────────────────────────
+// ─── Rate limiting ────────────────────────────────────────────────────────────
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 20,                   // máximo 20 intentos por IP
+  windowMs: 15 * 60 * 1000,
+  max: 20,
   standardHeaders: true,
   legacyHeaders: false,
   message: { ok: false, message: "Demasiados intentos. Intenta en 15 minutos." },
+});
+
+// Portal público: lectura — límite generoso para navegación normal
+const publicReadLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { ok: false, message: "Demasiadas solicitudes. Intenta en un momento." },
+});
+
+// Portal público: escritura (POST) — límite estricto, ignora GETs
+const publicWriteLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 30,
+  skip: (req) => req.method !== "POST",
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { ok: false, message: "Demasiadas solicitudes. Intenta más tarde." },
 });
 
 // ─── Health check ─────────────────────────────────────────────────────────────
@@ -114,7 +133,9 @@ app.use(calendarAdminRoutes);
 app.use(calendarProvidersRoutes);
 app.use(calendarServicesRoutes);
 app.use("/auth", authLimiter, loginRoutes);
-app.use("/api/public", portalSessionMiddleware);
+// Limiters aplicados ANTES de las rutas que los necesitan
+app.use("/api/public", publicReadLimiter, publicWriteLimiter, portalSessionMiddleware);
+app.use("/shop",       publicReadLimiter, publicWriteLimiter);
 app.use(publicPortalRouter);
 app.use(calendarPublicRouter);
 app.use("/api", chatAdminRouter);

@@ -12,6 +12,9 @@ export const JWT_SECRET      = requireEnv("JWT_SECRET");
 
 // CORS: lista de orígenes permitidos separados por coma
 // Ej: CORS_ORIGIN=https://app.tudominio.com,https://admin.tudominio.com
+if (!process.env.CORS_ORIGIN && process.env.NODE_ENV === "production") {
+  throw new Error("[startup] CORS_ORIGIN es requerido en producción");
+}
 export const CORS_ORIGINS: string[] = (process.env.CORS_ORIGIN ?? "http://localhost:3000")
   .split(",")
   .map((o) => o.trim())

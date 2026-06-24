@@ -2,6 +2,7 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import jwt from "jsonwebtoken";
 import DB from "../../db/db_configuration";
+import { consumePortalOAuthState } from "../portal-oauth-states";
 
 if (process.env.GOOGLE_CLIENT_ID) passport.use(
   new GoogleStrategy(
@@ -17,10 +18,12 @@ if (process.env.GOOGLE_CLIENT_ID) passport.use(
         const name    = profile.displayName;
         const picture = profile.photos?.[0]?.value;
 
-        // flujo portal: state = "portal:<slug>"
+        // flujo portal: state = "portal:<csrf-token>" validado server-side
         const rawState = (req.query?.state as string) || "";
         if (rawState.startsWith("portal:")) {
-          const slug = rawState.slice(7);
+          const token = rawState.slice(7);
+          const slug = consumePortalOAuthState(token);
+          if (!slug) return done(new Error("Estado OAuth inválido o expirado"));
           return done(null, { __type: "portal", slug, name, email, picture });
         }
 

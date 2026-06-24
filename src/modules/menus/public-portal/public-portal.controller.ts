@@ -181,7 +181,6 @@ export const publicPortalController = {
 
       const portalUser = (req as any).portalUser as { name?: string; email?: string; picture?: string } | undefined;
 
-      console.log("[submitReview] slug.user_id:", slug.user_id, "type:", typeof slug.user_id);
       await reviewsRepo.create(
         slug.user_id, r,
         comment?.trim() || null,
@@ -194,9 +193,8 @@ export const publicPortalController = {
 
       return res.json({ ok: true });
     } catch (e: any) {
-      const msg: string = e?.message || String(e) || "Error interno";
-      console.error("[submitReview]", msg, e);
-      return res.status(500).json({ ok: false, message: msg });
+      console.error("[submitReview]", e);
+      return res.status(500).json({ ok: false, message: "Error al guardar la reseña." });
     }
   },
 };

@@ -2,6 +2,7 @@ import { Router } from "express";
 import passport from "passport";
 import { loginController, googleLoginController, googleStartController,
   googleCallbackController,} from "./login.controller";
+import { createPortalOAuthState } from "./portal-oauth-states";
 
 const router = Router();
 
@@ -10,9 +11,10 @@ router.post("/google", googleLoginController);
 
 router.get("/google/start", googleStartController);
 
-// Portal customer login — reutiliza el mismo callback URL ya registrado en Google
+// Portal customer login — state contiene un token CSRF + slug encapsulado server-side
 router.get("/portal/:slug/google", (req, res, next) => {
-  const state = "portal:" + req.params["slug"];
+  const token = createPortalOAuthState(req.params["slug"]);
+  const state = "portal:" + token;
   passport.authenticate("google", { scope: ["profile", "email"], session: false, state } as any)(req, res, next);
 });
 

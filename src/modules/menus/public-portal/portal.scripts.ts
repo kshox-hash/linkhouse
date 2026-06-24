@@ -139,6 +139,8 @@ function openBookingFromService(svc){
   if(!svc) return;
   bk.svc=svc; bk.date=null; bk.time=null; bk.provider=null; bk.entry='service';
   bkCalYear=calYear; bkCalMonth=calMonth;
+  ensureServices();
+  if(!calLoaded) loadCalendar();
   closePanel('svcDetailPanel');
   renderBkDateStep();
   openPanel('bookingPanel');
@@ -148,6 +150,11 @@ function renderBkDateStep(){
   bk.step='date';
   setBkHeader(bk.svc?escH(bk.svc.name):'Elegí una fecha',true);
   var body=document.getElementById('bkBody'); if(!body) return;
+  if(!calLoaded){
+    body.innerHTML='<div class="bk-scroll"><div class="cal-loading"><div class="spinner"></div>Cargando calendario…</div></div>';
+    setTimeout(function(){if(bk.step==='date') renderBkDateStep();},1200);
+    return;
+  }
   var today=new Date();
   var todayStr=today.getFullYear()+'-'+pad2(today.getMonth()+1)+'-'+pad2(today.getDate());
   var year=bkCalYear; var month=bkCalMonth;
@@ -242,7 +249,7 @@ function openBookingPanel(){ showTab('reservas'); }
 
 function renderBkSvcStep(){
   bk.step='svc';
-  var label=fmtDateLabel(bk.date);
+  var label=bk.date?fmtDateLabel(bk.date):'Elegí un servicio';
   setBkHeader(label,false);
   var body=document.getElementById('bkBody'); if(!body) return;
   if(!svcsLoaded){
@@ -269,9 +276,9 @@ function renderBkSvcStep(){
       +'<div class="bk-svc-arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>'
       +'</div>';
   }).join('');
-  var dateBadge='<div class="bk-date-badge">'
+  var dateBadge=bk.date?('<div class="bk-date-badge">'
     +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'
-    +escH(label)+'</div>';
+    +escH(fmtDateLabel(bk.date))+'</div>'):'';
   body.innerHTML='<div class="bk-scroll">'+dateBadge
     +'<div class="bk-sec-title">Elegí un servicio</div>'+rows+'</div>';
 }
@@ -1032,7 +1039,7 @@ function showDaySlots(dateStr,todayStr){
   }
   area.style.display='block';
   var closeBtn=document.getElementById('slotsClose');
-  if(closeBtn) closeBtn.onclick=function(){dashSelectedDate=null;hideSlots();renderDayStrip(new Date(),todayStr);};
+  if(closeBtn) closeBtn.onclick=function(){dashSelectedDate=null;hideSlots();};
 }
 
 function hideSlots(){

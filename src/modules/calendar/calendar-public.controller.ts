@@ -250,7 +250,7 @@ export const calendarPublicController = {
       console.error("[calendar] Error creando reserva:", error);
       return res.status(500).json({
         ok: false,
-        message: error instanceof Error ? error.message : "No se pudo crear la reserva.",
+        message: "No se pudo crear la reserva.",
       });
     }
   },
@@ -347,7 +347,7 @@ export const calendarPublicController = {
       console.error("[calendar] Error creando pago:", error);
       return res.status(500).json({
         ok: false,
-        message: error instanceof Error ? error.message : "No se pudo crear el pago.",
+        message: "No se pudo crear el pago.",
       });
     }
   },

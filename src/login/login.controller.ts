@@ -1,5 +1,12 @@
 import { Request, Response } from "express";
 import { loginUser } from "./login.service";
+
+const KNOWN_AUTH_MSGS = new Set([
+  "Usuario no existe",
+  "Credenciales inválidas",
+  "Token de Google inválido",
+  "Google no devolvió correo",
+]);
 import jwt from "jsonwebtoken";
 import passport from "passport";
 
@@ -66,11 +73,8 @@ export async function loginController(req: Request, res: Response) {
     });
   } catch (error: any) {
     console.error("LOGIN ERROR:", error.message);
-
-    return res.status(401).json({
-      ok: false,
-      message: error.message,
-    });
+    const msg = KNOWN_AUTH_MSGS.has(error?.message) ? error.message : "Error de autenticación.";
+    return res.status(401).json({ ok: false, message: msg });
   }
 }
 
@@ -98,10 +102,7 @@ export async function googleLoginController(req: Request, res: Response) {
     });
   } catch (error: any) {
     console.error("GOOGLE LOGIN ERROR:", error.message);
-
-    return res.status(401).json({
-      ok: false,
-      message: error.message,
-    });
+    const msg = KNOWN_AUTH_MSGS.has(error?.message) ? error.message : "Error de autenticación.";
+    return res.status(401).json({ ok: false, message: msg });
   }
 }
