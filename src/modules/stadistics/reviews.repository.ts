@@ -3,6 +3,20 @@ import DB from "../../db/db_configuration";
 export async function initReviewsGoogleColumns(): Promise<void> {
   const pool = DB.getPool();
   await pool.query(`
+    CREATE TABLE IF NOT EXISTS reviews (
+      id              SERIAL PRIMARY KEY,
+      user_id         TEXT        NOT NULL,
+      rating          INTEGER     NOT NULL CHECK (rating BETWEEN 1 AND 5),
+      comment         TEXT,
+      client_name     TEXT,
+      module_id       TEXT,
+      google_name     TEXT,
+      google_email    TEXT,
+      google_avatar_url TEXT,
+      created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `);
+  await pool.query(`
     ALTER TABLE reviews
       ADD COLUMN IF NOT EXISTS google_name       TEXT,
       ADD COLUMN IF NOT EXISTS google_email      TEXT,

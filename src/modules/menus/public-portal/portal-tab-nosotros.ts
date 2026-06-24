@@ -38,7 +38,7 @@ export function nosotrosTabHtml(products: Product[]): string {
 
   return `<div id="panel-nosotros" class="panel">
   <div class="pscroll">
-    <div class="sec-hdr" style="margin-bottom:16px">
+    <div class="sec-hdr">
       <div>
         <div class="sec-title">Productos &amp; Servicios</div>
         <div class="sec-sub">${hasProducts ? `${products.length} disponible${products.length !== 1 ? "s" : ""}` : "Sin productos aún"}</div>
