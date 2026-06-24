@@ -6,7 +6,7 @@ type Product = {
   price: number;
   description?: string | null;
   color?: string | null;
-  photo?: string | null;
+  photos?: string[];
 };
 
 function fmtPrice(n: number): string {
@@ -19,11 +19,12 @@ function buildProductCard(product: Product): string {
   const price = fmtPrice(product.price);
   const color = escapeHtml(product.color || "#63ACF1");
 
-  const thumb = product.photo
-    ? `<img class="prd-thumb" src="${escapeHtml(product.photo)}" alt="" loading="lazy">`
+  const firstPhoto = product.photos && product.photos.length > 0 ? product.photos[0] : null;
+  const thumb = firstPhoto
+    ? `<img class="prd-thumb" src="${escapeHtml(firstPhoto)}" alt="" loading="lazy">`
     : `<div class="prd-thumb prd-thumb-dot" style="background:${color}"></div>`;
 
-  return `<div class="prd-card" data-name="${name.toLowerCase()}">
+  return `<div class="prd-card" data-name="${name.toLowerCase()}" data-prod-id="${escapeHtml(String(product.id))}">
   ${thumb}
   <div class="prd-info">
     <div class="prd-name">${name}</div>

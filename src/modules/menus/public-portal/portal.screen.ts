@@ -23,7 +23,7 @@ export type PortalViewData = {
   whatsappNumber?: string | null;
   businessHours?: string | null;
   enabledModules: MenuModuleItem[];
-  products: { id: string|number; name: string; price: number; description?: string|null; code?: string|null }[];
+  products: { id: string|number; name: string; price: number; description?: string|null; color?: string|null; photos?: string[] }[];
   portalUser?: { name?: string; email?: string; picture?: string } | null;
 };
 
@@ -303,6 +303,16 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
     </button>
   </div>
   <div class="sp-body" id="sdpBody"></div>
+</div>
+
+<div class="slide-panel" id="prodDetailPanel">
+  <div class="sp-hdr" id="pdpHdr">
+    <span class="sp-title" id="pdpTitle">Producto</span>
+    <button class="sp-close" id="closeProdDetail" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="sp-body" id="pdpBody"></div>
 </div>
 
 <script>${portalScripts(publicSlug, businessName, userId, enabledModules, products, { phone: s.phone, address: s.address, city: s.city, description: s.desc, welcomeMessage: welcomeMessage ?? null, businessHours: s.hours, instagramUrl: s.ig, whatsappNumber: s.wa }, initials)}</script>

@@ -1417,6 +1417,21 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
   border-radius:12px;object-fit:cover;flex-shrink:0;
   border:1px solid var(--border)
 }
+.pdp-photo-single{width:100%;aspect-ratio:4/3;overflow:hidden}
+.pdp-photo-single img{width:100%;height:100%;object-fit:cover;display:block}
+.pdp-no-photo{width:100%;height:160px}
+.pdp-gallery{width:100%;aspect-ratio:4/3;overflow:hidden;position:relative}
+.pdp-gallery-main{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .2s}
+.pdp-thumbs{
+  display:flex;gap:6px;padding:8px 16px;overflow-x:auto;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch
+}
+.pdp-thumbs::-webkit-scrollbar{display:none}
+.pdp-thumb{
+  width:58px;height:58px;object-fit:cover;border-radius:8px;flex-shrink:0;
+  cursor:pointer;border:2px solid transparent;opacity:.7;transition:opacity .15s,border-color .15s
+}
+.pdp-thumb.active{border-color:var(--primary);opacity:1}
 .sdp-hero{
   padding:20px 20px 16px;
   border-bottom:1px solid var(--border-inner)
