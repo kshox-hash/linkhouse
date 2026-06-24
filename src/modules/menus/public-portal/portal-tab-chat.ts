@@ -57,20 +57,19 @@ export function chatTabHtml(d: ChatData): string {
     <!-- PROFILE SUMMARY -->
     <div class="hm-profile-summary">
       ${d.desc ? `<div class="hm-profile-desc">${d.desc}</div>` : ''}
-      <div class="hm-profile-stats">
-        <span class="hm-pstat-item">
-          <span class="hm-pstat-val" id="hmStatSvcs">—</span>
-          <span class="hm-pstat-lbl"> servicios</span>
-        </span>
-        <span class="hm-pstat-dot"></span>
-        <span class="hm-pstat-item">
-          <span class="hm-pstat-val">★ <span id="hmStatRating">—</span></span>
-        </span>
-        <span class="hm-pstat-dot"></span>
-        <span class="hm-pstat-item">
-          <span class="hm-pstat-val" id="hmStatReviews">0</span>
-          <span class="hm-pstat-lbl"> reseñas</span>
-        </span>
+      <div class="hm-pstats">
+        <div class="hm-pstat hm-pstat-svc">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+          <span id="hmStatSvcs">—</span> <span class="hm-pstat-lbl">servicios</span>
+        </div>
+        <div class="hm-pstat hm-pstat-star">
+          <span style="color:#FACC15;font-size:14px;line-height:1">★</span>
+          <span id="hmStatRating">—</span>
+        </div>
+        <div class="hm-pstat hm-pstat-rev">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <span id="hmStatReviews">0</span> <span class="hm-pstat-lbl">reseñas</span>
+        </div>
       </div>
     </div>
 

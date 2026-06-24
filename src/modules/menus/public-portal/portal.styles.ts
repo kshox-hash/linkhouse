@@ -421,11 +421,16 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 /* ── PROFILE SUMMARY ─────────────────────────────────────────────────────── */
 .hm-profile-summary{padding:14px 20px 0;flex-shrink:0}
 .hm-profile-desc{font-size:13px;color:var(--soft);line-height:1.5;margin-bottom:10px}
-.hm-profile-stats{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.hm-pstat-item{display:flex;align-items:center}
-.hm-pstat-val{font-size:13px;font-weight:700;color:var(--text)}
-.hm-pstat-lbl{font-size:12.5px;color:var(--dim)}
-.hm-pstat-dot{width:3px;height:3px;border-radius:50%;background:var(--dim);flex-shrink:0}
+.hm-pstats{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.hm-pstat{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:20px;
+  font-size:12.5px;font-weight:700;
+}
+.hm-pstat-lbl{font-weight:500;color:inherit;opacity:.75}
+.hm-pstat-svc{background:rgba(99,102,241,.10);color:#6366F1}
+.hm-pstat-star{background:rgba(250,204,21,.13);color:#92700A}
+.hm-pstat-rev{background:rgba(59,118,237,.10);color:#3B76ED}
 
 /* ── HOME TAB ─────────────────────────────────────────────────────────────── */
 .home-welcome-msg{
