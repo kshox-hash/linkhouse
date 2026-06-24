@@ -550,6 +550,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 /* Calendar — home-style colored square cells */
 .rdash-body{display:grid;grid-template-columns:3fr 2fr;gap:12px;align-items:start;margin-bottom:22px}
 .rdash-info-col{display:flex;flex-direction:column;gap:10px}
+@media(max-width:640px){.rdash-body{grid-template-columns:1fr}}
 .month-cal-grid{width:100%}
 .mc-hdr-row{
   display:grid;grid-template-columns:repeat(7,1fr);
@@ -752,6 +753,9 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 .rv-name{font-weight:600;color:var(--text)}
 .rv-date{color:var(--dim)}
 .rv-comment{font-size:14px;color:var(--soft);line-height:1.55}
+.rv-load-more{display:block;width:100%;margin-top:14px;padding:11px;border:1.5px solid var(--border);border-radius:10px;background:transparent;font-size:13px;font-weight:600;color:var(--primary);cursor:pointer;text-align:center;transition:background .15s}
+.rv-load-more:hover{background:var(--bg)}
+.rv-load-more:disabled{opacity:.5;cursor:default}
 
 /* ── CALENDAR WIDGET ─────────────────────────────────────────────────── */
 .cal-widget{

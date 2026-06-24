@@ -130,13 +130,12 @@ export const statisticsController = {
   async getPublicReviews(req: Request, res: Response): Promise<Response> {
     try {
       const userId = String(req.params["userId"]);
-      console.log("[getPublicReviews] userId:", userId, "type:", typeof userId);
+      const page = Math.max(1, parseInt(String(req.query["page"] || "1"), 10) || 1);
       const [summary, recent] = await Promise.all([
-        reviewsService.getSummary(userId),
-        reviewsService.getAll(userId, 1, 10),
+        page === 1 ? reviewsService.getSummary(userId) : Promise.resolve(null),
+        reviewsService.getAll(userId, page, 10),
       ]);
-      console.log("[getPublicReviews] summary.total:", summary.total, "reviews count:", recent.data.length);
-      return res.json({ ok: true, summary, reviews: recent.data });
+      return res.json({ ok: true, summary, reviews: recent.data, pagination: recent.pagination });
     } catch (error: any) {
       return res.status(500).json({ ok: false, message: error?.message || "Error interno" });
     }

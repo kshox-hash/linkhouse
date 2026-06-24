@@ -30,6 +30,8 @@ var svcsLoaded=false;
 var svcsCache=[];
 var QCart={};
 var reviewsLoaded=false;
+var rvPage=1;
+var rvTotal=0;
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -329,7 +331,6 @@ document.addEventListener('click',function(e){
   if(tabBtn&&(tabBtn.classList.contains('bn-item')||tabBtn.classList.contains('ir-btn')||tabBtn.classList.contains('cn-tab')||tabBtn.classList.contains('mdr-item'))){
     if(tabBtn.classList.contains('mdr-item')) closeMobileDrawer();
     var tabName=tabBtn.getAttribute('data-tab');
-    if(tabName==='cotizar'){ openQuotePanel(); return; }
     showTab(tabName);
     return;
   }
@@ -339,7 +340,7 @@ document.addEventListener('click',function(e){
   if(actBtn){
     var a=actBtn.getAttribute('data-action');
     if(a==='reservas')      showTab('reservas');
-    else if(a==='cotizar')  openQuotePanel();
+    else if(a==='cotizar')  showTab('cotizar');
     else if(a==='productos')showTab('nosotros');
     else if(a==='resenas')  showTab('resenas');
     return;
@@ -1415,9 +1416,11 @@ function renderStars(avg){
 function ensureReviews(){
   if(reviewsLoaded) return;
   reviewsLoaded=true;
+  rvPage=1;
   fetch('/api/public/reviews/'+USER_ID)
     .then(function(r){return r.json();})
     .then(function(data){
+      rvTotal=parseInt((data&&data.summary&&data.summary.total)||'0',10)||0;
       renderReviewsTab(data);
       updateProfileRating(data);
       renderHomeInbox(data);
@@ -1550,6 +1553,29 @@ function updateProfileRating(data){
     +'<span class="pr-rating-count">('+total+' reseña'+(total!==1?'s':'')+')</span>';
 }
 
+function buildRvCard(r){
+  var stars='';
+  for(var i=1;i<=5;i++) stars+='<span style="color:'+(i<=(r.rating||0)?'#F59E0B':'var(--dim)')+'">★</span>';
+  var date='';
+  if(r.created_at){try{date=new Date(r.created_at).toLocaleDateString('es-CL',{day:'numeric',month:'short',year:'numeric'});}catch(e){}}
+  var displayName=r.google_name||r.client_name||'Cliente';
+  var avatarHtml=r.google_avatar_url
+    ?'<img src="'+escH(r.google_avatar_url)+'" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0" referrerpolicy="no-referrer">'
+    :'';
+  return '<div class="rv-card">'
+    +'<div class="rv-card-top">'
+    +(avatarHtml?'<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'+avatarHtml
+      +'<div><div class="rv-card-stars" style="margin-bottom:1px">'+stars+'</div>'
+      +'<div class="rv-card-meta"><span class="rv-name">'+escH(displayName)+'</span>'
+      +(date?'<span class="rv-date"> · '+escH(date)+'</span>':'')+'</div></div></div>'
+      :'<div class="rv-card-stars">'+stars+'</div>'
+      +'<div class="rv-card-meta"><span class="rv-name">'+escH(displayName)+'</span>'
+      +(date?'<span class="rv-date"> · '+escH(date)+'</span>':'')+'</div>')
+    +'</div>'
+    +(r.comment?'<div class="rv-comment">'+escH(r.comment)+'</div>':'')
+    +'</div>';
+}
+
 function renderReviewsTab(data){
   var el=document.getElementById('reviewsContent'); if(!el) return;
   var summary=(data&&data.summary)||{};
@@ -1582,33 +1608,39 @@ function renderReviewsTab(data){
     +'<div class="rv-bars">'+bars+'</div>'
     +'</div>';
 
-  var cards=reviews.map(function(r){
-    var stars='';
-    for(var i=1;i<=5;i++) stars+='<span style="color:'+(i<=(r.rating||0)?'#F59E0B':'var(--dim)')+'">★</span>';
-    var date='';
-    if(r.created_at){
-      try{ date=new Date(r.created_at).toLocaleDateString('es-CL',{day:'numeric',month:'short',year:'numeric'}); }catch(e){}
-    }
-    var displayName=r.google_name||r.client_name||'Cliente';
-    var avatarHtml=r.google_avatar_url
-      ?'<img src="'+escH(r.google_avatar_url)+'" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0" referrerpolicy="no-referrer">'
-      :'';
-    return '<div class="rv-card">'
-      +'<div class="rv-card-top">'
-      +(avatarHtml?'<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'+avatarHtml
-        +'<div><div class="rv-card-stars" style="margin-bottom:1px">'+stars+'</div>'
-        +'<div class="rv-card-meta"><span class="rv-name">'+escH(displayName)+'</span>'
-        +(date?'<span class="rv-date"> · '+escH(date)+'</span>':'')+'</div></div></div>'
-        :'<div class="rv-card-stars">'+stars+'</div>'
-        +'<div class="rv-card-meta"><span class="rv-name">'+escH(displayName)+'</span>'
-        +(date?'<span class="rv-date"> · '+escH(date)+'</span>':'')+'</div>')
-      +'</div>'
-      +(r.comment?'<div class="rv-comment">'+escH(r.comment)+'</div>':'')
-      +'</div>';
-  }).join('');
+  var cards=reviews.map(buildRvCard).join('');
+  var hasMore=total>reviews.length;
+  var loadMoreBtn=hasMore?'<button class="rv-load-more" type="button" id="rvLoadMore">Ver más reseñas</button>':'';
 
   el.innerHTML=summaryHtml
-    +(cards?'<div class="sec-hdr" style="margin-top:20px"><span class="sec-title">Últimas reseñas</span><span class="sec-sub" style="margin-top:2px">Opiniones de nuestros clientes</span></div>'+cards:'');
+    +(cards?'<div class="sec-hdr" style="margin-top:20px"><span class="sec-title">Últimas reseñas</span><span class="sec-sub" style="margin-top:2px">Opiniones de nuestros clientes</span></div>'
+      +'<div id="rvCardsList">'+cards+'</div>'+loadMoreBtn:'');
+
+  var btn=document.getElementById('rvLoadMore');
+  if(btn) btn.addEventListener('click',loadMoreReviews);
+}
+
+function loadMoreReviews(){
+  var btn=document.getElementById('rvLoadMore');
+  if(btn){btn.textContent='Cargando…';btn.disabled=true;}
+  rvPage++;
+  fetch('/api/public/reviews/'+USER_ID+'?page='+rvPage)
+    .then(function(r){return r.json();})
+    .then(function(data){
+      var reviews=(data&&data.reviews)||[];
+      var pagination=(data&&data.pagination)||{};
+      var list=document.getElementById('rvCardsList');
+      if(list) list.insertAdjacentHTML('beforeend',reviews.map(buildRvCard).join(''));
+      var btn2=document.getElementById('rvLoadMore');
+      if(btn2){
+        if(pagination.hasNextPage){btn2.textContent='Ver más reseñas';btn2.disabled=false;}
+        else btn2.remove();
+      }
+    })
+    .catch(function(){
+      var btn2=document.getElementById('rvLoadMore');
+      if(btn2){btn2.textContent='Ver más reseñas';btn2.disabled=false;}
+    });
 }
 
 // ── Review panel ─────────────────────────────────────────────────────────────
