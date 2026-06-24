@@ -533,33 +533,35 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 .rdash-mnav-btn svg{width:16px;height:16px;stroke-width:2;stroke:var(--soft)}
 .rdash-mnav-btn:disabled{opacity:.25;cursor:default}
 
-/* Calendar — fills available width, cells always cuadradas */
-.mc-outer{margin-bottom:20px}
+/* Calendar — fills its column, cells always square */
+.rdash-body{display:grid;grid-template-columns:3fr 2fr;gap:12px;align-items:start;margin-bottom:20px}
+.rdash-cal-col{}
+.rdash-info-col{display:flex;flex-direction:column;gap:10px}
 .month-cal-grid{width:100%}
 .mc-hdr-row{
   display:grid;grid-template-columns:repeat(7,1fr);
   margin-bottom:4px
 }
 .mc-hdr-cell{
-  text-align:center;font-size:11px;font-weight:600;
+  text-align:center;font-size:10px;font-weight:600;
   color:var(--dim);letter-spacing:.01em;
-  padding-bottom:10px
+  padding-bottom:8px
 }
 .mc-body{display:grid;grid-template-columns:repeat(7,1fr)}
 .mc-cell{
   aspect-ratio:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:4px;
+  align-items:center;justify-content:center;gap:3px;
   cursor:default;-webkit-tap-highlight-color:transparent
 }
 .mc-ring{
-  width:72%;aspect-ratio:1;
-  max-width:42px;border-radius:50%;
+  width:76%;aspect-ratio:1;
+  max-width:36px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
   transition:background .15s,transform .12s
 }
-.mc-num{font-size:clamp(12px,3.5vw,15px);font-weight:400;color:#CBD5E1;line-height:1}
+.mc-num{font-size:clamp(10px,2.8vw,14px);font-weight:400;color:#CBD5E1;line-height:1}
 .mc-dot{
-  width:4px;height:4px;border-radius:50%;
+  width:3px;height:3px;border-radius:50%;
   background:var(--primary);opacity:0;flex-shrink:0
 }
 .mc-empty .mc-ring{visibility:hidden}
@@ -588,59 +590,59 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 .mc-sel .mc-dot{background:rgba(255,255,255,.7)}
 .mc-sel:hover .mc-ring{background:var(--primary)}
 
-/* Stats row */
-.rdash-stats-row{
-  display:flex;align-items:center;
-  background:#F6F6F6;
-  border-radius:14px;padding:14px 0;
-  margin-bottom:24px
+/* Stats column */
+.rdash-stats-col{
+  background:#F6F6F6;border-radius:14px;
+  display:flex;flex-direction:column
 }
 .rds-item{
-  flex:1;display:flex;flex-direction:column;
-  align-items:center;gap:3px
+  display:flex;flex-direction:column;
+  align-items:center;gap:3px;
+  padding:10px 6px;border-bottom:1px solid #EBEBEB
 }
-.rds-val{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.05em;line-height:1}
-.rds-next{font-size:13px;font-weight:700}
-.rds-lbl{font-size:10px;color:var(--dim);font-weight:500;letter-spacing:.01em}
-.rds-divider{width:1px;height:32px;background:#EBEBEB;flex-shrink:0}
+.rds-item:last-child{border-bottom:none}
+.rds-val{font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.05em;line-height:1}
+.rds-next{font-size:11px;font-weight:700}
+.rds-lbl{font-size:9px;color:var(--dim);font-weight:500;letter-spacing:.01em;text-align:center}
 
 /* Slots area */
 .slots-area{
-  background:var(--panel);border:1px solid var(--border);border-radius:20px;
-  padding:16px 18px;margin:16px 0
+  background:var(--panel);border:1px solid var(--border);border-radius:16px;
+  padding:12px 14px
 }
-.slots-date-lbl{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px}
-.slots-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.slots-date-lbl{font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px}
+.slots-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .slot-chip{
-  padding:8px 14px;border-radius:10px;font-size:13px;font-weight:600;
+  padding:6px 10px;border-radius:8px;font-size:12px;font-weight:600;
   background:#EEF4FF;color:var(--primary);border:1.5px solid rgba(37,99,235,.2);
-  cursor:pointer;transition:background .18s,transform .15s,box-shadow .15s;
+  cursor:pointer;transition:background .18s,transform .15s;
   -webkit-tap-highlight-color:transparent;font-family:inherit
 }
 .slot-chip:hover{background:var(--primary);color:#fff}
 .slot-chip:active{transform:scale(.95)}
 .slots-close{
-  font-size:11.5px;color:var(--dim);background:none;border:none;cursor:pointer;
+  font-size:11px;color:var(--dim);background:none;border:none;cursor:pointer;
   font-family:inherit;padding:0
 }
 
-/* Service grid (2-col) */
-.rdash-sec-hdr{margin:20px 0 12px}
+/* Service grid — 3-col brick tiles */
+.rdash-sec-hdr{margin:4px 0 12px}
 .rdash-sec-title{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.04em}
-.svc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .svc-grid-item{
-  background:var(--panel);border:1px solid var(--border);border-radius:18px;
-  padding:14px;cursor:pointer;
-  transition:border-color .18s,background .18s;-webkit-tap-highlight-color:transparent;
-  display:flex;flex-direction:row;align-items:center;gap:12px
+  background:var(--panel);border:1px solid var(--border);border-radius:14px;
+  cursor:pointer;overflow:hidden;
+  transition:border-color .18s;-webkit-tap-highlight-color:transparent;
+  display:flex;flex-direction:column
 }
-.svc-grid-item:hover{border-color:var(--primary);background:var(--primary-dim)}
-.svc-grid-img{width:54px;height:54px;border-radius:12px;object-fit:cover;flex-shrink:0;border:1px solid var(--border)}
-.svc-grid-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.svc-grid-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
-.svc-grid-name{font-size:13px;font-weight:700;color:var(--text);letter-spacing:-.03em;line-height:1.3}
-.svc-grid-dur{font-size:11px;color:var(--dim)}
-.svc-grid-price{font-size:14px;font-weight:800;color:var(--primary);flex-shrink:0;font-variant-numeric:tabular-nums}
+.svc-grid-item:hover{border-color:var(--primary)}
+.svc-grid-thumb{width:100%;aspect-ratio:1;overflow:hidden;flex-shrink:0}
+.svc-grid-img{width:100%;height:100%;object-fit:cover;display:block}
+.svc-grid-dot{width:100%;aspect-ratio:1;opacity:.88}
+.svc-grid-info{padding:7px 9px 9px;display:flex;flex-direction:column;gap:2px}
+.svc-grid-name{font-size:11px;font-weight:700;color:var(--text);letter-spacing:-.02em;line-height:1.3}
+.svc-grid-dur{font-size:9px;color:var(--dim)}
+.svc-grid-price{font-size:12px;font-weight:800;color:var(--primary);font-variant-numeric:tabular-nums;margin-top:2px}
 
 /* Loader */
 .loader-row{display:flex;align-items:center;gap:10px;padding:32px 0;color:var(--dim);font-size:13.5px;justify-content:center}

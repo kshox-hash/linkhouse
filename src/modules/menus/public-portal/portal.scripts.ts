@@ -584,16 +584,16 @@ function renderSvcGrid(id,svcs){
     var price=s.price!=null?fmtPrice(Number(s.price)):'Consultar';
     var dur=s.duration_minutes?s.duration_minutes+' min':'';
     var firstPhoto=Array.isArray(s.photos)&&s.photos.length>0?s.photos[0]:null;
-    var leftHtml=firstPhoto
+    var thumbInner=firstPhoto
       ?'<img class="svc-grid-img" src="'+escH(firstPhoto)+'" alt="" loading="lazy">'
       :'<div class="svc-grid-dot" style="background:'+escH(color)+'"></div>';
     html+='<div class="svc-grid-item" data-bk-svc="'+i+'">'
-      +leftHtml
+      +'<div class="svc-grid-thumb">'+thumbInner+'</div>'
       +'<div class="svc-grid-info">'
       +'<div class="svc-grid-name">'+escH(s.name)+'</div>'
       +(dur?'<div class="svc-grid-dur">'+escH(dur)+'</div>':'')
-      +'</div>'
       +'<div class="svc-grid-price">'+escH(price)+'</div>'
+      +'</div>'
       +'</div>';
   });
   el.innerHTML=html;
