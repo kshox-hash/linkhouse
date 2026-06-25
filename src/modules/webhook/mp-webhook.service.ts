@@ -8,6 +8,7 @@ import {
 } from "./mp-webhook.repository";
 import { sendBookingPaidEmail } from "../calendar/booking/services/bookingPaidEmailService";
 import { sendBusinessBookingPaidEmail } from "../calendar/booking/services/businessBookingPaidEmailService";
+import { withRetry } from "../../core/retry";
 import { StatisticsService } from "../stadistics/stadistics.service";
 import { notificationService } from "../notifications/notification.service";
 
@@ -125,20 +126,20 @@ export async function processApprovedPayment(
   }).catch(() => {});
 
   if (booking.client_email) {
-    sendBookingPaidEmail({
+    withRetry(() => sendBookingPaidEmail({
       to: booking.client_email,
       customerName: booking.client_name || "Cliente",
       businessName,
       bookingDate: bookingDateStr,
       bookingTime: bookingTimeStr,
-    }).catch((e) => console.error("[webhook] Error email cliente:", e));
+    })).catch((e) => console.error("[webhook] Error email cliente tras reintentos:", e));
   }
 
   const businessEmail =
     (await getBusinessEmailByUserId(booking.user_id)) ??
     process.env.BUSINESS_NOTIFICATION_EMAIL;
   if (businessEmail) {
-    sendBusinessBookingPaidEmail({
+    withRetry(() => sendBusinessBookingPaidEmail({
       to: businessEmail,
       businessName,
       customerName: booking.client_name || "Cliente",
@@ -147,7 +148,7 @@ export async function processApprovedPayment(
       bookingDate: bookingDateStr,
       bookingTime: bookingTimeStr,
       amount: Number(payment.amount || 0),
-    }).catch((e) => console.error("[webhook] Error email negocio:", e));
+    })).catch((e) => console.error("[webhook] Error email negocio tras reintentos:", e));
   }
 
   return { skipped: false, bookingId };

@@ -28,6 +28,7 @@ import {
 const MIN_PAYMENT_AMOUNT = 3000;
 import { getServiceById } from "../appointments/calendar-services.repository";
 import { sendBookingPaymentLinkEmail } from "./booking/services/bookingPaymentLinkEmailService";
+import { withRetry } from "../../core/retry";
 
 export const calendarPublicController = {
 
@@ -217,7 +218,7 @@ export const calendarPublicController = {
       await updatePaymentWithPreference(payment.id, preference.checkoutUrl!, preference.preferenceId ?? "");
       const checkoutUrl = preference.checkoutUrl!;
       const cancelUrl = `${process.env.PUBLIC_BASE_URL}/api/bookings/cancel/${booking.confirmation_token}`;
-      sendBookingPaymentLinkEmail({
+      withRetry(() => sendBookingPaymentLinkEmail({
         to: customerEmail,
         customerName,
         businessName,
@@ -225,7 +226,7 @@ export const calendarPublicController = {
         bookingTime: startTime,
         checkoutUrl,
         cancelUrl,
-      }).catch((err) => console.error("[calendar] Error enviando email de pago:", err));
+      })).catch((err) => console.error("[calendar] Error email de pago tras reintentos:", err));
 
       statsService.increment(profile.user_id, "booking_created").catch(() => {});
 

@@ -1,4 +1,5 @@
 import express from "express";
+import rateLimit from "express-rate-limit";
 import { calendarPublicController } from "./calendar-public.controller";
 import { confirmBookingByToken } from "./booking/services/bookingConfirmation.service";
 import { renderBookingConfirmationSuccessHtml } from "./booking/views/bookingConfirmationSuccessHtml";
@@ -7,6 +8,15 @@ import { getSlugByValueService } from "../slug/slug.service";
 import { getActiveServicesPaginated } from "../appointments/calendar-services.repository";
 
 const router = express.Router();
+
+const bookingRateLimit = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  keyGenerator: (req) => `${req.ip}-${req.params["publicSlug"] ?? ""}`,
+  message: { ok: false, message: "Demasiadas solicitudes. Intenta más tarde." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Servicios de reserva públicos (para el selector en el portal)
 router.get("/api/public/:publicSlug/booking-services", async (req, res) => {
@@ -34,7 +44,7 @@ router.get("/api/public/:publicSlug/providers", calendarPublicController.getProv
 router.get("/api/public/:publicSlug/slots", calendarPublicController.getSlots);
 
 // Crear reserva
-router.post("/api/public/:publicSlug/bookings", calendarPublicController.createBooking);
+router.post("/api/public/:publicSlug/bookings", bookingRateLimit, calendarPublicController.createBooking);
 
 // Crear pago para una reserva
 router.post(

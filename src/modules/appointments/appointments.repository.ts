@@ -159,73 +159,54 @@ export async function createCalendarBooking(input: {
   serviceName?: string | null;
   serviceColor?: string | null;
 }) {
-  // Limpiar reservas expiradas para este slot antes de insertar
-  await pool.query(
-    `DELETE FROM calendar_bookings
-     WHERE user_id = $1 AND booking_date = $2 AND start_time = $3
-       AND status = 'pending_payment' AND expires_at <= NOW()`,
-    [input.userId, input.bookingDate, input.startTime]
-  );
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
 
-  const result = await pool.query<CalendarBookingRow>(
-    `
-    INSERT INTO calendar_bookings (
-      user_id,
-      booking_date,
-      start_time,
-      end_time,
-      client_name,
-      client_email,
-      client_phone,
-      status,
-      payment_status,
-      payment_amount,
-      notes,
-      confirmation_token,
-      confirmation_expires_at,
-      confirmation_email_sent_at,
-      expires_at,
-      provider_id,
-      service_id,
-      service_name,
-      service_color,
-      created_at,
-      updated_at
-    )
-    VALUES (
-      $1, $2, $3, $4, $5, $6, $7,
-      'pending_payment',
-      'unpaid',
-      $8,
-      $9, $10, $11, NOW(),
-      NOW() + INTERVAL '45 minutes',
-      $12,
-      $13, $14, $15,
-      NOW(),
-      NOW()
-    )
-    RETURNING *
-    `,
-    [
-      input.userId,
-      input.bookingDate,
-      input.startTime,
-      input.endTime,
-      input.customerName,
-      input.customerEmail,
-      input.customerPhone,
-      input.paymentAmount ?? null,
-      input.notes || null,
-      input.confirmationToken,
-      input.confirmationExpiresAt,
-      input.providerId || null,
-      input.serviceId || null,
-      input.serviceName || null,
-      input.serviceColor || null,
-    ]
-  );
+    await client.query(
+      `DELETE FROM calendar_bookings
+       WHERE user_id = $1 AND booking_date = $2 AND start_time = $3
+         AND status = 'pending_payment' AND expires_at <= NOW()`,
+      [input.userId, input.bookingDate, input.startTime]
+    );
 
-  return result.rows[0];
+    const result = await client.query<CalendarBookingRow>(
+      `
+      INSERT INTO calendar_bookings (
+        user_id, booking_date, start_time, end_time,
+        client_name, client_email, client_phone,
+        status, payment_status, payment_amount, notes,
+        confirmation_token, confirmation_expires_at, confirmation_email_sent_at,
+        expires_at, provider_id, service_id, service_name, service_color,
+        created_at, updated_at
+      )
+      VALUES (
+        $1, $2, $3, $4, $5, $6, $7,
+        'pending_payment', 'unpaid', $8, $9, $10, $11, NOW(),
+        NOW() + INTERVAL '45 minutes',
+        $12, $13, $14, $15,
+        NOW(), NOW()
+      )
+      RETURNING *
+      `,
+      [
+        input.userId, input.bookingDate, input.startTime, input.endTime,
+        input.customerName, input.customerEmail, input.customerPhone,
+        input.paymentAmount ?? null, input.notes || null,
+        input.confirmationToken, input.confirmationExpiresAt,
+        input.providerId || null, input.serviceId || null,
+        input.serviceName || null, input.serviceColor || null,
+      ]
+    );
+
+    await client.query("COMMIT");
+    return result.rows[0];
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 
 export async function bookingExists(input: {

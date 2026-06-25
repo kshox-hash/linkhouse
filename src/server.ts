@@ -119,8 +119,13 @@ const publicWriteLimiter = rateLimit({
 });
 
 // ─── Health check ─────────────────────────────────────────────────────────────
-app.get("/health", (_req, res) => {
-  res.json({ ok: true, timestamp: new Date().toISOString() });
+app.get("/health", async (_req, res) => {
+  try {
+    await DB.getPool().query("SELECT 1");
+    res.json({ ok: true, db: "up", timestamp: new Date().toISOString() });
+  } catch {
+    res.status(503).json({ ok: false, db: "down", timestamp: new Date().toISOString() });
+  }
 });
 
 // ─── Rutas ────────────────────────────────────────────────────────────────────

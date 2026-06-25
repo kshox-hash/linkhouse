@@ -20,6 +20,7 @@ export async function createPreference(
 ) {
   const client = new MercadoPagoConfig({
     accessToken: input.accessToken,
+    options: { timeout: 10_000 },
   });
 
   const preference = new Preference(client);

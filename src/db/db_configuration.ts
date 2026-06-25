@@ -15,11 +15,10 @@ export default class DB {
         password: PGPASSWORD,
         database: PGDATABASE,
         max: 10,
-        idleTimeoutMillis:     30_000,
-        connectionTimeoutMillis: 5_000,
+        idleTimeoutMillis:       30_000,
+        connectionTimeoutMillis:  5_000,
+        statement_timeout:       10_000,
         ssl: {
-          // Render Postgres usa certificados autofirmados; cambiar a true
-          // si se provee el CA cert en PGSSLROOTCERT
           rejectUnauthorized: false,
         },
       });
