@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
 import { StatisticsService } from "../stadistics/stadistics.service";
-import { buildCalendarSlots, reserveCalendarSlot } from "../appointments/appointments.service";
+import { buildCalendarSlots, buildCalendarSlotsAuto, reserveCalendarSlot } from "../appointments/appointments.service";
 
 const statsService = new StatisticsService();
 import { renderBookingHtml } from "../appointments/appointments.screen";
@@ -62,7 +62,9 @@ export const calendarPublicController = {
       }
 
       const providerId = String(req.query["providerId"] || "").trim() || null;
-      const data = await buildCalendarSlots(profile.user_id, providerId);
+      const data = providerId
+        ? await buildCalendarSlots(profile.user_id, providerId)
+        : await buildCalendarSlotsAuto(profile.user_id);
 
       return res.json(data);
     } catch (error) {

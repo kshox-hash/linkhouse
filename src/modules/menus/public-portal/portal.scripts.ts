@@ -96,6 +96,7 @@ function openQuotePanel(){
 var bk={date:null,svc:null,time:null,step:null,provider:null,entry:null};
 var bkCalYear=new Date().getFullYear();
 var bkCalMonth=new Date().getMonth();
+var bkProvSlots={}; // slots filtrados por el profesional elegido en la sesión actual
 
 // ── Providers (team members) ──────────────────────────────────────────────────
 var providersCache=[];
@@ -110,6 +111,22 @@ function loadProviders(){
       providersCache=Array.isArray(d.providers)?d.providers:[];
     })
     .catch(function(){providersLoaded=true;providersCache=[];});
+}
+
+// Carga los slots de un profesional específico para la sesión de reserva actual
+function loadBkProvSlots(providerId,cb){
+  var body=document.getElementById('bkBody');
+  if(body) body.innerHTML='<div class="bk-scroll"><div class="cal-loading"><div class="spinner"></div>Cargando horarios…</div></div>';
+  fetch('/api/public/'+SLUG+'/slots?providerId='+encodeURIComponent(providerId))
+    .then(function(r){return r.json();})
+    .then(function(data){
+      bkProvSlots={};
+      if(data&&Array.isArray(data.slots)){
+        data.slots.forEach(function(s){ if(s.date&&s.times&&s.times.length) bkProvSlots[s.date]=s.times; });
+      }
+      cb();
+    })
+    .catch(function(){bkProvSlots={};cb();});
 }
 
 function setBkHeader(title,showBack){
@@ -289,7 +306,7 @@ function renderBkTimeStep(){
   bk.step='time';
   setBkHeader(escH(bk.svc?bk.svc.name:'Horarios'),true);
   var body=document.getElementById('bkBody'); if(!body) return;
-  var times=(bk.date&&calSlots[bk.date])||[];
+  var times=(bk.date&&(bk.provider?bkProvSlots[bk.date]:calSlots[bk.date]))||[];
   var label=fmtDateLabel(bk.date);
   var badge='<div class="bk-date-badge">'
     +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'
@@ -388,7 +405,7 @@ function renderBkSuccess(checkoutUrl,bookingId){
   var done=document.getElementById('bkDone');
   if(done) done.addEventListener('click',function(){
     closePanel('bookingPanel');
-    bk.svc=null;bk.date=null;bk.time=null;bk.provider=null;bk.entry=null;
+    bk.svc=null;bk.date=null;bk.time=null;bk.provider=null;bk.entry=null;bkProvSlots={};
   });
   var cancelBtn=document.getElementById('bkCancel');
   if(cancelBtn&&bookingId){
@@ -400,7 +417,7 @@ function renderBkSuccess(checkoutUrl,bookingId){
         .then(function(d){
           if(d.ok){
             closePanel('bookingPanel');
-            bk.svc=null;bk.date=null;bk.time=null;bk.provider=null;bk.entry=null;
+            bk.svc=null;bk.date=null;bk.time=null;bk.provider=null;bk.entry=null;bkProvSlots={};
           } else {
             cancelBtn.textContent=d.message||'No se pudo cancelar.';
             cancelBtn.disabled=false;
@@ -502,13 +519,16 @@ document.addEventListener('click',function(e){
   if(provItem){
     var pidx=parseInt(provItem.getAttribute('data-bk-prov-i')||'0',10);
     bk.provider=providersCache[pidx]||null;
-    if(bk.time) renderBkFormStep();
-    else renderBkTimeStep();
+    if(bk.provider) loadBkProvSlots(bk.provider.id, function(){
+      if(bk.time) renderBkFormStep(); else renderBkTimeStep();
+    });
+    else { if(bk.time) renderBkFormStep(); else renderBkTimeStep(); }
     return;
   }
   var provAny=t.closest('[data-bk-prov-any]');
   if(provAny){
     bk.provider=null;
+    bkProvSlots={};
     if(bk.time) renderBkFormStep();
     else renderBkTimeStep();
     return;

@@ -6,6 +6,7 @@ import {
   getCalendarBookings,
   getCalendarSettings,
 } from "./appointments.repository";
+import { getActiveProvidersByUserId } from "./calendar-providers.repository";
 
 function toDateString(date: Date): string {
   return date.toISOString().slice(0, 10);
@@ -209,4 +210,32 @@ export async function reserveCalendarSlot(input: {
     serviceName: input.serviceName,
     serviceColor: input.serviceColor,
   });
+}
+
+// Returns union of available slots across all active providers.
+// Falls back to global schedule if no providers are configured.
+export async function buildCalendarSlotsAuto(userId: string) {
+  const providers = await getActiveProvidersByUserId(userId);
+
+  if (!providers.length) {
+    return buildCalendarSlots(userId, null);
+  }
+
+  const allResults = await Promise.all(
+    providers.map((p: { id: string }) => buildCalendarSlots(userId, p.id))
+  );
+
+  const merged: Record<string, Set<string>> = {};
+  for (const result of allResults) {
+    for (const slot of result.slots) {
+      if (!merged[slot.date]) merged[slot.date] = new Set();
+      slot.times.forEach((t: string) => merged[slot.date].add(t));
+    }
+  }
+
+  const slots = Object.keys(merged)
+    .sort()
+    .map((date) => ({ date, times: [...merged[date]].sort() }));
+
+  return { slots };
 }
