@@ -64,11 +64,10 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 .mhdr-badge{
   display:inline-flex;align-items:center;gap:5px;
   background:var(--green-dim);color:var(--green);
-  font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
-  padding:3px 10px;border-radius:20px;border:1px solid rgba(34,197,94,.2);flex-shrink:0
+  font-size:9.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  padding:3px 10px;border-radius:6px;border:1px solid rgba(22,163,74,.15);flex-shrink:0
 }
-.mhdr-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 2.5s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.mhdr-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green)}
 
 .content-wrap{
   position:fixed;top:var(--hdr);left:0;right:0;
@@ -223,14 +222,13 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
   }
   .pr-back{display:none}
   .pr-avatar{
-    width:70px;height:70px;border-radius:18px;margin-bottom:14px;
-    background:linear-gradient(135deg,var(--primary),#93C5FD);
+    width:56px;height:56px;border-radius:12px;margin-bottom:12px;
+    background:var(--primary);
     display:flex;align-items:center;justify-content:center;
-    font-size:22px;font-weight:800;color:#fff;user-select:none;letter-spacing:-.03em;
-    box-shadow:none
+    font-size:18px;font-weight:700;color:#fff;user-select:none;letter-spacing:-.02em;
   }
-  .pr-name{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.04em;margin-bottom:2px}
-  .pr-role{font-size:12px;color:var(--soft);margin-bottom:12px;line-height:1.4}
+  .pr-name{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.03em;margin-bottom:2px}
+  .pr-role{font-size:12px;color:var(--soft);margin-bottom:10px;line-height:1.45}
   .pr-rating{
     display:flex;align-items:center;gap:5px;margin-top:4px;margin-bottom:10px;
     font-size:12.5px;color:var(--amber);font-weight:600
