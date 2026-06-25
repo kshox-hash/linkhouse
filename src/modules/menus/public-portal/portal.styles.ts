@@ -423,7 +423,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
   padding:12px 16px 0;flex-shrink:0
 }
 .hm-profile-card{
-  background:var(--panel);border-radius:16px;
+  background:#F6F6F6;border-radius:20px;
   padding:12px 14px;display:flex;flex-direction:column;gap:10px
 }
 .hm-profile-desc{
