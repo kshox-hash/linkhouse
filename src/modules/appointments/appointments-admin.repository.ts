@@ -335,7 +335,7 @@ export async function getPaymentsForExport(userId: string, year?: string): Promi
      LEFT JOIN calendar_providers cp ON cb.provider_id = cp.id
      LEFT JOIN payments            p  ON p.booking_id  = cb.id AND p.provider = 'mercadopago'
      WHERE cb.user_id = $1
-       AND cb.payment_status IN ('paid', 'free')
+       AND cb.payment_status = 'paid'
        ${yearClause}
      ORDER BY cb.booking_date ASC, cb.start_time ASC`,
     params

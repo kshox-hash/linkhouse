@@ -1,9 +1,9 @@
 import crypto from "crypto";
 import { getPaymentById } from "../payments/mercado.service";
 import {
-  markPaymentAsPaid,
-  confirmBooking,
+  confirmPaymentAndBooking,
   getBusinessNameByUserId,
+  getBusinessEmailByUserId,
   getAccessTokenByMpUserId,
 } from "./mp-webhook.repository";
 import { sendBookingPaidEmail } from "../calendar/booking/services/bookingPaidEmailService";
@@ -97,13 +97,13 @@ export async function processApprovedPayment(
     return { skipped: true, reason: "pago aprobado sin external_reference" };
   }
 
-  const payment = await markPaymentAsPaid(bookingId, paymentId);
+  const result = await confirmPaymentAndBooking(bookingId, paymentId);
 
-  if (!payment) {
+  if (!result) {
     return { skipped: true, reason: "pago ya procesado anteriormente", bookingId };
   }
 
-  const booking = await confirmBooking(bookingId);
+  const { payment, booking } = result;
 
   if (!booking) {
     return { skipped: false, bookingId };
@@ -134,7 +134,9 @@ export async function processApprovedPayment(
     }).catch((e) => console.error("[webhook] Error email cliente:", e));
   }
 
-  const businessEmail = process.env.BUSINESS_NOTIFICATION_EMAIL;
+  const businessEmail =
+    (await getBusinessEmailByUserId(booking.user_id)) ??
+    process.env.BUSINESS_NOTIFICATION_EMAIL;
   if (businessEmail) {
     sendBusinessBookingPaidEmail({
       to: businessEmail,

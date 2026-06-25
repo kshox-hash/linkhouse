@@ -11,35 +11,50 @@ export type ConfirmedBooking = {
   service_name: string | null;
 };
 
-export async function markPaymentAsPaid(
+export async function confirmPaymentAndBooking(
   bookingId: string,
   providerPaymentId: string
-): Promise<{ id: string; amount: number } | null> {
+): Promise<{ payment: { id: string; amount: number }; booking: ConfirmedBooking | null } | null> {
   const pool = DB.getPool();
-  const result = await pool.query(
-    `UPDATE payments
-     SET status = 'paid', provider_payment_id = $1, paid_at = NOW()
-     WHERE booking_id = $2
-       AND provider = 'mercadopago'
-       AND status <> 'paid'
-     RETURNING id, amount`,
-    [providerPaymentId, bookingId]
-  );
-  return result.rows[0] ?? null;
-}
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
 
-export async function confirmBooking(
-  bookingId: string
-): Promise<ConfirmedBooking | null> {
-  const pool = DB.getPool();
-  const result = await pool.query(
-    `UPDATE calendar_bookings
-     SET payment_status = 'paid', paid_at = NOW(), status = 'confirmed'
-     WHERE id = $1
-     RETURNING id, user_id, client_name, client_email, client_phone, booking_date, start_time, service_name`,
-    [bookingId]
-  );
-  return result.rows[0] ?? null;
+    const paymentResult = await client.query(
+      `UPDATE payments
+       SET status = 'paid', provider_payment_id = $1, paid_at = NOW()
+       WHERE booking_id = $2
+         AND provider = 'mercadopago'
+         AND status <> 'paid'
+       RETURNING id, amount`,
+      [providerPaymentId, bookingId]
+    );
+
+    if ((paymentResult.rowCount ?? 0) === 0) {
+      await client.query("ROLLBACK");
+      return null;
+    }
+
+    const bookingResult = await client.query(
+      `UPDATE calendar_bookings
+       SET payment_status = 'paid', paid_at = NOW(), status = 'confirmed'
+       WHERE id = $1
+       RETURNING id, user_id, client_name, client_email, client_phone, booking_date, start_time, service_name`,
+      [bookingId]
+    );
+
+    await client.query("COMMIT");
+
+    return {
+      payment: paymentResult.rows[0],
+      booking: bookingResult.rows[0] ?? null,
+    };
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 
 export async function getBusinessNameByUserId(userId: string): Promise<string | null> {
@@ -49,6 +64,15 @@ export async function getBusinessNameByUserId(userId: string): Promise<string | 
     [userId]
   );
   return result.rows[0]?.business_name ?? null;
+}
+
+export async function getBusinessEmailByUserId(userId: string): Promise<string | null> {
+  const pool = DB.getPool();
+  const result = await pool.query(
+    `SELECT email FROM users WHERE id = $1 LIMIT 1`,
+    [userId]
+  );
+  return result.rows[0]?.email ?? null;
 }
 
 export async function getAccessTokenByMpUserId(mpUserId: string): Promise<string | null> {

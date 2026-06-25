@@ -156,6 +156,15 @@ export const calendarPublicController = {
         });
       }
 
+      // Verificar que MP esté configurado antes de crear la reserva
+      const accessToken = await getMpAccessToken(profile.user_id);
+      if (!accessToken) {
+        return res.status(400).json({
+          ok: false,
+          message: "El negocio no tiene MercadoPago configurado. No se pueden aceptar reservas en este momento.",
+        });
+      }
+
       // Bloquear si el cliente ya tiene una reserva pendiente de pago
       const alreadyPending = await hasPendingPaymentForCustomer(profile.user_id, customerEmail);
       if (alreadyPending) {
@@ -186,47 +195,37 @@ export const calendarPublicController = {
       });
 
       // Crear preferencia de pago en MercadoPago
-      let checkoutUrl: string | null = null;
       const businessName = await getBusinessNameByUserId(profile.user_id);
       const bookingDateLabel = new Date(bookingDate).toLocaleDateString("es-CL", {
         weekday: "long", day: "numeric", month: "long",
       });
-      try {
-        const accessToken = await getMpAccessToken(profile.user_id);
-        if (accessToken) {
-          const feePct = await getPlatformFeePct(profile.user_id);
-          const marketplaceFee = Math.round(paymentAmount * feePct / 100);
-          const payment = await createPaymentRecord(profile.user_id, booking.id, paymentAmount);
-          const bookingDateStr = new Date(bookingDate).toLocaleDateString("es-CL");
-          const preference = await createPreference({
-            accessToken,
-            bookingId: booking.id,
-            title: `Reserva ${businessName}`,
-            description: `${bookingDateStr} a las ${startTime} - ${customerName}`,
-            amount: paymentAmount,
-            customerEmail,
-            customerName,
-            businessName,
-            marketplaceFee,
-          });
-          if (preference.checkoutUrl) {
-            await updatePaymentWithPreference(payment.id, preference.checkoutUrl, preference.preferenceId ?? "");
-            checkoutUrl = preference.checkoutUrl;
-            const cancelUrl = `${process.env.PUBLIC_BASE_URL}/api/bookings/cancel/${booking.confirmation_token}`;
-            sendBookingPaymentLinkEmail({
-              to: customerEmail,
-              customerName,
-              businessName,
-              bookingDate: bookingDateLabel,
-              bookingTime: startTime,
-              checkoutUrl,
-              cancelUrl,
-            }).catch((err) => console.error("[calendar] Error enviando email de pago:", err));
-          }
-        }
-      } catch (err) {
-        console.error("[calendar] Error en flujo post-reserva:", err);
-      }
+      const feePct = await getPlatformFeePct(profile.user_id);
+      const marketplaceFee = Math.round(paymentAmount * feePct / 100);
+      const payment = await createPaymentRecord(profile.user_id, booking.id, paymentAmount);
+      const bookingDateStr = new Date(bookingDate).toLocaleDateString("es-CL");
+      const preference = await createPreference({
+        accessToken,
+        bookingId: booking.id,
+        title: `Reserva ${businessName}`,
+        description: `${bookingDateStr} a las ${startTime} - ${customerName}`,
+        amount: paymentAmount,
+        customerEmail,
+        customerName,
+        businessName,
+        marketplaceFee,
+      });
+      await updatePaymentWithPreference(payment.id, preference.checkoutUrl!, preference.preferenceId ?? "");
+      const checkoutUrl = preference.checkoutUrl!;
+      const cancelUrl = `${process.env.PUBLIC_BASE_URL}/api/bookings/cancel/${booking.confirmation_token}`;
+      sendBookingPaymentLinkEmail({
+        to: customerEmail,
+        customerName,
+        businessName,
+        bookingDate: bookingDateLabel,
+        bookingTime: startTime,
+        checkoutUrl,
+        cancelUrl,
+      }).catch((err) => console.error("[calendar] Error enviando email de pago:", err));
 
       statsService.increment(profile.user_id, "booking_created").catch(() => {});
 

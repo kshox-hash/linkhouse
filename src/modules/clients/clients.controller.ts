@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import nodemailer from "nodemailer";
+import { createTransporter, SMTP_FROM } from "../../core/mailer";
 import { getClients, getClientBookings } from "./clients.repository";
 
 function uid(req: Request): string {
@@ -8,15 +8,6 @@ function uid(req: Request): string {
 
 function isForbidden(req: Request): boolean {
   return req.user?.userId !== uid(req);
-}
-
-function createTransporter() {
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: process.env.SMTP_SECURE === "true",
-    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-  });
 }
 
 export const clientsController = {
@@ -51,7 +42,7 @@ export const clientsController = {
       }
       const transporter = createTransporter();
       await transporter.sendMail({
-        from: `"Automatiza Fácil" <${process.env.SMTP_FROM_EMAIL}>`,
+        from: SMTP_FROM(),
         to: String(to),
         subject: String(subject),
         html: `<div style="font-family:sans-serif;padding:24px;max-width:600px">

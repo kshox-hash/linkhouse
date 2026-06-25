@@ -61,17 +61,13 @@ function initSubmitHandler() {
         return;
       }
 
-      // Paid booking — redirect to MercadoPago checkout
+      // Redirect to MercadoPago checkout
       if (bookingData.checkoutUrl) {
         window.location.href = bookingData.checkoutUrl;
         return;
       }
 
-      // Free booking or no payment configured — show success
-      const serviceLabel = selServiceName ? selServiceName + " · " : "";
-      const dateLabel = selDate ? formatDisplayDate(selDate) : "";
-      const timeLabel = selTime ? "a las " + selTime : "";
-      showSuccess(serviceLabel + dateLabel + " " + timeLabel);
+      showMessage("error", "No se pudo iniciar el proceso de pago. Contacta al negocio.");
     } catch (_) {
       showMessage("error", "Ocurrió un error al enviar la reserva.");
       setSubmitLoading(false);

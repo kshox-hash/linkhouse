@@ -140,7 +140,7 @@ export const calendarAdminController = {
 
       const rows = await getPaymentsForExport(userId, year || undefined);
 
-      const STATUS_LABEL: Record<string, string> = { paid: "Pagado", free: "Sin cobro" };
+      const STATUS_LABEL: Record<string, string> = { paid: "Pagado" };
 
       const escape = (v: string | number | null | undefined): string => {
         const s = v == null ? "" : String(v);
@@ -151,7 +151,6 @@ export const calendarAdminController = {
       // ── Resumen ──────────────────────────────────────────────────────────
       const totalAmount = rows.reduce((sum, r) => sum + (r.payment_amount ?? 0), 0);
       const paidCount   = rows.filter(r => r.payment_status === "paid").length;
-      const freeCount   = rows.filter(r => r.payment_status === "free").length;
 
       const periodoLabel = (year && /^\d{4}$/.test(year)) ? `Año ${year}` : "Todos los registros";
 
@@ -163,7 +162,6 @@ export const calendarAdminController = {
         `"Período:","${firstDate} al ${lastDate}"`,
         `"Total transacciones:","${rows.length}"`,
         `"Transacciones pagadas:","${paidCount}"`,
-        `"Sin cobro:","${freeCount}"`,
         `"Total recaudado:","$${totalAmount.toLocaleString('es-CL')}"`,
         `""`,
       ];

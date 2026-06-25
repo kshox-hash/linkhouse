@@ -162,12 +162,3 @@ export async function hasPendingPaymentForCustomer(
   return (result.rowCount ?? 0) > 0;
 }
 
-export async function confirmFreeBooking(bookingId: string): Promise<void> {
-  const pool = DB.getPool();
-  await pool.query(
-    `UPDATE calendar_bookings
-     SET status = 'confirmed', payment_status = 'free', email_confirmed_at = NOW()
-     WHERE id = $1 AND payment_status = 'unpaid'`,
-    [bookingId]
-  );
-}
