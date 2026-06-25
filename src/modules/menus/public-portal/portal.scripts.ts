@@ -554,6 +554,13 @@ document.addEventListener('click',function(e){
     if(jsonStr){try{var prod=JSON.parse(jsonStr);if(prod&&prod.id)openProdDetailPanel(prod);}catch(e){}}
     return;
   }
+
+  var galItem=t.closest('[data-gal-idx]');
+  if(galItem){
+    var gidx=parseInt(galItem.getAttribute('data-gal-idx')||'0',10);
+    openGalPanel(gidx);
+    return;
+  }
 });
 
 // ── services ──────────────────────────────────────────────────────────────────

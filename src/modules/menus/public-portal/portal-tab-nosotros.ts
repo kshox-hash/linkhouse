@@ -76,7 +76,7 @@ export function nosotrosTabHtml(products: Product[], total: number, galleryPhoto
     </div>
     ${hasGallery ? `
     <div class="gal-grid">
-      ${galleryPhotos.map((p, i) => `<div class="gal-item" data-gal-idx="${i}" data-gal-url="${escapeHtml(p.url)}" data-gal-desc="${escapeHtml(p.description || "")}" onclick="openGalPanel(${i})">
+      ${galleryPhotos.map((p, i) => `<div class="gal-item" data-gal-idx="${i}" data-gal-url="${escapeHtml(p.url)}" data-gal-desc="${escapeHtml(p.description || "")}">
         <img src="${escapeHtml(p.url)}" alt="" loading="lazy">
       </div>`).join("")}
     </div>` : `
