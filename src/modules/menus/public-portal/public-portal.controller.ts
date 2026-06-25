@@ -143,7 +143,6 @@ export const publicPortalController = {
         city:           profile?.city            ?? null,
         brandColor:     profile?.brand_color     ?? null,
         description:    profile?.description     ?? null,
-        welcomeMessage: profile?.welcome_message ?? null,
         instagramUrl:   profile?.instagram_url   ?? null,
         whatsappNumber: profile?.whatsapp_number ?? null,
         businessHours:  profile?.business_hours  ?? null,

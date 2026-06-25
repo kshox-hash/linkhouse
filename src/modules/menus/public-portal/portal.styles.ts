@@ -430,6 +430,10 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 .hm-profile-desc{
   font-size:13px;color:var(--soft);line-height:1.5
 }
+.hm-profile-hours{
+  display:flex;align-items:center;gap:6px;font-size:12px;color:var(--soft);
+}
+.hm-profile-hours svg{width:12px;height:12px;flex-shrink:0;opacity:.7}
 .hm-pstats{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .hm-pstat{
   display:flex;align-items:center;gap:5px;

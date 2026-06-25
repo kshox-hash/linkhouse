@@ -18,7 +18,6 @@ export type PortalViewData = {
   city?: string | null;
   brandColor?: string | null;
   description?: string | null;
-  welcomeMessage?: string | null;
   instagramUrl?: string | null;
   whatsappNumber?: string | null;
   businessHours?: string | null;
@@ -60,7 +59,7 @@ export function renderPortalHtml(data: PortalViewData): string {
   const {
     businessName, publicSlug, userId, productCount,
     phone, address, city, brandColor,
-    description, welcomeMessage,
+    description,
     instagramUrl, whatsappNumber, businessHours,
     coverImage,
     enabledModules, products, galleryPhotos,
@@ -76,7 +75,6 @@ export function renderPortalHtml(data: PortalViewData): string {
     city:    city           ? escapeHtml(city)           : null,
     address: address        ? escapeHtml(address)        : null,
     desc:    description    ? escapeHtml(description)    : null,
-    welcome: welcomeMessage ? escapeHtml(welcomeMessage) : null,
     ig:      instagramUrl   ? escapeHtml(instagramUrl)   : null,
     wa:      whatsappNumber ? escapeHtml(whatsappNumber) : null,
     hours:   businessHours  ? escapeHtml(businessHours)  : null,
@@ -176,7 +174,7 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
     <span class="cn-status">En línea</span>
   </nav>
 
-  ${chatTabHtml({ name: s.name, slug: s.slug, desc: s.desc, welcome: s.welcome, enabledModules, phone: s.phone, ig: s.ig, wa: s.wa, hours: s.hours, locationLine, waHref, initials, productCount, portalUser, coverImage: coverImage ?? null })}
+  ${chatTabHtml({ name: s.name, slug: s.slug, desc: s.desc, enabledModules, phone: s.phone, ig: s.ig, wa: s.wa, hours: s.hours, locationLine, waHref, initials, productCount, portalUser, coverImage: coverImage ?? null })}
   ${reservasTabHtml()}
   ${nosotrosTabHtml(products, productCount, galleryPhotos)}
   ${serviciosTabHtml()}
@@ -305,7 +303,7 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
   <div class="sp-body" id="galPanelBody"></div>
 </div>
 
-<script>${portalScripts(publicSlug, businessName, userId, enabledModules, products.length, productCount, { phone: s.phone, address: s.address, city: s.city, description: s.desc, welcomeMessage: welcomeMessage ?? null, businessHours: s.hours, instagramUrl: s.ig, whatsappNumber: s.wa }, initials)}</script>
+<script>${portalScripts(publicSlug, businessName, userId, enabledModules, products.length, productCount, { phone: s.phone, address: s.address, city: s.city, description: s.desc, businessHours: s.hours, instagramUrl: s.ig, whatsappNumber: s.wa }, initials)}</script>
 </body>
 </html>`;
 }

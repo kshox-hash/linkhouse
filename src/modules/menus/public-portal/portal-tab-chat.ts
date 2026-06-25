@@ -4,7 +4,6 @@ type ChatData = {
   name: string;
   slug: string;
   desc?: string | null;
-  welcome?: string | null;
   enabledModules: MenuModuleItem[];
   phone?: string | null;
   ig?: string | null;
@@ -58,6 +57,7 @@ export function chatTabHtml(d: ChatData): string {
     <div class="hm-profile-summary">
       <div class="hm-profile-card">
       ${d.desc ? `<div class="hm-profile-desc">${d.desc}</div>` : ''}
+      ${d.hours ? `<div class="hm-profile-hours">${S_CLOCK}&nbsp;${d.hours}</div>` : ''}
       <div class="hm-pstats">
         <div class="hm-pstat hm-pstat-svc">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>

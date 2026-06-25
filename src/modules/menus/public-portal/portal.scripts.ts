@@ -400,32 +400,12 @@ function renderBkSuccess(checkoutUrl,bookingId){
     +'<div class="bk-success-title">¡Reserva confirmada!</div>'
     +'<div class="bk-success-sub">'+subMsg+'</div>'
     +'<button class="btn-primary" type="button" id="bkDone" style="width:100%;margin-top:28px">Listo</button>'
-    +(bookingId?'<button type="button" id="bkCancel" style="width:100%;margin-top:10px;background:none;border:none;cursor:pointer;font-size:13px;color:var(--soft);padding:8px 0">Cancelar reserva</button>':'')
     +'</div>';
   var done=document.getElementById('bkDone');
   if(done) done.addEventListener('click',function(){
     closePanel('bookingPanel');
     bk.svc=null;bk.date=null;bk.time=null;bk.provider=null;bk.entry=null;bkProvSlots={};
   });
-  var cancelBtn=document.getElementById('bkCancel');
-  if(cancelBtn&&bookingId){
-    cancelBtn.addEventListener('click',function(){
-      cancelBtn.textContent='Cancelando…';
-      cancelBtn.disabled=true;
-      fetch('/api/public/'+SLUG+'/bookings/'+bookingId,{method:'DELETE'})
-        .then(function(r){return r.json();})
-        .then(function(d){
-          if(d.ok){
-            closePanel('bookingPanel');
-            bk.svc=null;bk.date=null;bk.time=null;bk.provider=null;bk.entry=null;bkProvSlots={};
-          } else {
-            cancelBtn.textContent=d.message||'No se pudo cancelar.';
-            cancelBtn.disabled=false;
-          }
-        })
-        .catch(function(){cancelBtn.textContent='Error al cancelar.';cancelBtn.disabled=false;});
-    });
-  }
 }
 
 function fmtDateLabel(dateStr){
