@@ -28,8 +28,8 @@ export function generateStyle5(
       const rawAccent = input.brandAccentColor?.trim() ?? "";
       const accent    = /^#[0-9A-Fa-f]{6}$/.test(rawAccent) ? rawAccent : "#1A1A1A";
 
-      const sidebarBg  = "#1A1A1A";
-      const sideAccent = "#6B7280";  // visible-on-dark gray for sidebar details
+      const sidebarBg  = accent;
+      const sideAccent = "#9CA3AF";  // visible-on-dark gray for sidebar details
       const white      = "#FFFFFF";
       const ink        = "#111827";
       const inkSub     = "#4B5563";
@@ -63,13 +63,13 @@ export function generateStyle5(
             doc.restore();
           } catch {
             // fallback to initials
-            doc.rect(lx, sy, LOGO_SZ, LOGO_SZ).fill(accent);
+            doc.rect(lx, sy, LOGO_SZ, LOGO_SZ).fill(sideAccent);
             const init = (brand[0] || "M").toUpperCase();
             doc.fillColor(white).font("Helvetica-Bold").fontSize(30)
                .text(init, lx, sy + 16, { width: LOGO_SZ, align: "center" });
           }
         } else {
-          doc.rect(lx, sy, LOGO_SZ, LOGO_SZ).fill(accent);
+          doc.rect(lx, sy, LOGO_SZ, LOGO_SZ).fill(sideAccent);
           const init = (brand[0] || "M").toUpperCase();
           doc.fillColor(white).font("Helvetica-Bold").fontSize(30)
              .text(init, lx, sy + 16, { width: LOGO_SZ, align: "center" });

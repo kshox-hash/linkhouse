@@ -17,7 +17,7 @@ export const quoteServicesController = {
     try {
       const userId = req.user?.userId;
       if (!userId) return res.status(401).json({ ok: false, message: "No autorizado" });
-      const { name, description, unit = "unidad", price } = req.body;
+      const { name, description, unit = "unidad", price, isQuoteOnly } = req.body;
       if (!name?.trim()) return res.status(400).json({ ok: false, message: "Nombre es requerido" });
       if (price == null || isNaN(Number(price)) || Number(price) < 0)
         return res.status(400).json({ ok: false, message: "Precio inválido" });
@@ -26,6 +26,7 @@ export const quoteServicesController = {
         description: description?.trim() || undefined,
         unit: unit || "unidad",
         price: Number(price),
+        isQuoteOnly: Boolean(isQuoteOnly),
       });
       return res.status(201).json({ ok: true, service });
     } catch (e: any) {
@@ -38,13 +39,14 @@ export const quoteServicesController = {
       const userId = req.user?.userId;
       if (!userId) return res.status(401).json({ ok: false, message: "No autorizado" });
       const serviceId = String(req.params["serviceId"]);
-      const { name, description, unit, price, isActive } = req.body;
+      const { name, description, unit, price, isActive, isQuoteOnly } = req.body;
       const service = await repo.updateQuoteService(userId, serviceId, {
         name: name?.trim(),
         description: description !== undefined ? (description?.trim() || null) : undefined,
         unit: unit?.trim(),
         price: price != null ? Number(price) : undefined,
         isActive,
+        isQuoteOnly: isQuoteOnly !== undefined ? Boolean(isQuoteOnly) : undefined,
       });
       if (!service) return res.status(404).json({ ok: false, message: "Servicio no encontrado" });
       return res.json({ ok: true, service });

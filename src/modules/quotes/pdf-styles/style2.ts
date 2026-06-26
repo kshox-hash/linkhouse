@@ -261,15 +261,15 @@ export function generateStyle2(
       ];
 
       totRows.forEach(([lbl, val, isBold]) => {
-        const bg = isBold ? accent : (lbl.startsWith("TOTAL") ? rowAlt : white);
-        doc.rect(TOT_X, y, TOT_LW, ROW_H).fill(lbl === "SALDO ADEUDADO" ? "#DBEAFE" : bg);
+        const bg = isBold ? accent : rowAlt;
+        doc.rect(TOT_X, y, TOT_LW, ROW_H).fill(bg);
         doc.rect(TOT_X + TOT_LW, y, TOT_VW, ROW_H).fill(isBold ? accent : white);
         doc.strokeColor(border).lineWidth(0.4).rect(TOT_X, y, TOT_W, ROW_H).stroke();
         doc.strokeColor(border).lineWidth(0.3)
            .moveTo(TOT_X + TOT_LW, y).lineTo(TOT_X + TOT_LW, y + ROW_H).stroke();
 
         const fnt = isBold ? "Helvetica-Bold" : "Helvetica";
-        const clr = isBold ? white : (lbl === "SALDO ADEUDADO" ? accent : ink);
+        const clr = isBold ? white : ink;
         doc.fillColor(clr).font(fnt).fontSize(isBold ? 10 : 8.5)
            .text(lbl, TOT_X + 8, y + (ROW_H - (isBold ? 12 : 10)) / 2, { width: TOT_LW - 10 })
            .text(val, TOT_X + TOT_LW + 5, y + (ROW_H - (isBold ? 12 : 10)) / 2, { width: TOT_VW - 8, align: "right" });

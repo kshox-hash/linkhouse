@@ -10,6 +10,7 @@ export type CalendarService = {
   duration_minutes: number | null;
   color: string;
   is_active: boolean;
+  is_quote_only: boolean;
   sort_order: number;
   photos: string[];
 };
@@ -35,12 +36,16 @@ export async function initCalendarServicesTable(): Promise<void> {
       ADD COLUMN IF NOT EXISTS service_name TEXT,
       ADD COLUMN IF NOT EXISTS service_color TEXT
   `);
+  await pool.query(`
+    ALTER TABLE calendar_services
+      ADD COLUMN IF NOT EXISTS is_quote_only BOOLEAN NOT NULL DEFAULT FALSE
+  `);
 }
 
 export async function getServicesByUserId(userId: string): Promise<CalendarService[]> {
   const pool = DB.getPool();
   const result = await pool.query(
-    `SELECT id::text, user_id::text, name, description, COALESCE(unit,'unidad') AS unit, price, duration_minutes, color, is_active, sort_order, COALESCE(photos, '{}') AS photos
+    `SELECT id::text, user_id::text, name, description, COALESCE(unit,'unidad') AS unit, price, duration_minutes, color, is_active, is_quote_only, sort_order, COALESCE(photos, '{}') AS photos
      FROM calendar_services
      WHERE user_id = $1
      ORDER BY sort_order ASC, name ASC`,
@@ -52,9 +57,9 @@ export async function getServicesByUserId(userId: string): Promise<CalendarServi
 export async function getActiveServicesByUserId(userId: string): Promise<CalendarService[]> {
   const pool = DB.getPool();
   const result = await pool.query(
-    `SELECT id::text, user_id::text, name, description, COALESCE(unit,'unidad') AS unit, price, duration_minutes, color, is_active, sort_order, COALESCE(photos, '{}') AS photos
+    `SELECT id::text, user_id::text, name, description, COALESCE(unit,'unidad') AS unit, price, duration_minutes, color, is_active, is_quote_only, sort_order, COALESCE(photos, '{}') AS photos
      FROM calendar_services
-     WHERE user_id = $1 AND is_active = TRUE
+     WHERE user_id = $1 AND is_active = TRUE AND is_quote_only = FALSE
      ORDER BY sort_order ASC, name ASC`,
     [userId]
   );
@@ -67,11 +72,11 @@ export async function getActiveServicesPaginated(
   offset: number
 ): Promise<{ rows: CalendarService[]; total: number }> {
   const pool = DB.getPool();
-  const sel = `SELECT id::text, user_id::text, name, description, COALESCE(unit,'unidad') AS unit, price, duration_minutes, color, is_active, sort_order, COALESCE(photos, '{}') AS photos
-     FROM calendar_services WHERE user_id = $1 AND is_active = TRUE ORDER BY sort_order ASC, name ASC`;
+  const sel = `SELECT id::text, user_id::text, name, description, COALESCE(unit,'unidad') AS unit, price, duration_minutes, color, is_active, is_quote_only, sort_order, COALESCE(photos, '{}') AS photos
+     FROM calendar_services WHERE user_id = $1 AND is_active = TRUE AND is_quote_only = FALSE ORDER BY sort_order ASC, name ASC`;
   const [data, count] = await Promise.all([
     pool.query(sel + ` LIMIT $2 OFFSET $3`, [userId, limit, offset]),
-    pool.query(`SELECT COUNT(*)::int AS total FROM calendar_services WHERE user_id = $1 AND is_active = TRUE`, [userId]),
+    pool.query(`SELECT COUNT(*)::int AS total FROM calendar_services WHERE user_id = $1 AND is_active = TRUE AND is_quote_only = FALSE`, [userId]),
   ]);
   return { rows: data.rows, total: Number(count.rows[0].total) };
 }
@@ -79,7 +84,7 @@ export async function getActiveServicesPaginated(
 export async function getServiceById(id: string, userId: string): Promise<CalendarService | null> {
   const pool = DB.getPool();
   const result = await pool.query(
-    `SELECT id::text, user_id::text, name, description, COALESCE(unit,'unidad') AS unit, price, duration_minutes, color, is_active, sort_order, COALESCE(photos, '{}') AS photos
+    `SELECT id::text, user_id::text, name, description, COALESCE(unit,'unidad') AS unit, price, duration_minutes, color, is_active, is_quote_only, sort_order, COALESCE(photos, '{}') AS photos
      FROM calendar_services WHERE id = $1 AND user_id = $2`,
     [id, userId]
   );
@@ -99,7 +104,7 @@ export async function createService(input: {
   const result = await pool.query(
     `INSERT INTO calendar_services (user_id, name, description, unit, price, duration_minutes, color)
      VALUES ($1, $2, $3, $4, $5, $6, $7)
-     RETURNING id::text, user_id::text, name, description, COALESCE(unit,'unidad') AS unit, price, duration_minutes, color, is_active, sort_order, COALESCE(photos, '{}') AS photos`,
+     RETURNING id::text, user_id::text, name, description, COALESCE(unit,'unidad') AS unit, price, duration_minutes, color, is_active, is_quote_only, sort_order, COALESCE(photos, '{}') AS photos`,
     [input.userId, input.name, input.description ?? null, input.unit ?? 'unidad', input.price, input.durationMinutes ?? null, input.color]
   );
   return result.rows[0];
@@ -119,7 +124,7 @@ export async function updateService(input: {
     `UPDATE calendar_services
      SET name = $1, price = $2, duration_minutes = $3, color = $4, is_active = $5
      WHERE id = $6 AND user_id = $7
-     RETURNING id::text, user_id::text, name, description, COALESCE(unit,'unidad') AS unit, price, duration_minutes, color, is_active, sort_order, COALESCE(photos, '{}') AS photos`,
+     RETURNING id::text, user_id::text, name, description, COALESCE(unit,'unidad') AS unit, price, duration_minutes, color, is_active, is_quote_only, sort_order, COALESCE(photos, '{}') AS photos`,
     [input.name, input.price, input.durationMinutes ?? null, input.color, input.isActive, input.id, input.userId]
   );
   return result.rows[0] ?? null;
