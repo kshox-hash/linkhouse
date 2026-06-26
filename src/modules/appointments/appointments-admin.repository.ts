@@ -321,7 +321,7 @@ export async function getPaymentsForExport(userId: string, year?: string): Promi
   const result = await pool.query<PaymentExportRow>(
     `SELECT
        TO_CHAR(cb.booking_date, 'DD/MM/YYYY') AS booking_date,
-       TO_CHAR(cb.start_time,   'HH24:MI')    AS start_time,
+       cb.start_time,
        COALESCE(cb.client_name,  '')           AS client_name,
        COALESCE(cb.client_email, '')           AS client_email,
        COALESCE(cb.client_phone, '')           AS client_phone,

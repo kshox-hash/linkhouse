@@ -127,6 +127,18 @@ export const statisticsController = {
     }
   },
 
+  async getLinkOpensDaily(req: Request, res: Response): Promise<Response> {
+    try {
+      if (isForbidden(req)) return res.status(403).json({ ok: false, message: "Forbidden" });
+      const days = Math.min(Math.max(parseInt(String(req.query["days"] || "30"), 10) || 30, 7), 90);
+      const repo = new (await import("./statistics.repository")).StatisticsRepository();
+      const rows = await repo.getDailyHistory(uid(req), "link_opens", days, null);
+      return res.json({ ok: true, days: rows });
+    } catch (error: any) {
+      return res.status(500).json({ ok: false, message: error?.message || "Error interno" });
+    }
+  },
+
   async getPublicReviews(req: Request, res: Response): Promise<Response> {
     try {
       const userId = String(req.params["userId"]);
