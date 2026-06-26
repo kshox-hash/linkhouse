@@ -181,7 +181,7 @@ export const companyProfileController = {
             folder: `cover-images/${userId}`,
             transformation: [
               { width: 1600, height: 600, crop: "limit" },
-              { quality: "auto:low", fetch_format: "auto" },
+              { quality: "auto:good", fetch_format: "auto" },
             ],
           },
           (err, result) => {
