@@ -261,23 +261,30 @@ export async function generateQuotePdf(
         if (ex.notes) rows.push({ label: "Notas adicionales", value: ex.notes });
         if (rows.length === 0) return startY;
 
-        const rowH = 20;
-        const boxH = 26 + rows.length * rowH;
-        let cy     = ensureSpace(startY, boxH + 16);
+        // Pre-calculate each row height based on actual value text
+        const valueColW  = CW - 178;
+        const rowHeights = rows.map(({ value }) => {
+          doc.font("Helvetica").fontSize(8.5);
+          const valH = doc.heightOfString(value, { width: valueColW });
+          return Math.max(16, Math.ceil(valH) + 8);
+        });
+        const totalH = 20 + rowHeights.reduce((a, b) => a + b, 0);
+
+        let cy = ensureSpace(startY, totalH + 16);
 
         // Thin separator above extra fields block
         doc.strokeColor(border).lineWidth(0.6)
            .moveTo(M, cy).lineTo(M + CW, cy).stroke();
         cy += 12;
-        rows.forEach(({ label, value }) => {
+        rows.forEach(({ label, value }, i) => {
           doc.fillColor(inkDim).font("Helvetica-Bold").fontSize(8)
              .text(label + ":", M, cy, { width: 172 });
           doc.fillColor(inkSub).font("Helvetica").fontSize(8.5)
-             .text(value, M + 178, cy, { width: CW - 178 });
-          cy += rowH;
+             .text(value, M + 178, cy, { width: valueColW });
+          cy += rowHeights[i];
         });
 
-        return startY + boxH + 12;
+        return cy + 8;
       }
 
       // ── BUILD PAGE ────────────────────────────────────────────────────────────
@@ -344,22 +351,36 @@ export async function generateQuotePdf(
         y += 42;
       } else {
         lines.forEach((line, idx) => {
-          const hasDesc = !!line.description?.trim();
-          const rowH    = hasDesc ? 46 : 30;
-          const fill    = idx % 2 === 0 ? white : rowAlt;
-          y = ensureSpace(y, rowH + 120, true);
+          const hasDesc   = !!line.description?.trim();
+          const nameColW  = dW - pad * 2;
+
+          // Measure actual text heights before drawing
+          doc.font("Helvetica-Bold").fontSize(9);
+          const nameH = doc.heightOfString(line.name || "—", { width: nameColW });
+
+          let descH = 0;
+          if (hasDesc) {
+            doc.font("Helvetica").fontSize(7.5);
+            descH = doc.heightOfString(line.description, { width: nameColW });
+          }
+
+          const vPad = 16; // top + bottom padding combined
+          const rowH = Math.max(28, Math.ceil(nameH + (hasDesc ? descH + 5 : 0) + vPad));
+          const fill = idx % 2 === 0 ? white : rowAlt;
+
+          y = ensureSpace(y, rowH + 60, true);
 
           doc.rect(M, y, CW, rowH).fill(fill);
           doc.strokeColor(border).lineWidth(0.4)
              .moveTo(M, y + rowH).lineTo(M + CW, y + rowH).stroke();
 
-          const ty = hasDesc ? y + 8 : y + 10;
+          const ty = y + 8;
 
           doc.fillColor(ink).font("Helvetica-Bold").fontSize(9)
-             .text(line.name, c1, ty, { width: dW - pad * 2 });
+             .text(line.name, c1, ty, { width: nameColW });
           if (hasDesc) {
             doc.fillColor(inkDim).font("Helvetica").fontSize(7.5)
-               .text(line.description, c1, ty + 17, { width: dW - pad * 2 });
+               .text(line.description, c1, ty + nameH + 3, { width: nameColW });
           }
           doc.fillColor(inkSub).font("Helvetica").fontSize(9)
              .text(String(line.quantity),             c2, ty, { width: qW, align: "center" })
@@ -403,15 +424,18 @@ export async function generateQuotePdf(
       // ── Customer notes ────────────────────────────────────────────────────────
       const noteText = cust.notes?.trim();
       if (noteText) {
-        y = ensureSpace(y, 72);
+        doc.font("Helvetica").fontSize(9);
+        const noteH    = doc.heightOfString(noteText, { width: CW });
+        const noteBlock = Math.ceil(noteH) + 30; // label + top/bottom gaps
+        y = ensureSpace(y, noteBlock + 16);
         doc.strokeColor(border).lineWidth(0.6)
            .moveTo(M, y).lineTo(M + CW, y).stroke();
         y += 12;
         doc.fillColor(inkDim).font("Helvetica-Bold").fontSize(7)
            .text("OBSERVACIONES DEL CLIENTE", M, y);
         doc.fillColor(inkSub).font("Helvetica").fontSize(9)
-           .text(noteText, M, y + 14, { width: CW });
-        y += 44;
+           .text(noteText, M, y + 12, { width: CW });
+        y += noteBlock;
       }
 
       // ── Footer ────────────────────────────────────────────────────────────────
