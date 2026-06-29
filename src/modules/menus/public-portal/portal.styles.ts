@@ -3,9 +3,9 @@ export function portalStyles(): string {
 /* ── RESET ───────────────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 button{border:none;background:none;cursor:pointer;font-family:inherit;padding:0;-webkit-appearance:none;appearance:none}
-html,body{height:100%;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;background:#fff;scrollbar-width:none;overflow-x:hidden}
+html,body{height:100%;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;background:var(--bg);scrollbar-width:none;overflow-x:hidden}
 html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
-body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);overscroll-behavior:none}
+body{font-family:'Manrope',system-ui,sans-serif;background:var(--bg);color:var(--text);overscroll-behavior:none}
 *::-webkit-scrollbar{width:4px;height:4px}
 *::-webkit-scrollbar-track{background:transparent}
 *::-webkit-scrollbar-thumb{background:rgba(15,23,42,.15);border-radius:99px}
@@ -13,32 +13,32 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 
 /* ── TOKENS ──────────────────────────────────────────────────────────── */
 :root{
-  --bg:#FFFFFF;
-  --panel:#F8FAFC;
-  --rail:#F8FAFC;
-  --rail-icon:#94A3B8;
+  --bg:#EAEAED;
+  --panel:#FFFFFF;
+  --rail:#FFFFFF;
+  --rail-icon:#AEAEBA;
   --rail-icon-act:var(--primary);
-  --border:#E2E8F0;
-  --border-inner:#EEF2F7;
-  --text:#0F172A;
-  --soft:#475569;
-  --dim:#94A3B8;
-  --primary:#2563EB;
-  --primary-dim:rgba(37,99,235,.07);
-  --primary-glow:rgba(37,99,235,.15);
-  --nav-act:#2563EB;
-  --nav-act-bg:rgba(37,99,235,.07);
+  --border:#E0E0E6;
+  --border-inner:#F2F2F5;
+  --text:#111116;
+  --soft:#38383F;
+  --dim:#78788C;
+  --primary:#F97316;
+  --primary-dim:rgba(249,115,22,.07);
+  --primary-glow:rgba(249,115,22,.15);
+  --nav-act:#F97316;
+  --nav-act-bg:rgba(249,115,22,.08);
   --green:#16A34A;
   --green-dim:rgba(22,163,74,.08);
-  --red:#DC2626;
-  --red-dim:rgba(220,38,38,.08);
+  --red:#EF4444;
+  --red-dim:rgba(239,68,68,.08);
   --amber:#D97706;
   --amber-dim:rgba(217,119,6,.10);
-  --shadow-s:0 1px 4px rgba(15,23,42,.06);
-  --shadow:0 4px 16px rgba(15,23,42,.08);
-  --shadow-l:0 12px 36px rgba(15,23,42,.12);
-  --r:10px;
-  --rs:7px;
+  --shadow-s:0 1px 4px rgba(0,0,0,.05);
+  --shadow:0 4px 16px rgba(0,0,0,.07);
+  --shadow-l:0 12px 36px rgba(0,0,0,.10);
+  --r:14px;
+  --rs:10px;
   --rail-w:210px;
   --prof-w:260px;
   --hdr:56px;
@@ -440,7 +440,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 .hm-social-btn:hover{background:var(--panel)}
 .hm-social-wa{border-color:rgba(22,163,74,.25);color:#15803D;background:rgba(22,163,74,.05)}
 .hm-social-ig{border-color:rgba(219,39,119,.2);color:#be185d;background:rgba(219,39,119,.04)}
-.hm-social-ph{border-color:rgba(37,99,235,.2);color:#1d4ed8;background:rgba(37,99,235,.04)}
+.hm-social-ph{border-color:var(--primary-glow);color:var(--primary);background:var(--primary-dim)}
 .hm-social-btn svg{width:13px;height:13px;flex-shrink:0}
 .hm-pstats{display:flex;align-items:center;gap:14px;padding-top:2px;border-top:1px solid var(--border-inner)}
 .hm-pstat{
@@ -872,7 +872,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 }
 .cal-cell.cal-empty{pointer-events:none;background:transparent}
 .cal-cell.cal-past{color:#94A3B8;pointer-events:none;background:transparent}
-.cal-cell.cal-today{background:#2563EB;color:#fff;font-weight:700}
+.cal-cell.cal-today{background:var(--primary);color:#fff;font-weight:700}
 .cal-cell.cal-avail-good{cursor:pointer;font-weight:700;color:#fff;background:#16A34A;border:none}
 .cal-cell.cal-avail-good:hover{background:#15803D}
 .cal-cell.cal-avail-good::after{
@@ -917,7 +917,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:var(--text);
 .bk-date-badge{
   display:inline-flex;align-items:center;gap:6px;background:var(--primary-dim);
   color:var(--primary);border-radius:6px;padding:5px 12px;font-size:12px;font-weight:600;
-  margin-bottom:18px;border:1px solid rgba(37,99,235,.15)
+  margin-bottom:18px;border:1px solid var(--primary-glow)
 }
 .bk-sec-title{font-size:11.5px;font-weight:600;color:var(--dim);letter-spacing:.04em;margin-bottom:10px}
 .bk-svc-item{

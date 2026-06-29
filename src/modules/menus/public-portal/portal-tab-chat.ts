@@ -150,7 +150,7 @@ export function chatTabHtml(d: ChatData): string {
         <div class="hm-card hm-card-cal">
           <div class="hm-card-hdr">
             <div class="hm-card-title-row">
-              <span class="hm-card-title-icon" style="color:#2563EB">${S_CAL}</span>
+              <span class="hm-card-title-icon" style="color:var(--primary)">${S_CAL}</span>
               <span class="hm-card-title">Disponibilidad</span>
             </div>
             <button class="sec-link" type="button" data-action="reservas">Reservar →</button>

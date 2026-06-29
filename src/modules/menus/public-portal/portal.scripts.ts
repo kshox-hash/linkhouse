@@ -1250,7 +1250,7 @@ function showCalTip(cell,date){
   var isToday=dDay.getTime()===today.getTime();
   var slots=calSlots[date]||[];
   var hasSlots=slots.length>0;
-  var svcDotColors=['#6366F1','#2563EB','#059669','#D97706','#EC4899','#14B8A6'];
+  var svcDotColors=['#F97316','#FB923C','#059669','#D97706','#EC4899','#14B8A6'];
 
   var html='<div class="cal-tip-date">'
     +DAY[d.getDay()]+' '+d.getDate()+' '+MON[d.getMonth()]
@@ -1381,7 +1381,7 @@ function openDayDetailPanel(date){
   var isToday=new Date(date+'T00:00').getTime()===today.getTime();
   var slots=calSlots[date]||[];
   var hasSlots=slots.length>0;
-  var svcDotColors=['#6366F1','#2563EB','#059669','#D97706','#EC4899','#14B8A6'];
+  var svcDotColors=['#F97316','#FB923C','#059669','#D97706','#EC4899','#14B8A6'];
   var dateLabel=(isToday?'Hoy — ':'')+DAY[d.getDay()]+' '+d.getDate()+' de '+MON[d.getMonth()];
 
   var titleEl=document.getElementById('ddpTitle');
