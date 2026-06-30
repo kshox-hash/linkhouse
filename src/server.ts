@@ -10,7 +10,6 @@ import mpWebhookRouter from "./modules/webhook/mp-webhook.router";
 import mpConnectRouter from "./modules/mp-connect/mp-connect.router";
 import adminRouter from "./modules/admin/admin.router";
 import clientsRouter from "./modules/clients/clients.router";
-import blocksRouter from "./modules/blocks/blocks.router";
 import { startReminderCron } from "./modules/reminders/reminder.cron";
 import { startCleanupCron } from "./modules/appointments/cleanup.cron";
 import { PORT, CORS_ORIGINS } from "./config/env";
@@ -155,7 +154,6 @@ app.use("/products", productsRouter);
 app.use("/api", statisticsRouter);
 app.use("/api", quotesExtendedRouter);
 app.use("/api", clientsRouter);
-app.use("/api", blocksRouter);
 app.use(galleryRouter);
 app.use(errorMiddleware);
 
