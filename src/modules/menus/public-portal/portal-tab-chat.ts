@@ -1,4 +1,5 @@
 import { MenuModuleItem } from "../user-modules.repository";
+import { escapeHtml } from "../../../utils/html";
 
 type ChatData = {
   name: string;
@@ -16,6 +17,7 @@ type ChatData = {
   portalUser?: { name?: string; email?: string; picture?: string } | null;
   coverImage?: string | null;
   galleryFolders?: { id: string; name: string; coverUrl: string | null }[];
+  orphanPhotos?: { url: string }[];
 };
 
 const S_CAL   = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
@@ -155,6 +157,20 @@ export function chatTabHtml(d: ChatData): string {
               ${f.coverUrl ? `<img src="${f.coverUrl}" alt="" loading="lazy">` : `<div class="hm-gal-card-empty"></div>`}
               <div class="hm-gal-card-name">${f.name}</div>
             </button>`).join("")}
+          </div>
+        </div>` : ""}
+
+        ${d.orphanPhotos && d.orphanPhotos.length > 0 ? `
+        <div class="hm-card">
+          <div class="hm-card-hdr">
+            <div class="hm-card-title-row">
+              <span class="hm-card-title-icon" style="color:#0EA5E9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></span>
+              <span class="hm-card-title">Fotos</span>
+            </div>
+            <button class="sec-link" type="button" data-action="nosotros">Ver galería →</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;border-radius:0 0 14px 14px;overflow:hidden">
+            ${d.orphanPhotos.slice(0, 5).map(p => `<button type="button" data-action="nosotros" style="aspect-ratio:1;overflow:hidden;border:none;padding:0;cursor:pointer;background:var(--bg)"><img src="${escapeHtml(p.url)}" alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block"></button>`).join("")}
           </div>
         </div>` : ""}
 

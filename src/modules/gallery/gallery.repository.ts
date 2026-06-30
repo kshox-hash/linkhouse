@@ -167,6 +167,27 @@ export async function getGalleryPhotosByUserId(userId: string): Promise<GalleryP
   return result.rows;
 }
 
+export async function getOrphanPhotosPaginated(
+  userId: string,
+  limit: number,
+  offset: number
+): Promise<{ photos: GalleryPhoto[]; total: number }> {
+  const pool = DB.getPool();
+  const [photosRes, countRes] = await Promise.all([
+    pool.query(
+      `SELECT id::text, user_id::text, url, description, folder_id::text, created_at::text
+       FROM gallery_photos WHERE user_id = $1 AND folder_id IS NULL
+       ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
+      [userId, limit, offset]
+    ),
+    pool.query(
+      `SELECT COUNT(*)::int AS total FROM gallery_photos WHERE user_id = $1 AND folder_id IS NULL`,
+      [userId]
+    ),
+  ]);
+  return { photos: photosRes.rows, total: countRes.rows[0]?.total ?? 0 };
+}
+
 export async function updateGalleryPhotoDescription(
   id: string,
   userId: string,

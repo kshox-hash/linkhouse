@@ -178,9 +178,9 @@ ${safeColor ? `:root{--primary:${safeColor};--primary-dim:${safeColor}1A;--prima
     <span class="cn-status">En línea</span>
   </nav>
 
-  ${chatTabHtml({ name: s.name, slug: s.slug, desc: s.desc, enabledModules, phone: s.phone, ig: s.ig, wa: s.wa, hours: s.hours, locationLine, waHref, initials, productCount, portalUser, coverImage: coverImage ?? null, galleryFolders: galleryFolders.slice(0, 4).map(f => ({ id: f.id, name: f.name, coverUrl: f.photos[0]?.url ?? null })) })}
+  ${chatTabHtml({ name: s.name, slug: s.slug, desc: s.desc, enabledModules, phone: s.phone, ig: s.ig, wa: s.wa, hours: s.hours, locationLine, waHref, initials, productCount, portalUser, coverImage: coverImage ?? null, galleryFolders: galleryFolders.slice(0, 4).map(f => ({ id: f.id, name: f.name, coverUrl: f.photos[0]?.url ?? null })), orphanPhotos: orphanPhotos.slice(0, 5).map(p => ({ url: p.url })) })}
   ${reservasTabHtml()}
-  ${nosotrosTabHtml(products, productCount, galleryFolders, orphanPhotos)}
+  ${nosotrosTabHtml(products, productCount, galleryFolders, orphanPhotos.slice(0, 20), orphanPhotos.length, publicSlug)}
   ${serviciosTabHtml()}
   ${resenasTabHtml()}
 </main>

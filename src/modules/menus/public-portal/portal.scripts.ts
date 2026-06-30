@@ -2066,5 +2066,45 @@ function renderUpcomingSlots(){
   ensureReviews();
   initUpcoming();
 })();
+
+// ── Orphan photos infinite scroll ─────────────────────────────────────────────
+(function(){
+  var sentinel=document.getElementById('orphanSentinel');
+  if(!sentinel) return;
+  var loading=false;
+  var obs=new IntersectionObserver(function(entries){
+    if(!entries[0].isIntersecting||loading) return;
+    var total=parseInt(sentinel.getAttribute('data-total')||'0',10);
+    var loaded=parseInt(sentinel.getAttribute('data-loaded')||'0',10);
+    if(loaded>=total){obs.disconnect();return;}
+    loading=true;
+    fetch('/api/public/'+SLUG+'/gallery?limit=20&offset='+loaded)
+      .then(function(r){return r.json();})
+      .then(function(data){
+        if(!data.ok||!Array.isArray(data.photos)){loading=false;return;}
+        var grid=document.getElementById('orphan-grid');
+        if(!grid){loading=false;return;}
+        var newLoaded=loaded+data.photos.length;
+        sentinel.setAttribute('data-loaded',String(newLoaded));
+        data.photos.forEach(function(p,i){
+          var div=document.createElement('div');
+          div.className='gal-item';
+          div.setAttribute('data-gal-idx',String(loaded+i));
+          div.setAttribute('data-gal-url',p.url||'');
+          div.setAttribute('data-gal-desc',p.description||'');
+          var img=document.createElement('img');
+          img.src=p.url||'';
+          img.alt='';
+          img.loading='lazy';
+          div.appendChild(img);
+          grid.appendChild(div);
+        });
+        loading=false;
+        if(newLoaded>=total)obs.disconnect();
+      })
+      .catch(function(){loading=false;});
+  },{rootMargin:'300px'});
+  obs.observe(sentinel);
+})();
 `;
 }

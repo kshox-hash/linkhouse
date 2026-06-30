@@ -88,7 +88,9 @@ export function nosotrosTabHtml(
   products: Product[],
   total: number,
   galleryFolders: GalleryFolder[],
-  orphanPhotos: GalleryPhoto[]
+  orphanPhotos: GalleryPhoto[],
+  orphanTotal: number,
+  slug: string
 ): string {
   const hasProducts   = products && products.length > 0;
   const hasMore       = total > products.length;
@@ -128,26 +130,15 @@ export function nosotrosTabHtml(
       ${galleryFolders.map(f => buildFolderCard(f)).join("")}
     </div>` : ""}
 
-    ${hasOrphans ? (() => {
-      const visible = orphanPhotos.slice(0, 5);
-      const hidden  = orphanPhotos.slice(5);
-      const buildItem = (p: GalleryPhoto, i: number) =>
-        `<div class="gal-item" data-gal-idx="${i}" data-gal-url="${escapeHtml(p.url)}" data-gal-desc="${escapeHtml(p.description || "")}"><img src="${escapeHtml(p.url)}" alt="" loading="lazy"></div>`;
-      return `
+    ${hasOrphans ? `
     <div class="sec-hdr" style="margin-top:20px">
       <div class="sec-title" style="font-size:13px">Otras fotos</div>
     </div>
-    <div class="gal-grid">
-      ${visible.map((p, i) => buildItem(p, i)).join("")}
+    <div class="gal-grid" id="orphan-grid">
+      ${orphanPhotos.map((p, i) => `<div class="gal-item" data-gal-idx="${i}" data-gal-url="${escapeHtml(p.url)}" data-gal-desc="${escapeHtml(p.description || "")}"><img src="${escapeHtml(p.url)}" alt="" loading="lazy"></div>`).join("")}
     </div>
-    ${hidden.length > 0 ? `
-    <div class="gal-grid" id="orphan-extra" style="display:none">
-      ${hidden.map((p, i) => buildItem(p, visible.length + i)).join("")}
-    </div>
-    <div style="text-align:center;padding:10px 0 4px">
-      <button class="btn-outline" type="button" onclick="var e=document.getElementById('orphan-extra');if(e){e.style.display='grid';this.style.display='none';}">Ver todas (${orphanPhotos.length} fotos)</button>
-    </div>` : ""}`;
-    })() : ""}
+    ${orphanTotal > orphanPhotos.length ? `<div id="orphanSentinel" data-slug="${escapeHtml(slug)}" data-total="${orphanTotal}" data-loaded="${orphanPhotos.length}" style="height:4px;margin-top:8px"></div>` : ""}
+    ` : ""}
 
     ${!hasAnyGallery ? `
     <div class="gal-empty">

@@ -4,6 +4,7 @@ import { getSlugByValueService } from "../slug/slug.service";
 import {
   addGalleryPhoto,
   getGalleryPhotosByUserId,
+  getOrphanPhotosPaginated,
   updateGalleryPhotoDescription,
   deleteGalleryPhoto,
   createFolder,
@@ -104,10 +105,12 @@ export const galleryController = {
   async listPublic(req: Request, res: Response) {
     try {
       const publicSlug = String(req.params["publicSlug"] || "").trim();
+      const limit  = Math.min(Math.max(parseInt(String(req.query["limit"]  || "20"), 10) || 20, 1), 50);
+      const offset = Math.max(parseInt(String(req.query["offset"] || "0"),  10) || 0, 0);
       const slug = await getSlugByValueService(publicSlug);
       if (!slug) return res.status(404).json({ ok: false, message: "Negocio no encontrado." });
-      const photos = await getGalleryPhotosByUserId(slug.user_id);
-      return res.json({ ok: true, photos });
+      const { photos, total } = await getOrphanPhotosPaginated(slug.user_id, limit, offset);
+      return res.json({ ok: true, photos, total });
     } catch (err) {
       console.error("[gallery] listPublic:", err);
       return res.status(500).json({ ok: false, message: "Error al obtener la galería." });
