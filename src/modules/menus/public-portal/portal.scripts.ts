@@ -523,6 +523,10 @@ document.addEventListener('click',function(e){
     var pidx=parseInt(provItem.getAttribute('data-bk-prov-i')||'0',10);
     bk.provider=providersCache[pidx]||null;
     if(bk.provider) loadBkProvSlots(bk.provider.id, function(){
+      // Si había un tiempo pre-seleccionado pero no está en los slots de este doctor, limpiarlo
+      if(bk.time && bk.date && (!bkProvSlots[bk.date] || bkProvSlots[bk.date].indexOf(bk.time)===-1)){
+        bk.time=null;
+      }
       if(bk.time) renderBkFormStep(); else renderBkTimeStep();
     });
     else { if(bk.time) renderBkFormStep(); else renderBkTimeStep(); }

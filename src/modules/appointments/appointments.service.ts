@@ -6,7 +6,7 @@ import {
   getCalendarBookings,
   getCalendarSettings,
 } from "./appointments.repository";
-import { getActiveProvidersByUserId } from "./calendar-providers.repository";
+import { getActiveProvidersByUserId, isProviderActiveForUser } from "./calendar-providers.repository";
 
 function toDateString(date: Date): string {
   return date.toISOString().slice(0, 10);
@@ -161,6 +161,11 @@ export async function reserveCalendarSlot(input: {
 
   if (!settings) {
     throw new Error("Calendario no configurado.");
+  }
+
+  if (input.providerId) {
+    const valid = await isProviderActiveForUser(input.providerId, input.userId);
+    if (!valid) throw new Error("El profesional seleccionado no está disponible.");
   }
 
   const availability = await getCalendarAvailability(input.userId, input.providerId);

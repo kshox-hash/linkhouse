@@ -73,7 +73,9 @@ export const calendarProvidersController = {
       return res.json({ ok: true });
     } catch (error) {
       console.error("Error eliminando proveedor:", error);
-      return res.status(500).json({ ok: false, message: "No se pudo eliminar." });
+      const msg = error instanceof Error ? error.message : "No se pudo eliminar.";
+      const status = msg.includes("reservas activas") ? 409 : 500;
+      return res.status(status).json({ ok: false, message: msg });
     }
   },
 

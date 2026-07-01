@@ -87,7 +87,26 @@ export async function updateProvider(input: {
 }
 
 export async function deleteProvider(id: string, userId: string) {
+  const active = await pool.query(
+    `SELECT id FROM calendar_bookings
+     WHERE provider_id = $1 AND user_id = $2
+       AND status IN ('confirmed','pending_payment')
+       AND (expires_at IS NULL OR expires_at > NOW())
+     LIMIT 1`,
+    [id, userId]
+  );
+  if ((active.rowCount ?? 0) > 0) {
+    throw new Error("Este profesional tiene reservas activas. Cancélalas antes de eliminarlo.");
+  }
   await pool.query(`DELETE FROM calendar_providers WHERE id = $1 AND user_id = $2`, [id, userId]);
+}
+
+export async function isProviderActiveForUser(providerId: string, userId: string): Promise<boolean> {
+  const result = await pool.query(
+    `SELECT id FROM calendar_providers WHERE id = $1 AND user_id = $2 AND is_active = true LIMIT 1`,
+    [providerId, userId]
+  );
+  return (result.rowCount ?? 0) > 0;
 }
 
 export async function getActiveProvidersByUserId(userId: string) {
