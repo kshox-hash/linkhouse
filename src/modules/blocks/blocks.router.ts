@@ -4,10 +4,8 @@ import { blocksController } from "./blocks.controller";
 
 const router = express.Router();
 
-router.use(authMiddleware);
-
-router.get("/blocks/:userId",          blocksController.list);
-router.post("/blocks/:userId",         blocksController.create);
-router.delete("/blocks/:userId/:blockId", blocksController.remove);
+router.get("/blocks/:userId",             authMiddleware, blocksController.list);
+router.post("/blocks/:userId",            authMiddleware, blocksController.create);
+router.delete("/blocks/:userId/:blockId", authMiddleware, blocksController.remove);
 
 export default router;
