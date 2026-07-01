@@ -1,5 +1,25 @@
 import DB from "../../db/db_configuration";
 
+export async function initCalendarBlockedDatesTable(): Promise<void> {
+  const pool = DB.getPool();
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS calendar_blocked_dates (
+      id          UUID      PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id     UUID      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      blocked_date DATE     NOT NULL,
+      start_time  TIME,
+      end_time    TIME,
+      is_full_day BOOLEAN   NOT NULL DEFAULT false,
+      reason      TEXT,
+      created_at  TIMESTAMP NOT NULL DEFAULT NOW()
+    )
+  `);
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS idx_calendar_blocked_dates_user_date
+    ON calendar_blocked_dates(user_id, blocked_date)
+  `);
+}
+
 export type CalendarBlock = {
   id: string;
   user_id: string;

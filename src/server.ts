@@ -42,6 +42,7 @@ import { initReviewsGoogleColumns } from "./modules/stadistics/reviews.repositor
 import calendarServicesRoutes from "./modules/appointments/calendar-services.routes";
 import galleryRouter from "./modules/gallery/gallery.router";
 import { initGalleryTable, initGalleryFoldersTable } from "./modules/gallery/gallery.repository";
+import { initCalendarBlockedDatesTable } from "./modules/blocks/blocks.repository";
 import DB from "./db/db_configuration";
 
 // ─── Proceso ────────────────────────────────────────────────────────────────
@@ -186,6 +187,7 @@ const server = app.listen(PORT, async () => {
     initReviewsGoogleColumns().catch((e) => console.error("[init] reviews_google:", e)),
     initGalleryTable().catch((e) => console.error("[init] gallery:", e)),
     initGalleryFoldersTable().catch((e) => console.error("[init] gallery_folders:", e)),
+    initCalendarBlockedDatesTable().catch((e) => console.error("[init] calendar_blocked_dates:", e)),
   ]);
 });
 
