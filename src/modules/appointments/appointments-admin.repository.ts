@@ -81,6 +81,13 @@ export async function initCalendarBookingPriceColumn(): Promise<void> {
   `);
 }
 
+export async function initCalendarBreakTimesColumn(): Promise<void> {
+  await pool.query(`
+    ALTER TABLE calendar_settings
+    ADD COLUMN IF NOT EXISTS break_times JSONB NOT NULL DEFAULT '[]'::jsonb
+  `);
+}
+
 export type SaveCalendarSettingsInput = {
   userId: string;
   openingTime: string;
@@ -137,9 +144,10 @@ export async function getCalendarSettingsByUserId(userId: string) {
 
   const settings = settingsResult.rows[0] || null;
   const availability = availabilityResult.rows;
-  const blockedDates = blockedDatesResult.rows;
-
   const firstAvailability = availability[0] || null;
+
+  const breakTimes: Array<{ start_time: string; end_time: string; reason?: string | null }> =
+    settings?.break_times || [];
 
   return {
     user_id: userId,
@@ -153,12 +161,12 @@ export async function getCalendarSettingsByUserId(userId: string) {
     active_weekdays: availability.length
       ? availability.map((row) => Number(row.weekday))
       : [1, 2, 3, 4, 5],
-    blocked_dates: blockedDates.map((row) => ({
-      blocked_date: row.blocked_date,
-      start_time: row.start_time,
-      end_time: row.end_time,
-      reason: row.reason,
-      is_full_day: row.is_full_day,
+    blocked_dates: breakTimes.map((bt) => ({
+      blocked_date: null,
+      start_time: bt.start_time,
+      end_time: bt.end_time,
+      reason: bt.reason ?? null,
+      is_full_day: false,
     })),
   };
 }
@@ -172,14 +180,16 @@ export async function saveCalendarSettings(input: SaveCalendarSettingsInput) {
         timezone,
         default_slot_minutes,
         max_advance_days,
+        break_times,
         updated_at
       )
-      VALUES ($1, $2, $3, $4, NOW())
+      VALUES ($1, $2, $3, $4, $5::jsonb, NOW())
       ON CONFLICT (user_id)
       DO UPDATE SET
         timezone = EXCLUDED.timezone,
         default_slot_minutes = EXCLUDED.default_slot_minutes,
         max_advance_days = EXCLUDED.max_advance_days,
+        break_times = EXCLUDED.break_times,
         updated_at = NOW()
       RETURNING *
       `,
@@ -188,6 +198,13 @@ export async function saveCalendarSettings(input: SaveCalendarSettingsInput) {
         input.timezone || "America/Santiago",
         input.slotDurationMinutes,
         input.maxDaysAhead,
+        JSON.stringify(
+          [...new Map(
+            (input.blockedDates || [])
+              .filter((b) => b.startTime && b.endTime)
+              .map((b) => [`${b.startTime}-${b.endTime}`, { start_time: b.startTime, end_time: b.endTime, reason: b.reason || null }])
+          ).values()]
+        ),
       ]
     );
 
@@ -224,41 +241,7 @@ export async function saveCalendarSettings(input: SaveCalendarSettingsInput) {
       );
     }
 
-    await client.query(
-      `
-      DELETE FROM calendar_blocked_dates
-      WHERE user_id = $1
-      `,
-      [input.userId]
-    );
-
-    for (const block of input.blockedDates || []) {
-      const isFullDay = !block.startTime || !block.endTime;
-
-      await client.query(
-        `
-        INSERT INTO calendar_blocked_dates (
-          user_id,
-          blocked_date,
-          start_time,
-          end_time,
-          is_full_day,
-          reason,
-          created_at,
-          updated_at
-        )
-        VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
-        `,
-        [
-          input.userId,
-          block.blockedDate,
-          block.startTime || null,
-          block.endTime || null,
-          isFullDay,
-          block.reason || null,
-        ]
-      );
-    }
+    // break_times ya se guardaron en calendar_settings — no se necesita calendar_blocked_dates para pausas recurrentes
 
     return getCalendarSettingsByUserId(input.userId);
   });

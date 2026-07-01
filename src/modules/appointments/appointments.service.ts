@@ -63,6 +63,7 @@ export async function buildCalendarSlots(userId: string, providerId?: string | n
 
   const bookings = await getCalendarBookings(userId, from, to, providerId);
   const blockedDates = await getCalendarBlockedDates(userId, from, to);
+  const breakTimes = settings.break_times || [];
 
   const slots: Array<{ date: string; times: string[] }> = [];
 
@@ -107,14 +108,18 @@ export async function buildCalendarSlots(userId: string, providerId?: string | n
         const isBlocked = dayBlocks.some((block) => {
           if (block.is_full_day) return true;
           if (!block.start_time || !block.end_time) return true;
-
           const blockStart = timeToMinutes(block.start_time);
           const blockEnd = timeToMinutes(block.end_time);
-
           return current < blockEnd && current + duration > blockStart;
         });
 
-        if (!isBooked && !isBlocked) {
+        const isBreak = breakTimes.some((bt) => {
+          const breakStart = timeToMinutes(bt.start_time);
+          const breakEnd = timeToMinutes(bt.end_time);
+          return current < breakEnd && current + duration > breakStart;
+        });
+
+        if (!isBooked && !isBlocked && !isBreak) {
           times.push(startTime);
         }
 

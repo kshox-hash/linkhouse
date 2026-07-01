@@ -8,6 +8,7 @@ import rateLimit from "express-rate-limit";
 
 import mpWebhookRouter from "./modules/webhook/mp-webhook.router";
 import mpConnectRouter from "./modules/mp-connect/mp-connect.router";
+import blocksRouter from "./modules/blocks/blocks.router";
 import adminRouter from "./modules/admin/admin.router";
 import clientsRouter from "./modules/clients/clients.router";
 import { startReminderCron } from "./modules/reminders/reminder.cron";
@@ -34,7 +35,7 @@ import productsRouter from "./modules/quotes/quotes.router";
 import statisticsRouter from "./modules/stadistics/stadistics.router";
 import quotesExtendedRouter from "./modules/quotes/quotes-extended.routes";
 import { initQuoteHistoryTable } from "./modules/quotes/quote-history/quote-history.repository";
-import { initCalendarBookingPriceColumn, migrateCalendarAvailabilityConstraint, migrateCalendarBookingsUniqueConstraint } from "./modules/appointments/appointments-admin.repository";
+import { initCalendarBookingPriceColumn, initCalendarBreakTimesColumn, migrateCalendarAvailabilityConstraint, migrateCalendarBookingsUniqueConstraint } from "./modules/appointments/appointments-admin.repository";
 import { migrateSlugUniqueConstraint } from "./modules/slug/slug.repository";
 import { initCalendarServicesTable } from "./modules/appointments/calendar-services.repository";
 import { initReviewsGoogleColumns } from "./modules/stadistics/reviews.repository";
@@ -145,6 +146,7 @@ app.use("/assets", express.static("assets"));
 app.use(passport.initialize());
 app.use(mpWebhookRouter);
 app.use(mpConnectRouter);
+app.use("/api", blocksRouter);
 app.use(adminRouter);
 app.use(companyProfileRoutes);
 app.use(calendarAdminRoutes);
@@ -176,6 +178,7 @@ const server = app.listen(PORT, async () => {
   await Promise.all([
     initQuoteHistoryTable().catch((e) => console.error("[init] quote_history:", e)),
     initCalendarBookingPriceColumn().catch((e) => console.error("[init] calendar_booking_price:", e)),
+    initCalendarBreakTimesColumn().catch((e) => console.error("[init] calendar_break_times:", e)),
     migrateCalendarAvailabilityConstraint().catch((e) => console.error("[init] calendar_availability_constraint:", e)),
     migrateCalendarBookingsUniqueConstraint().catch((e) => console.error("[init] calendar_bookings_unique_constraint:", e)),
     migrateSlugUniqueConstraint().catch((e) => console.error("[init] slug_unique_constraint:", e)),

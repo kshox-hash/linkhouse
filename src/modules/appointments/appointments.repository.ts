@@ -12,6 +12,7 @@ export type CalendarSettingsRow = {
   auto_confirm_booking: boolean;
   is_active: boolean;
   booking_price?: number | null;
+  break_times?: Array<{ start_time: string; end_time: string; reason?: string | null }>;
 };
 
 export type CalendarAvailabilityRow = {

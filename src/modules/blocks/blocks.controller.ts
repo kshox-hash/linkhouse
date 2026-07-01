@@ -30,13 +30,13 @@ export const blocksController = {
       if (new Date(endAt) <= new Date(startAt)) {
         return res.status(400).json({ ok: false, message: "endAt debe ser posterior a startAt" });
       }
-      const block = await createBlock(
+      const blocks = await createBlock(
         uid(req),
         String(startAt),
         String(endAt),
         reason ? String(reason) : null
       );
-      return res.status(201).json({ ok: true, block });
+      return res.status(201).json({ ok: true, blocks });
     } catch (e: any) {
       return res.status(500).json({ ok: false, message: e?.message });
     }
