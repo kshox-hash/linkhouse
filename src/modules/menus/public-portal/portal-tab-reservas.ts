@@ -5,8 +5,8 @@ export function reservasTabHtml(): string {
 
       <!-- Intro -->
       <div class="rsv-intro">
-        <div class="rsv-intro-title">Reservá tu turno</div>
-        <div class="rsv-intro-sub">Elegí el servicio, seleccioná el día disponible y confirmá el horario que más te quede.</div>
+        <div class="rsv-intro-title">Reserva tu hora</div>
+        <div class="rsv-intro-sub">Elige el servicio, selecciona el día disponible y confirma el horario que prefieras.</div>
       </div>
 
       <!-- Calendar (card) + stats (separado) -->
@@ -33,7 +33,7 @@ export function reservasTabHtml(): string {
             </div>
             <div class="rds-item">
               <span class="rds-val" id="rstatSlots">—</span>
-              <span class="rds-lbl">Turnos</span>
+              <span class="rds-lbl">Horarios</span>
             </div>
             <div class="rds-item">
               <span class="rds-val rds-next" id="rstatNext">—</span>
@@ -53,7 +53,7 @@ export function reservasTabHtml(): string {
       <div class="rdash-sec-hdr">
         <div>
           <div class="rdash-sec-title">Servicios disponibles</div>
-          <div class="rdash-sec-sub">Tocá el servicio que querés reservar</div>
+          <div class="rdash-sec-sub">Selecciona el servicio que deseas reservar</div>
         </div>
       </div>
       <div class="svc-grid" id="svcGrid">

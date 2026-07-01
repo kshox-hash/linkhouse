@@ -222,7 +222,7 @@ function renderBkDateStep(){
     +'<div class="cal-legend">'
     +'<span class="cal-leg-item"><span class="cal-leg-dot" style="background:#16A34A"></span>Disponible</span>'
     +'<span class="cal-leg-item"><span class="cal-leg-dot" style="background:#EA580C"></span>Pocas horas</span>'
-    +'<span class="cal-leg-item"><span class="cal-leg-dot" style="background:var(--border)"></span>Sin turnos</span>'
+    +'<span class="cal-leg-item"><span class="cal-leg-dot" style="background:var(--border)"></span>Sin horarios</span>'
     +'</div>'
     +'</div>';
   body.querySelectorAll('.cal-cell[data-bk-date]').forEach(function(cell){
@@ -1172,7 +1172,7 @@ function updateProfileNextSlot(){
     var cnt=calSlots[next].length;
     slot.innerHTML='<div class="pr-avail-pill">'+calIco+escH(fmtDateLabel(next))+'<span style="font-weight:400;font-size:11px;opacity:.8">'+cnt+' horario'+(cnt!==1?'s':'')+'</span></div>';
   } else {
-    slot.innerHTML='<div class="pr-avail-none">Sin turnos disponibles por ahora</div>';
+    slot.innerHTML='<div class="pr-avail-none">Sin horarios disponibles por ahora</div>';
   }
 }
 
@@ -1233,8 +1233,8 @@ function renderCalWidget(id){
     +'<div class="cal-grid">'+dayNames+cells+'</div>'
     +'<div class="cal-legend">'
     +'<div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--green)"></div>Disponible</div>'
-    +'<div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--red);opacity:.5"></div>Sin turnos</div>'
-    +'<div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--primary)"></div>Hoy</div>'
+    +'<div class="cal-leg-item"><div class="cal-leg-dot" style="background:var(--red);opacity:.5"></div>Sin horarios</div>'
+    +'<div class="cal-leg-item"><div class="cal-leg-dot" style="background:#3B82F6"></div>Hoy</div>'
     +'</div>';
 
   el.innerHTML=html;
@@ -1294,12 +1294,12 @@ function showCalTip(cell,date){
 
   var html='<div class="cal-tip-date">'
     +DAY[d.getDay()]+' '+d.getDate()+' '+MON[d.getMonth()]
-    +(isToday?'<span class="cal-tip-date-badge">Hoy</span>':hasSlots?'<span class="cal-tip-date-badge" style="background:#ECFDF5;color:#059669">Disponible</span>':'<span class="cal-tip-date-badge" style="background:#FEF3C7;color:#D97706">Sin turnos</span>')
+    +(isToday?'<span class="cal-tip-date-badge">Hoy</span>':hasSlots?'<span class="cal-tip-date-badge" style="background:#ECFDF5;color:#059669">Disponible</span>':'<span class="cal-tip-date-badge" style="background:#FEF3C7;color:#D97706">Sin horarios</span>')
     +'</div>'
     +'<div class="cal-tip-divider"></div>';
 
   if(hasSlots){
-    html+='<div class="cal-tip-section">Turnos disponibles</div>'
+    html+='<div class="cal-tip-section">Horarios disponibles</div>'
       +'<div class="cal-tip-slots">';
     slots.slice(0,4).forEach(function(t){
       html+='<span class="cal-tip-slot" data-tip-slot-date="'+date+'" data-tip-slot-time="'+t+'">'+t+'</span>';
@@ -1433,7 +1433,7 @@ function openDayDetailPanel(date){
 
   // Slots section
   html+='<div class="ddp-section">'
-    +'<div class="ddp-section-lbl">'+( hasSlots?'Turnos disponibles':'Sin turnos este día')+'</div>';
+    +'<div class="ddp-section-lbl">'+( hasSlots?'Horarios disponibles':'Sin horarios este día')+'</div>';
   if(hasSlots){
     html+='<div class="ddp-slots">';
     slots.forEach(function(t){
@@ -2044,7 +2044,7 @@ function renderUpcomingSlots(){
       +'</div>'
       +'<div class="hm-empty-body">'
       +'<div class="hm-empty-title">Sin disponibilidad próxima</div>'
-      +'<div class="hm-empty-sub">No hay turnos disponibles en los próximos días</div>'
+      +'<div class="hm-empty-sub">No hay horarios disponibles en los próximos días</div>'
       +'</div>'
       +'</div>';
     return;
