@@ -12,7 +12,7 @@ const router = express.Router();
 const bookingRateLimit = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 10,
-  keyGenerator: (req) => `${ipKeyGenerator(req)}-${req.params["publicSlug"] ?? ""}`,
+  keyGenerator: (req) => `${ipKeyGenerator(req.ip ?? "")}-${req.params["publicSlug"] ?? ""}`,
   message: { ok: false, message: "Demasiadas solicitudes. Intenta más tarde." },
   standardHeaders: true,
   legacyHeaders: false,
@@ -22,7 +22,7 @@ const bookingRateLimit = rateLimit({
 const tokenRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
-  keyGenerator: (req) => ipKeyGenerator(req),
+  keyGenerator: (req) => ipKeyGenerator(req.ip ?? ""),
   message: { ok: false, message: "Demasiadas solicitudes. Intenta más tarde." },
   standardHeaders: true,
   legacyHeaders: false,
