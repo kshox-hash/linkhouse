@@ -1,5 +1,5 @@
 import express from "express";
-import rateLimit from "express-rate-limit";
+import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import { calendarPublicController } from "./calendar-public.controller";
 import { confirmBookingByToken } from "./booking/services/bookingConfirmation.service";
 import { renderBookingConfirmationSuccessHtml } from "./booking/views/bookingConfirmationSuccessHtml";
@@ -12,7 +12,7 @@ const router = express.Router();
 const bookingRateLimit = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 10,
-  keyGenerator: (req) => `${req.ip}-${req.params["publicSlug"] ?? ""}`,
+  keyGenerator: (req) => `${ipKeyGenerator(req)}-${req.params["publicSlug"] ?? ""}`,
   message: { ok: false, message: "Demasiadas solicitudes. Intenta más tarde." },
   standardHeaders: true,
   legacyHeaders: false,
@@ -22,7 +22,7 @@ const bookingRateLimit = rateLimit({
 const tokenRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
-  keyGenerator: (req) => `${req.ip}`,
+  keyGenerator: (req) => ipKeyGenerator(req),
   message: { ok: false, message: "Demasiadas solicitudes. Intenta más tarde." },
   standardHeaders: true,
   legacyHeaders: false,
